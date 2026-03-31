@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOLID Principles — Exam Crusher 💥</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a28;
+    --border: #2a2a45;
+    --text: #e8e8f5;
+    --muted: #7878a0;
+    --accent1: #ff4d6d;
+    --accent2: #4dffb4;
+    --accent3: #ffd54d;
+    --accent4: #4d9fff;
+    --accent5: #c44dff;
+    --s: #ff4d6d;
+    --o: #ff9a4d;
+    --l: #ffd54d;
+    --i: #4dffb4;
+    --d: #4d9fff;
+  }
+ 
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+  html { scroll-behavior: smooth; }
+ 
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+  }
+ 
+  /* HEADER */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+ 
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent2);
+    letter-spacing: -1px;
+  }
+ 
+  nav {
+    display: flex;
+    gap: 0.3rem;
+  }
+ 
+  nav a {
+    text-decoration: none;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+ 
+  nav a:hover { border-color: var(--border); background: var(--surface2); }
+  .nav-s { color: var(--s); }
+  .nav-o { color: var(--o); }
+  .nav-l { color: var(--l); }
+  .nav-i { color: var(--i); }
+  .nav-d { color: var(--d); }
+ 
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 2rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+ 
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 60% 50% at 20% 50%, rgba(255,77,109,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 50% at 80% 50%, rgba(77,159,255,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 50% 80%, rgba(77,255,180,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+ 
+  .solid-letters {
+    display: flex;
+    gap: 0.2rem;
+    margin-bottom: 1.5rem;
+  }
+ 
+  .solid-letter {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(4rem, 12vw, 9rem);
+    font-weight: 800;
+    line-height: 1;
+    animation: letterPop 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+ 
+  .solid-letter:nth-child(1) { color: var(--s); animation-delay: 0.1s; }
+  .solid-letter:nth-child(2) { color: var(--o); animation-delay: 0.2s; }
+  .solid-letter:nth-child(3) { color: var(--l); animation-delay: 0.3s; }
+  .solid-letter:nth-child(4) { color: var(--i); animation-delay: 0.4s; }
+  .solid-letter:nth-child(5) { color: var(--d); animation-delay: 0.5s; }
+ 
+  @keyframes letterPop {
+    from { opacity: 0; transform: translateY(40px) scale(0.8); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+ 
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.8s 0.7s both;
+  }
+ 
+  .hero-sub span {
+    color: var(--accent2);
+    font-weight: 600;
+  }
+ 
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+ 
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    animation: fadeUp 0.8s 0.9s both;
+  }
+ 
+  .pill {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+    display: inline-block;
+  }
+ 
+  .pill:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+  .pill-s { background: rgba(255,77,109,0.15); color: var(--s); border: 1px solid rgba(255,77,109,0.4); }
+  .pill-o { background: rgba(255,154,77,0.15); color: var(--o); border: 1px solid rgba(255,154,77,0.4); }
+  .pill-l { background: rgba(255,213,77,0.15); color: var(--l); border: 1px solid rgba(255,213,77,0.4); }
+  .pill-i { background: rgba(77,255,180,0.15); color: var(--i); border: 1px solid rgba(77,255,180,0.4); }
+  .pill-d { background: rgba(77,159,255,0.15); color: var(--d); border: 1px solid rgba(77,159,255,0.4); }
+ 
+  /* MAIN CONTENT */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 6rem;
+  }
+ 
+  /* SECTION */
+  .principle {
+    margin-bottom: 5rem;
+    position: relative;
+  }
+ 
+  .principle-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+ 
+  .principle-letter {
+    font-family: 'Syne', sans-serif;
+    font-size: 5rem;
+    font-weight: 800;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 90px;
+    text-align: center;
+  }
+ 
+  .principle-title-block { flex: 1; }
+ 
+  .principle-acronym {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+ 
+  .principle-name {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+ 
+  .principle-tagline {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+ 
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+ 
+  .card:hover { border-color: var(--muted); }
+ 
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    border-radius: 3px 0 0 3px;
+  }
+ 
+  .card-s::before { background: var(--s); }
+  .card-o::before { background: var(--o); }
+  .card-l::before { background: var(--l); }
+  .card-i::before { background: var(--i); }
+  .card-d::before { background: var(--d); }
+ 
+  .card-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    opacity: 0.6;
+  }
+ 
+  .card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+ 
+  .card p, .card li {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: #c0c0d8;
+  }
+ 
+  .card ul {
+    padding-left: 1.2rem;
+  }
+ 
+  .card ul li { margin-bottom: 0.4rem; }
+ 
+  /* DEFINITION BOX */
+  .def-box {
+    background: var(--surface2);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+    border-left: 4px solid;
+  }
+ 
+  .def-box-s { border-color: var(--s); }
+  .def-box-o { border-color: var(--o); }
+  .def-box-l { border-color: var(--l); }
+  .def-box-i { border-color: var(--i); }
+  .def-box-d { border-color: var(--d); }
+ 
+  .def-box .quote {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.6;
+    font-style: italic;
+  }
+ 
+  .def-box .quote em {
+    font-style: normal;
+    font-weight: 700;
+  }
+ 
+  /* CODE BLOCK */
+  .code-block {
+    background: #0d0d16;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    overflow-x: auto;
+    margin: 0.75rem 0;
+    color: #a8b8d8;
+  }
+ 
+  .code-block .kw { color: #c44dff; }
+  .code-block .cls { color: #ffd54d; }
+  .code-block .fn { color: #4dffb4; }
+  .code-block .str { color: #ff9a4d; }
+  .code-block .cmt { color: #505070; font-style: italic; }
+  .code-block .bad { color: #ff4d6d; }
+  .code-block .good { color: #4dffb4; }
+ 
+  /* GRID */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+ 
+  @media (max-width: 700px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .principle-header { flex-direction: column; }
+    .principle-letter { font-size: 3.5rem; width: auto; }
+  }
+ 
+  /* COMPARE TABLE */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+ 
+  .compare-col { padding: 1.25rem; }
+  .compare-bad { background: rgba(255,77,109,0.08); border-right: 1px solid var(--border); }
+  .compare-good { background: rgba(77,255,180,0.06); }
+  .compare-col h4 { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 1rem; }
+  .compare-bad h4 { color: var(--s); }
+  .compare-good h4 { color: var(--i); }
+ 
+  @media (max-width: 600px) {
+    .compare { grid-template-columns: 1fr; }
+    .compare-bad { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+ 
+  /* HIGHLIGHT */
+  .hl { font-weight: 700; }
+  .hl-s { color: var(--s); }
+  .hl-o { color: var(--o); }
+  .hl-l { color: var(--l); }
+  .hl-i { color: var(--i); }
+  .hl-d { color: var(--d); }
+ 
+  /* TRICK BOX */
+  .trick-box {
+    background: linear-gradient(135deg, rgba(255,213,77,0.06), rgba(255,154,77,0.06));
+    border: 1px solid rgba(255,213,77,0.25);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    margin: 1rem 0;
+  }
+ 
+  .trick-box .trick-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent3);
+    margin-bottom: 0.5rem;
+  }
+ 
+  .trick-box p {
+    font-size: 0.9rem;
+    color: #d8c880;
+    line-height: 1.6;
+  }
+ 
+  /* MEMORY AID */
+  .memory {
+    background: linear-gradient(135deg, rgba(77,255,180,0.06), rgba(77,159,255,0.06));
+    border: 1px solid rgba(77,255,180,0.2);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    margin: 1rem 0;
+  }
+ 
+  .memory .memory-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent2);
+    margin-bottom: 0.5rem;
+  }
+ 
+  .memory p { font-size: 0.9rem; color: #b0e8d0; line-height: 1.6; }
+ 
+  /* CONDITIONS */
+  .conditions-list {
+    counter-reset: cond;
+    list-style: none;
+    padding: 0;
+  }
+ 
+  .conditions-list li {
+    counter-increment: cond;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: #c0c0d8;
+  }
+ 
+  .conditions-list li::before {
+    content: counter(cond);
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255,213,77,0.15);
+    color: var(--l);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+  }
+ 
+  /* DI TYPES */
+  .di-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+ 
+  @media (max-width: 700px) { .di-grid { grid-template-columns: 1fr; } }
+ 
+  .di-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem;
+    text-align: center;
+  }
+ 
+  .di-card .di-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  .di-card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--d); }
+  .di-card p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+ 
+  /* PATTERN CARD */
+  .pattern-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+  }
+ 
+  .pattern-block h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--o);
+  }
+ 
+  .pattern-block p { font-size: 0.9rem; color: #c0c0d8; line-height: 1.65; }
+ 
+  /* SEPARATOR */
+  .section-sep {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 4rem 0;
+  }
+ 
+  /* SUMMARY TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+  }
+ 
+  th {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 0.75rem 1rem;
+    background: var(--surface2);
+    color: var(--muted);
+    text-align: left;
+  }
+ 
+  td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: #c0c0d8;
+    line-height: 1.5;
+  }
+ 
+  tr:hover td { background: var(--surface2); }
+ 
+  /* SCROLL TOP */
+  .scroll-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 44px;
+    height: 44px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.25s;
+    text-decoration: none;
+    color: var(--text);
+  }
+ 
+  .scroll-top:hover {
+    background: var(--surface);
+    transform: translateY(-3px);
+    border-color: var(--accent2);
+  }
+ 
+  /* QUIZ SECTION */
+  .quiz-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 3rem 0;
+  }
+ 
+  .quiz-section h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    color: var(--accent3);
+  }
+ 
+  .quiz-q {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+ 
+  .quiz-q:hover { border-color: var(--accent3); }
+ 
+  .quiz-q .q-text {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0;
+    color: var(--text);
+  }
+ 
+  .quiz-q .q-answer {
+    display: none;
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.88rem;
+    color: var(--accent2);
+    line-height: 1.6;
+  }
+ 
+  .quiz-q.open .q-answer { display: block; }
+ 
+  .quiz-q .q-toggle {
+    float: right;
+    font-size: 1.1rem;
+    color: var(--accent3);
+    transition: transform 0.3s;
+    font-family: 'Space Mono', monospace;
+  }
+ 
+  .quiz-q.open .q-toggle { transform: rotate(45deg); }
+ 
+  /* VIP BADGE */
+  .vip-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(196,77,255,0.12);
+    border: 1px solid rgba(196,77,255,0.3);
+    color: #c44dff;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 4px 10px;
+    border-radius: 100px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+ 
+  .connections-map {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 0;
+    text-align: center;
+  }
+ 
+  .connections-map h3 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+ 
+  .conn-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+ 
+  .conn-node {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+ 
+  .conn-arrow {
+    color: var(--muted);
+    font-size: 1.2rem;
+  }
+</style>
+</head>
+<body>
+ 
+<!-- HEADER -->
+<header>
+  <div class="logo">// SOLID.study</div>
+  <nav>
+    <a href="#srp" class="nav-s">S — SRP</a>
+    <a href="#ocp" class="nav-o">O — OCP</a>
+    <a href="#lsp" class="nav-l">L — LSP</a>
+    <a href="#isp" class="nav-i">I — ISP</a>
+    <a href="#dip" class="nav-d">D — DIP</a>
+  </nav>
+</header>
+ 
+<!-- HERO -->
+<div class="hero">
+  <div class="solid-letters">
+    <span class="solid-letter">S</span>
+    <span class="solid-letter">O</span>
+    <span class="solid-letter">L</span>
+    <span class="solid-letter">I</span>
+    <span class="solid-letter">D</span>
+  </div>
+  <p class="hero-sub">Software Engineering 2 — <span>Exam Crusher</span> 💥 | Every word from the slides</p>
+  <div class="pills">
+    <a href="#srp" class="pill pill-s">S · Single Responsibility</a>
+    <a href="#ocp" class="pill pill-o">O · Open/Closed</a>
+    <a href="#lsp" class="pill pill-l">L · Liskov Substitution</a>
+    <a href="#isp" class="pill pill-i">I · Interface Segregation</a>
+    <a href="#dip" class="pill pill-d">D · Dependency Inversion</a>
+  </div>
+</div>
+ 
+<!-- MAIN -->
+<main>
+ 
+<!-- ========== S — SRP ========== -->
+<section class="principle" id="srp">
+  <div class="principle-header">
+    <div class="principle-letter hl-s">S</div>
+    <div class="principle-title-block">
+      <div class="principle-acronym" style="color:var(--s)">SRP</div>
+      <div class="principle-name">Single Responsibility Principle</div>
+      <div class="principle-tagline">Coined by Robert C. Martin (Uncle Bob)</div>
+    </div>
+  </div>
+ 
+  <!-- TWO DEFINITIONS -->
+  <div class="card card-s">
+    <div class="card-label">🎯 Two Definitions — Both are EXAM-READY</div>
+    <div class="def-box def-box-s" style="margin-bottom:0.75rem">
+      <div class="quote">Definition 1: <em>"Every software component should have one and only one responsibility."</em></div>
+    </div>
+    <div class="def-box def-box-s">
+      <div class="quote">Definition 2 (Uncle Bob): <em>"Every software component should have one and only one <span class="hl hl-s">reason to change</span>."</em></div>
+    </div>
+    <p style="margin-top:0.75rem; font-size:0.88rem; color:var(--muted)">Component = class, method, or module. Quote: Heraclitus — <em>"The only thing that is constant is change."</em></p>
+  </div>
+ 
+  <!-- COHESION -->
+  <div class="card card-s">
+    <div class="card-label">📦 Concept 1 — Cohesion</div>
+    <h3>Cohesion = How RELATED are parts inside a component</h3>
+    <p><span class="hl hl-s">High cohesion</span> = parts are closely related → ✅ GOOD<br>
+    <span class="hl" style="color:#ff7070">Low cohesion</span> = parts have nothing to do with each other → ❌ BAD</p>
+    <div class="trick-box" style="margin-top:1rem">
+      <div class="trick-label">🗑️ Real-World Analogy</div>
+      <p>Unsegregated trash bin = LOW cohesion (everything mixed). Segregated bins (plastic / paper / organic) = HIGH cohesion. Each bin has ONE type of content.</p>
+    </div>
+ 
+    <div class="compare">
+      <div class="compare-col compare-bad">
+        <h4>❌ Bad — Low Cohesion (Square class)</h4>
+        <div class="code-block"><span class="kw">class</span> <span class="cls">Square</span> {
+  <span class="cmt">// Measurements</span>
+  <span class="fn">calculateArea</span>()
+  <span class="fn">calculatePerimeter</span>()
+  <span class="cmt">// Rendering — NOT related!</span>
+  <span class="fn bad">draw</span>()
+  <span class="fn bad">rotate</span>()
+}</div>
+        <p style="font-size:0.82rem;color:#ff9090">calculatePerimeter() and draw() have NO relation → LOW cohesion</p>
+      </div>
+      <div class="compare-col compare-good">
+        <h4>✅ Good — High Cohesion (2 classes)</h4>
+        <div class="code-block"><span class="kw">class</span> <span class="cls">Square</span> {
+  <span class="cmt">// Measurements only</span>
+  <span class="fn good">calculateArea</span>()
+  <span class="fn good">calculatePerimeter</span>()
+}
+<span class="kw">class</span> <span class="cls">SquareUI</span> {
+  <span class="cmt">// Rendering only</span>
+  <span class="fn good">draw</span>()
+  <span class="fn good">rotate</span>()
+}</div>
+        <p style="font-size:0.82rem;color:#80ffb0">Each class has ONE job → HIGH cohesion ✅</p>
+      </div>
+    </div>
+    <div class="memory">
+      <div class="memory-label">🧠 MEMORY TRICK</div>
+      <p><strong>HIGH cohesion = HIGH grade.</strong> High is always good for cohesion. Ask yourself: "Do all methods in this class actually BELONG together?" If yes → high cohesion ✅</p>
+    </div>
+  </div>
+ 
+  <!-- COUPLING -->
+  <div class="card card-s">
+    <div class="card-label">🔗 Concept 2 — Coupling</div>
+    <h3>Coupling = Level of inter-dependency between components</h3>
+    <p><span class="hl hl-s">Tight coupling</span> = change one class → must change another too → ❌ BAD<br>
+    <span class="hl hl-i">Loose coupling</span> = classes are independent → ✅ GOOD</p>
+ 
+    <div class="trick-box" style="margin-top:1rem">
+      <div class="trick-label">🚂 Train Track Analogy</div>
+      <p>Train tracks have FIXED gauge width → a train CANNOT run on a different track → Tightly coupled. In software, tight coupling = bad. You want trains that can switch tracks (loose coupling).</p>
+    </div>
+ 
+    <div class="compare">
+      <div class="compare-col compare-bad">
+        <h4>❌ Tight Coupling — BAD</h4>
+        <div class="code-block"><span class="kw">class</span> <span class="cls">Student</span> {
+  <span class="cmt">// Core data + DB logic mixed!</span>
+  <span class="fn bad">save</span>() {
+    <span class="cmt">// MySQL code directly</span>
+    Class.forName(<span class="str">"com.mysql.jdbc.Driver"</span>);
+    <span class="cmt">// Change DB = rewrite Student!</span>
+  }
+}</div>
+        <p style="font-size:0.82rem;color:#ff9090">3 reasons to change: id format, name format, DB backend</p>
+      </div>
+      <div class="compare-col compare-good">
+        <h4>✅ Loose Coupling — GOOD</h4>
+        <div class="code-block"><span class="kw">class</span> <span class="cls">Student</span> {
+  <span class="fn good">save</span>() {
+    <span class="kw">new</span> <span class="cls">StudentRepository</span>().<span class="fn">save</span>(<span class="kw">this</span>);
+  }
+}
+<span class="kw">class</span> <span class="cls">StudentRepository</span> {
+  <span class="cmt">// ALL DB code here</span>
+  <span class="fn good">save</span>(student) { ... }
+}</div>
+        <p style="font-size:0.82rem;color:#80ffb0">Change DB → only modify Repository, Student unchanged ✅</p>
+      </div>
+    </div>
+ 
+    <div class="card" style="background:var(--surface2); border-color:rgba(255,77,109,0.2); margin-top:1rem">
+      <div class="card-label">📊 Student Class — Reasons to Change</div>
+      <table>
+        <thead><tr><th>Class</th><th>Reasons to Change</th><th>OK?</th></tr></thead>
+        <tbody>
+          <tr><td>Student (original)</td><td>id format + name format + DB backend</td><td style="color:var(--s)">❌ 3 reasons</td></tr>
+          <tr><td>Student (fixed)</td><td>id format + name format → "student profile"</td><td style="color:var(--i)">✅ 1 reason</td></tr>
+          <tr><td>StudentRepository</td><td>DB backend only</td><td style="color:var(--i)">✅ 1 reason</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.82rem; color:var(--muted); margin-top:0.5rem">If 2 reasons are CLOSELY RELATED, you can combine them into 1. "id format" + "name format" = "changes to student profile"</p>
+    </div>
+ 
+    <div class="memory">
+      <div class="memory-label">🧠 MEMORY TRICK</div>
+      <p><strong>SRP Formula:</strong> HIGH Cohesion + LOOSE Coupling = SRP ✅<br>
+      Ask: "How many reasons does this class have to change?" → Should be exactly ONE.</p>
+    </div>
+  </div>
+</section>
+ 
+<div class="section-sep"></div>
+ 
+<!-- ========== O — OCP ========== -->
+<section class="principle" id="ocp">
+  <div class="principle-header">
+    <div class="principle-letter hl-o">O</div>
+    <div class="principle-title-block">
+      <div class="principle-acronym" style="color:var(--o)">OCP</div>
+      <div class="principle-name">Open / Closed Principle</div>
+      <div class="principle-tagline">Open for Extension. Closed for Modification.</div>
+    </div>
+  </div>
+ 
+  <div class="card card-o">
+    <div class="card-label">🎯 Core Definition</div>
+    <div class="def-box def-box-o">
+      <div class="quote"><em>"Software entities should be <span class="hl hl-i">open to extension</span> but <span class="hl hl-s">closed to modification</span>."</em></div>
+    </div>
+    <div class="grid-2">
+      <div style="background:rgba(77,255,180,0.06); border-radius:10px; padding:1rem; border:1px solid rgba(77,255,180,0.2)">
+        <p style="font-family:'Space Mono',monospace; font-size:0.7rem; color:var(--i); margin-bottom:0.5rem">OPEN FOR EXTENSION</p>
+        <p style="font-size:0.88rem; color:#b0e8d0">Design classes so NEW functionality can be added as new requirements arrive → adapt to new needs</p>
+      </div>
+      <div style="background:rgba(255,77,109,0.06); border-radius:10px; padding:1rem; border:1px solid rgba(255,77,109,0.2)">
+        <p style="font-family:'Space Mono',monospace; font-size:0.7rem; color:var(--s); margin-bottom:0.5rem">CLOSED FOR MODIFICATION</p>
+        <p style="font-size:0.88rem; color:#ffb0b0">Once a class is developed, NEVER modify it (except to fix bugs) → stable, no side effects</p>
+      </div>
+    </div>
+    <div class="trick-box" style="margin-top:1rem">
+      <div class="trick-label">⚽ How to Achieve OCP</div>
+      <p>Use <strong>interfaces / abstract classes</strong> instead of concrete classes for dependencies. Add new features by creating NEW classes that implement the interface. This avoids touching existing, working code.</p>
+    </div>
+  </div>
+ 
+  <!-- Football Example -->
+  <div class="card card-o">
+    <div class="card-label">⚽ Football Match Example — Strategy Pattern</div>
+    <h3>Scenario: Al-Ahly (Attack +2) vs Zamalek (Defend +1)</h3>
+ 
+    <div class="compare">
+      <div class="compare-col compare-bad">
+        <h4>❌ Violates OCP — if/else chains</h4>
+        <div class="code-block"><span class="fn bad">Play</span>() {
+  <span class="kw">if</span> (Team1 is Ahly)
+    Ahly is attacker
+  <span class="kw">else if</span> (Team1 is Zamalk)
+    Zamalk is defend
+}
+<span class="fn bad">Welcome</span>() {
+  <span class="kw">if</span> (Team1 is Ahly) ...
+  <span class="kw">else if</span> (Team1 is Zamalk) ...
+}
+<span class="fn bad">SetScore</span>(winner) {
+  <span class="kw">if</span> winner is Ahly → +2
+  <span class="kw">else if</span> winner is Zamalk → +1
+}</div>
+        <p style="font-size:0.82rem;color:#ff9090">Adding a new team = modifying existing code. Violates OCP!</p>
+      </div>
+      <div class="compare-col compare-good">
+        <h4>✅ Follows OCP — Strategy Pattern</h4>
+        <div class="code-block"><span class="kw">abstract class</span> <span class="cls">Strategy</span> {
+  name, scorePoint
+  <span class="fn good">play</span>()
+  <span class="fn good">setScorePoint</span>()
+}
+<span class="kw">class</span> <span class="cls bad">Attack</span> <span class="kw">extends</span> Strategy {
+  play() → Attack!
+  setScorePoint() → +2
+}
+<span class="kw">class</span> <span class="cls good">Defend</span> <span class="kw">extends</span> Strategy {
+  play() → Defend!
+  setScorePoint() → +1
+}
+<span class="cls">Match</span>.play() → Team1.play()</div>
+        <p style="font-size:0.82rem;color:#80ffb0">New team = new Strategy subclass. Zero modification to Match! ✅</p>
+      </div>
+    </div>
+ 
+    <div class="pattern-block">
+      <h4>🎨 Strategy Design Pattern — 3 Parts to Know</h4>
+      <table>
+        <thead><tr><th>Part</th><th>Role</th><th>In Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Context</strong></td><td>Holds reference to a Strategy, talks via interface only</td><td>Match class / Team class</td></tr>
+          <tr><td><strong>Strategy Interface</strong></td><td>Common interface, declares methods context uses</td><td>Abstract class Strategy (play, setScorePoint)</td></tr>
+          <tr><td><strong>Concrete Strategies</strong></td><td>Implement different variations of the algorithm</td><td>Attack class, Defend class</td></tr>
+        </tbody>
+      </table>
+    </div>
+ 
+    <div class="memory">
+      <div class="memory-label">🧠 MEMORY TRICK</div>
+      <p><strong>"Add, don't edit."</strong> Want new behavior? Add a new class. Never touch the old one. OCP = Extension YES, Modification NO.<br><br>
+      OCP links to DIP: one of the ways to achieve OCP is to use the Dependency Inversion Principle (abstractions!).</p>
+    </div>
+  </div>
+</section>
+ 
+<div class="section-sep"></div>
+ 
+<!-- ========== L — LSP ========== -->
+<section class="principle" id="lsp">
+  <div class="principle-header">
+    <div class="principle-letter hl-l">L</div>
+    <div class="principle-title-block">
+      <div class="principle-acronym" style="color:var(--l)">LSP</div>
+      <div class="principle-name">Liskov Substitution Principle</div>
+      <div class="principle-tagline">By Barbara Liskov — 1987 Conference Keynote</div>
+    </div>
+  </div>
+ 
+  <div class="card card-l">
+    <div class="card-label">🎯 Core Definition</div>
+    <div class="def-box def-box-l">
+      <div class="quote"><em>"If class B is a subclass of class A, then wherever A is expected, B can be used instead — <span class="hl hl-l">without breaking the system</span>."</em></div>
+    </div>
+    <p style="font-size:0.9rem; color:#c0c0d8; margin-top:0.75rem">→ Objects of a <strong>superclass</strong> should be replaceable with objects of its <strong>subclasses</strong> without breaking the system.<br>
+    → A subclass should <strong>NOT be more restrictive</strong> than the behavior specified by the superclass.<br>
+    → This principle ensures <strong>inheritance is used CORRECTLY</strong>.<br>
+    → <strong>Red flag:</strong> If an override method does nothing OR throws an exception → you're probably violating LSP!</p>
+  </div>
+ 
+  <!-- 4 Conditions -->
+  <div class="card card-l">
+    <div class="card-label">📋 The 4 Conditions for LSP Compliance — MEMORIZE THESE</div>
+    <ul class="conditions-list">
+      <li>
+        <div>
+          <strong style="color:var(--l)">Condition 1 — Contravariance (Method Signatures must match):</strong><br>
+          Method parameters must be the same OR MORE GENERIC than the parent's method parameters. You cannot narrow them. (Allowed in PHP, NOT in Java.)
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong style="color:var(--l)">Condition 2 — Preconditions cannot be STRENGTHENED in subtype:</strong><br>
+          An inherited method cannot have MORE conditions than the parent's method. Example: Parent accepts any integer → child only accepts positive integers → ❌ VIOLATES LSP. You're making conditions STRICTER (stronger pre-conditions = bad).
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong style="color:var(--l)">Condition 3 — Postconditions cannot be WEAKENED in subtype:</strong><br>
+          Postconditions must be AT LEAST EQUAL to the parent's. Example: Parent closes DB connection at end of method → child keeps it open → ❌ VIOLATES LSP. You're delivering LESS than promised (weaker post-conditions = bad).
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong style="color:var(--l)">Condition 4 — Exception types must match:</strong><br>
+          If parent throws FileNotFoundException, the overriding method must also throw FileNotFoundException. Cannot throw a different or unexpected exception type.
+        </div>
+      </li>
+    </ul>
+    <div class="trick-box">
+      <div class="trick-label">🧠 TRICK to remember Pre vs Post conditions</div>
+      <p><strong>PRE</strong>conditions = conditions BEFORE the method runs (input constraints) → Cannot make stricter (more restrictive)<br>
+      <strong>POST</strong>conditions = what the method GUARANTEES after running (output/state) → Cannot weaken (deliver less)</p>
+    </div>
+  </div>
+ 
+  <!-- Bicycle example -->
+  <div class="card card-l">
+    <div class="card-label">🚗🚲 Classic Example — Vehicle / Bicycle</div>
+    <div class="compare">
+      <div class="compare-col compare-bad">
+        <h4>❌ Violates LSP</h4>
+        <div class="code-block"><span class="kw">class</span> <span class="cls">Bicycle</span> <span class="kw">extends</span> Vehicle {
+  <span class="fn bad">startEngine</span>() {
+    <span class="kw">throw new</span> Exception(
+      <span class="str">"Not supported"</span>
+    ); <span class="cmt">// 💥 VIOLATES LSP</span>
+  }
+}
+ 
+<span class="cmt">// In main:</span>
+<span class="kw">for</span>(Vehicle v : vehicleList) {
+  v.<span class="fn bad">startEngine</span>(); <span class="cmt">// CRASH! 💥</span>
+}</div>
+      </div>
+      <div class="compare-col compare-good">
+        <h4>✅ Follows LSP — Correct Hierarchy</h4>
+        <div class="code-block"><span class="kw">class</span> <span class="cls">Vehicle</span> { name, speed }
+ 
+<span class="kw">class</span> <span class="cls good">VehicleWithEngines</span>
+  <span class="kw">extends</span> Vehicle {
+  <span class="fn good">startEngine</span>()
+}
+<span class="kw">class</span> <span class="cls good">VehicleWithoutEngines</span>
+  <span class="kw">extends</span> Vehicle {
+  <span class="fn good">startMoving</span>()
+}
+<span class="kw">class</span> <span class="cls">Car</span> <span class="kw">extends</span> VehicleWithEngines
+<span class="kw">class</span> <span class="cls">Bicycle</span> <span class="kw">extends</span> VehicleWithoutEngines</div>
+      </div>
+    </div>
+    <div class="card" style="background:var(--surface2); border:1px solid rgba(255,213,77,0.2); margin-top:1rem">
+      <div class="card-label">⚠️ 3 Situations that Violate LSP</div>
+      <ul style="padding-left:1.2rem; font-size:0.88rem; color:#c0c0d8">
+        <li style="margin-bottom:0.4rem">Subclass returns an object <strong>completely different</strong> from what the superclass returns</li>
+        <li style="margin-bottom:0.4rem">Subclass <strong>throws an exception</strong> NOT defined in the superclass</li>
+        <li>There are <strong>side effects</strong> in subclass methods that were NOT part of the superclass definition</li>
+      </ul>
+    </div>
+ 
+    <div class="card" style="background:var(--surface2); border:1px solid rgba(255,213,77,0.15); margin-top:1rem">
+      <div class="card-label">☕ Java Note — Covariant Return Type (Java 5+)</div>
+      <p style="font-size:0.88rem; color:#c0c0d8; line-height:1.65">
+        Before Java 5: override → parameters AND return type must match exactly.<br>
+        Java 5+: <strong>Covariant return type</strong> = overriding method can return a <em>subclass</em> of the return type declared in the superclass.<br>
+        Example: Parent returns Circle → Child can return Square (if Square extends Circle). <strong>ONLY works if child return type is a subtype of parent return type.</strong>
+      </p>
+      <div class="code-block">
+<span class="kw">class</span> <span class="cls">Circle</span> {}
+<span class="kw">class</span> <span class="cls">Square</span> <span class="kw">extends</span> Circle {}
+<span class="kw">class</span> <span class="cls">ParentClass</span> {
+  <span class="kw">public</span> <span class="cls">Circle</span> <span class="fn">method1</span>(Circle c) { <span class="kw">return new</span> Circle(); }
+}
+<span class="kw">class</span> <span class="cls">ChildClass</span> <span class="kw">extends</span> ParentClass {
+  @Override
+  <span class="kw">public</span> <span class="cls good">Square</span> <span class="fn">method1</span>(Circle c) { <span class="kw">return new</span> Square(); } <span class="cmt">// ✅ OK! Square IS-A Circle</span>
+}</div>
+    </div>
+ 
+    <div class="memory">
+      <div class="memory-label">🧠 MEMORY TRICK</div>
+      <p><strong>LSP = "Can I replace parent with child and nothing breaks?"</strong><br>
+      If your child class has methods that throw exceptions or do nothing when called → RED ALERT → fix the inheritance hierarchy!</p>
+    </div>
+  </div>
+</section>
+ 
+<div class="section-sep"></div>
+ 
+<!-- ========== I — ISP ========== -->
+<section class="principle" id="isp">
+  <div class="principle-header">
+    <div class="principle-letter hl-i">I</div>
+    <div class="principle-title-block">
+      <div class="principle-acronym" style="color:var(--i)">ISP</div>
+      <div class="principle-name">Interface Segregation Principle</div>
+      <div class="principle-tagline">By Robert C. Martin — Consulting for Xerox printer systems</div>
+    </div>
+  </div>
+ 
+  <div class="card card-i">
+    <div class="card-label">🎯 Core Definition</div>
+    <div class="def-box def-box-i">
+      <div class="quote"><em>"Clients should NOT be forced to depend upon interfaces that they do not use."</em></div>
+    </div>
+    <div class="grid-2" style="margin-top:1rem">
+      <div style="background:rgba(77,255,180,0.06); border-radius:10px; padding:1rem; border:1px solid rgba(77,255,180,0.2)">
+        <p style="font-family:'Space Mono',monospace; font-size:0.7rem; color:var(--i); margin-bottom:0.5rem">RULE 1</p>
+        <p style="font-size:0.88rem; color:#b0e8d0">No class should be forced to implement method(s) of an interface they don't use</p>
+      </div>
+      <div style="background:rgba(77,255,180,0.06); border-radius:10px; padding:1rem; border:1px solid rgba(77,255,180,0.2)">
+        <p style="font-family:'Space Mono',monospace; font-size:0.7rem; color:var(--i); margin-bottom:0.5rem">RULE 2</p>
+        <p style="font-size:0.88rem; color:#b0e8d0">Instead of big "fat interfaces", create multiple smaller interfaces — clients only think about methods of interest to them</p>
+      </div>
+    </div>
+    <div class="trick-box" style="margin-top:1rem">
+      <div class="trick-label">🔗 Connection to SRP</div>
+      <p>ISP is like SRP but for <strong>interfaces</strong>. SRP = each class/module has one purpose. ISP = each interface has one purpose. Same idea, different level!</p>
+    </div>
+  </div>
+ 
+  <!-- Printer Example -->
+  <div class="card card-i">
+    <div class="card-label">🖨️ Printer Example</div>
+    <div class="compare">
+      <div class="compare-col compare-bad">
+        <h4>❌ FAT Interface — Violates ISP</h4>
+        <div class="code-block"><span class="kw">interface</span> <span class="cls bad">PrinterTasks</span> {
+  <span class="fn">Print</span>(content)
+  <span class="fn">Scan</span>(content)
+  <span class="fn bad">Fax</span>(content)
+  <span class="fn bad">PrintDuplex</span>(content)
+}
+ 
+<span class="cmt">// LiquidInkjetPrinter doesn't have Fax!</span>
+<span class="kw">class</span> <span class="cls">LiquidInkjetPrinter</span>
+  <span class="kw">implements</span> PrinterTasks {
+  <span class="fn bad">Fax</span>() { <span class="kw">throw new</span>
+    UnsupportedOperationException(); }
+  <span class="fn bad">PrintDuplex</span>() { <span class="kw">throw new</span>
+    UnsupportedOperationException(); }
+}</div>
+        <p style="font-size:0.82rem;color:#ff9090">LiquidInkjet forced to implement Fax+Duplex it doesn't support → LSP violation too!</p>
+      </div>
+      <div class="compare-col compare-good">
+        <h4>✅ Segregated Interfaces — Follows ISP</h4>
+        <div class="code-block"><span class="kw">interface</span> <span class="cls good">PrintingTasks</span> { Print() }
+<span class="kw">interface</span> <span class="cls good">ScanTasks</span>    { Scan() }
+<span class="kw">interface</span> <span class="cls good">FaxTasks</span>      { Fax() }
+<span class="kw">interface</span> <span class="cls good">DuplexTasks</span>   { PrintDuplex() }
+ 
+<span class="cmt">// HP LaserJet needs everything</span>
+<span class="kw">class</span> <span class="cls">HPLaserJetPrinter</span>
+  <span class="kw">implements</span> PrintingTasks, ScanTasks,
+             FaxTasks, DuplexTasks { }
+ 
+<span class="cmt">// Inkjet only needs Print + Scan</span>
+<span class="kw">class</span> <span class="cls">LiquidInkjetPrinter</span>
+  <span class="kw">implements</span> PrintingTasks, ScanTasks { }</div>
+      </div>
+    </div>
+    <div class="memory">
+      <div class="memory-label">🧠 MEMORY TRICK</div>
+      <p><strong>"Don't force a simple printer to know about faxing."</strong><br>
+      Fat interface = forced methods you'll never use = bad design. Split it! Many small interfaces > one giant interface.<br>
+      <strong>Key indicator:</strong> If a class implements an interface but throws UnsupportedOperationException → ISP violated!</p>
+    </div>
+  </div>
+</section>
+ 
+<div class="section-sep"></div>
+ 
+<!-- ========== D — DIP ========== -->
+<section class="principle" id="dip">
+  <div class="principle-header">
+    <div class="principle-letter hl-d">D</div>
+    <div class="principle-title-block">
+      <div class="principle-acronym" style="color:var(--d)">DIP + DI</div>
+      <div class="principle-name">Dependency Inversion Principle</div>
+      <div class="principle-tagline">+ Dependency Injection (Implementation technique)</div>
+    </div>
+  </div>
+ 
+  <div class="card card-d">
+    <div class="card-label">🎯 Core Definition — DIP</div>
+    <div class="def-box def-box-d">
+      <div class="quote"><em>"<span class="hl hl-d">High-level modules</span> should NOT depend on <span class="hl hl-s">low-level modules</span>. Both should depend on <span class="hl hl-i">abstractions</span>. Abstractions should NOT depend on details. Details should depend upon abstractions."</em></div>
+    </div>
+    <div style="background:rgba(77,159,255,0.08); border:1px solid rgba(77,159,255,0.2); border-radius:10px; padding:1rem; margin-top:1rem">
+      <p style="font-size:0.9rem; color:#b0d8ff; line-height:1.7">
+        ↓ Normal (bad): High-level → depends on → Low-level<br>
+        ↑ Inverted (good): High-level → depends on → <strong>Abstraction</strong> ← depends on ← Low-level<br>
+        <br>Why? Code violating DIP = too tightly coupled = hard to maintain, hard to read, prone to side effects.
+      </p>
+    </div>
+  </div>
+ 
+  <!-- Store Example DIP -->
+  <div class="card card-d">
+    <div class="card-label">🛒 E-Commerce Store + Payment Gateway Example</div>
+ 
+    <div class="compare">
+      <div class="compare-col compare-bad">
+        <h4>❌ Violates DIP — Store depends on Stripe directly</h4>
+        <div class="code-block"><span class="kw">class</span> <span class="cls bad">Store</span> {
+  <span class="cls">Stripe</span> stripe; <span class="cmt">// hard-coded!</span>
+  <span class="cls">Store</span>() {
+    stripe = <span class="kw">new</span> <span class="cls">Stripe</span>(); <span class="cmt">// tightly coupled</span>
+  }
+  sellItem() { stripe.processPayment(); }
+}</div>
+        <p style="font-size:0.82rem;color:#ff9090">Stripe goes down? You MUST modify Store class. Multiple instances to change = bugs everywhere.</p>
+      </div>
+      <div class="compare-col compare-good">
+        <h4>✅ Follows DIP — Depends on Abstraction</h4>
+        <div class="code-block"><span class="kw">interface</span> <span class="cls good">PaymentGateway</span> {
+  processPayment();
+}
+<span class="kw">class</span> <span class="cls">Stripe</span> <span class="kw">implements</span> PaymentGateway {}
+<span class="kw">class</span> <span class="cls">Paypal</span> <span class="kw">implements</span> PaymentGateway {}
+ 
+<span class="kw">class</span> <span class="cls good">Store</span> {
+  <span class="cls">PaymentGateway</span> pg; <span class="cmt">// abstraction!</span>
+  setPaymentGateway(PaymentGateway pg){}
+  sellItem() { pg.processPayment(); }
+}</div>
+        <p style="font-size:0.82rem;color:#80ffb0">Switch Stripe→Paypal? Zero changes to Store! Just inject a different implementation ✅</p>
+      </div>
+    </div>
+ 
+    <!-- Manager Example -->
+    <div class="card" style="background:var(--surface2); border:1px solid rgba(77,159,255,0.2); margin-top:1rem">
+      <div class="card-label">👔 Manager / Workers Example (DIP)</div>
+      <div class="compare">
+        <div class="compare-col compare-bad">
+          <h4>❌ Manager knows specific types</h4>
+          <div class="code-block"><span class="kw">class</span> <span class="cls">Manager</span> {
+  developers = []
+  designers = []
+  testers = []
+  <span class="fn bad">addDeveloper</span>(dev)
+  <span class="fn bad">addDesigner</span>(design)
+  <span class="fn bad">addTester</span>(tester)
+}</div>
+          <p style="font-size:0.8rem;color:#ff9090">Manager must know ALL types upfront. Add new worker type = modify Manager class!</p>
+        </div>
+        <div class="compare-col compare-good">
+          <h4>✅ Manager depends on abstraction</h4>
+          <div class="code-block"><span class="kw">interface</span> <span class="cls good">Worker</span> { work() }
+<span class="kw">class</span> <span class="cls">Developer</span> <span class="kw">implements</span> Worker {}
+<span class="kw">class</span> <span class="cls">Designer</span>  <span class="kw">implements</span> Worker {}
+<span class="kw">class</span> <span class="cls">Manager</span> {
+  workers = [] <span class="cmt">// just Worker list!</span>
+  <span class="fn good">addWorker</span>(Worker w) {}
+}</div>
+          <p style="font-size:0.8rem;color:#80ffb0">New worker type? Just implement Worker. Manager has NO idea about specific types → truly decoupled ✅</p>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- Dependency Injection -->
+  <div class="card card-d">
+    <div class="card-label">💉 Dependency Injection (DI) — How to IMPLEMENT DIP</div>
+    <div class="def-box def-box-d">
+      <div class="quote"><em>DI = being able to <span class="hl hl-d">pass (inject)</span> the dependencies when required instead of initializing them inside the recipient class.</em></div>
+    </div>
+    <p style="font-size:0.9rem; color:#c0c0d8; line-height:1.7; margin: 0.75rem 0">
+      DI resolves dependencies at <strong>runtime</strong> rather than compile time.<br>
+      DI is a <strong>design pattern</strong>, not a framework. It's one way of implementing <strong>Inversion of Control (IoC)</strong>.<br>
+      IoC = inverting additional responsibilities of a class (not the main one).
+    </p>
+ 
+    <div class="card" style="background:rgba(255,77,109,0.05); border:1px solid rgba(255,77,109,0.2); margin-bottom:1rem">
+      <div class="card-label">❌ WITHOUT DI — Problems</div>
+      <ul style="padding-left:1.2rem; font-size:0.88rem; color:#ffb0b0; line-height:1.8">
+        <li>Code is <strong>inflexible</strong> — change one class = must change the dependent class too, must recompile</li>
+        <li>Code is <strong>hard to unit test</strong> — testing one class forces testing all its dependencies</li>
+        <li>Code is <strong>hard to reuse</strong> — classes are tightly coupled</li>
+      </ul>
+    </div>
+ 
+    <!-- 3 Types -->
+    <h3 style="margin-bottom:1rem">3 Types of Dependency Injection</h3>
+    <div class="di-grid">
+      <div class="di-card">
+        <div class="di-icon">🏗️</div>
+        <h4>Constructor Injection</h4>
+        <p>Dependency passed via constructor. Used when dependency must stay the same for the object's lifetime.</p>
+        <div class="code-block" style="margin-top:0.75rem; font-size:0.75rem">Store(PaymentGateway pg) {
+  this.pg = pg;
+}</div>
+      </div>
+      <div class="di-card">
+        <div class="di-icon">⚙️</div>
+        <h4>Setter Injection</h4>
+        <p>Dependent class has a public setter method through which the dependency is injected.</p>
+        <div class="code-block" style="margin-top:0.75rem; font-size:0.75rem">setPaymentGateway(
+  PaymentGateway pg) {
+  this.pg = pg;
+}</div>
+      </div>
+      <div class="di-card">
+        <div class="di-icon">🔌</div>
+        <h4>Interface Injection</h4>
+        <p>An interface provides an injector method. Clients implement the interface and override the injector method.</p>
+        <div class="code-block" style="margin-top:0.75rem; font-size:0.75rem">interface Injector {
+  setPaymentGateway(pg);
+}
+Store implements Injector</div>
+      </div>
+    </div>
+ 
+    <div class="card" style="background:var(--surface2); border:1px solid rgba(77,255,180,0.15); margin-top:1rem">
+      <div class="card-label">✅ Advantages of DI</div>
+      <ul style="padding-left:1.2rem; font-size:0.88rem; color:#b0e8d0; line-height:1.8">
+        <li>Makes <strong>testing easier</strong> — inject mock dependencies</li>
+        <li><strong>Reduces coupling</strong> between client and dependency classes</li>
+        <li>Code is easier to <strong>maintain, reuse and extend</strong></li>
+      </ul>
+    </div>
+ 
+    <div class="memory">
+      <div class="memory-label">🧠 MEMORY TRICK — DIP vs DI</div>
+      <p><strong>DIP</strong> = the PRINCIPLE (what to do): depend on abstractions, not concretions.<br>
+      <strong>DI</strong> = the TECHNIQUE (how to do it): inject dependencies instead of hardcoding them.<br>
+      <strong>DI implements DIP. DIP enables OCP.</strong><br><br>
+      "The client does NOT control how objects are created — it works with an implementation through an INTERFACE." = this is also why it's called Inversion of Control (IoC).</p>
+    </div>
+  </div>
+</section>
+ 
+<div class="section-sep"></div>
+ 
+<!-- CONNECTIONS MAP -->
+<div class="connections-map">
+  <h3>🔗 How the SOLID Principles Connect</h3>
+  <div class="conn-flow">
+    <div class="conn-node" style="background:rgba(255,77,109,0.15); color:var(--s); border:1px solid rgba(255,77,109,0.3)">SRP<br><span style="font-size:0.65rem;font-family:'Space Mono',monospace">1 reason to change</span></div>
+    <div class="conn-arrow">→</div>
+    <div class="conn-node" style="background:rgba(255,154,77,0.15); color:var(--o); border:1px solid rgba(255,154,77,0.3)">OCP<br><span style="font-size:0.65rem;font-family:'Space Mono',monospace">extend, don't edit</span></div>
+    <div class="conn-arrow">→</div>
+    <div class="conn-node" style="background:rgba(77,159,255,0.15); color:var(--d); border:1px solid rgba(77,159,255,0.3)">DIP<br><span style="font-size:0.65rem;font-family:'Space Mono',monospace">depend on abstractions</span></div>
+    <div class="conn-arrow">→</div>
+    <div class="conn-node" style="background:rgba(77,255,180,0.15); color:var(--i); border:1px solid rgba(77,255,180,0.3)">DI<br><span style="font-size:0.65rem;font-family:'Space Mono',monospace">inject deps</span></div>
+  </div>
+  <p style="margin-top:1.5rem; color:var(--muted); font-size:0.85rem; max-width:600px; margin-left:auto; margin-right:auto; line-height:1.7">
+    SRP → reduces coupling (loose coupling) + increases cohesion<br>
+    OCP is achieved using DIP (abstractions / interfaces)<br>
+    DIP is implemented using DI (constructor/setter/interface injection)<br>
+    ISP is like SRP but applied to interfaces<br>
+    LSP ensures that inheritance is used correctly (if override does nothing → LSP violated)
+  </p>
+</div>
+ 
+<!-- QUICK REFERENCE TABLE -->
+<div class="card" style="margin-bottom:2rem">
+  <div class="card-label">📋 Quick Reference — All 5 Principles at a Glance</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Letter</th>
+        <th>Name</th>
+        <th>Core Idea</th>
+        <th>Key Terms</th>
+        <th>Red Flag</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="hl hl-s">S</span></td>
+        <td>Single Responsibility</td>
+        <td>1 component = 1 responsibility = 1 reason to change</td>
+        <td>High Cohesion, Loose Coupling</td>
+        <td>Class has 3+ reasons to change</td>
+      </tr>
+      <tr>
+        <td><span class="hl hl-o">O</span></td>
+        <td>Open / Closed</td>
+        <td>Extend behavior without modifying existing code</td>
+        <td>Abstract class, Strategy Pattern</td>
+        <td>Adding a feature requires editing existing class</td>
+      </tr>
+      <tr>
+        <td><span class="hl hl-l">L</span></td>
+        <td>Liskov Substitution</td>
+        <td>Subclass can replace parent without breaking anything</td>
+        <td>Contravariance, Pre/Postconditions, Covariance</td>
+        <td>Override throws exception or does nothing</td>
+      </tr>
+      <tr>
+        <td><span class="hl hl-i">I</span></td>
+        <td>Interface Segregation</td>
+        <td>No class forced to implement unused interface methods</td>
+        <td>Fat interface, Segregated interfaces</td>
+        <td>Implementing method throws UnsupportedOperationException</td>
+      </tr>
+      <tr>
+        <td><span class="hl hl-d">D</span></td>
+        <td>Dependency Inversion</td>
+        <td>Depend on abstractions, not concrete classes</td>
+        <td>DI, IoC, Interface, High/Low-level modules</td>
+        <td>High-level class directly instantiates low-level class</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+ 
+<!-- QUIZ -->
+<div class="quiz-section">
+  <h2>⚡ Exam Flash Quiz — Click to Reveal</h2>
+ 
+  <div class="quiz-q" onclick="toggleQuiz(this)">
+    <div class="q-toggle">+</div>
+    <div class="q-text">What is Cohesion? Is high or low cohesion better?</div>
+    <div class="q-answer">Cohesion = the degree to which the various parts of a software component are RELATED. HIGH cohesion = better. It means all methods in a class actually belong together and serve one purpose. High cohesion helps attain better adherence to SRP.</div>
+  </div>
+ 
+  <div class="quiz-q" onclick="toggleQuiz(this)">
+    <div class="q-toggle">+</div>
+    <div class="q-text">What is Coupling? Is tight or loose coupling better?</div>
+    <div class="q-answer">Coupling = level of inter-dependency between software components. How much does changing one thing force changes in another? LOOSE coupling = better. Tight coupling (like a train on one track) is undesirable in software because changes cascade everywhere.</div>
+  </div>
+ 
+  <div class="quiz-q" onclick="toggleQuiz(this)">
+    <div class="q-toggle">+</div>
+    <div class="q-text">Uncle Bob's exact definition of SRP?</div>
+    <div class="q-answer">"Every software component should have one and only one REASON TO CHANGE." (Not just one responsibility — one REASON TO CHANGE. Both definitions are valid, but Uncle Bob prefers this one.)</div>
+  </div>
+ 
+  <div class="quiz-q" onclick="toggleQuiz(this)">
+    <div class="q-toggle">+</div>
+    <div class="q-text">What are the 3 types of Dependency Injection?</div>
+    <div class="q-answer">1. Constructor Injection — pass dependency via constructor. 2. Setter Injection — public setter method to inject. 3. Interface Injection — implement an injector interface with a setter method.</div>
+  </div>
+ 
+  <div class="quiz-q" onclick="toggleQuiz(this)">
+    <div class="q-toggle">+</div>
+    <div class="q-text">Who defined LSP, when, and where?</div>
+    <div class="q-answer">Barbara Liskov defined it in a 1987 conference keynote. It ensures inheritance is used correctly. If B is a subclass of A, wherever A is expected, B can be used without breaking the system.</div>
+  </div>
+ 
+  <div class="quiz-q" onclick="toggleQuiz(this)">
+    <div class="q-toggle">+</div>
+    <div class="q-text">Who defined ISP, and why?</div>
+    <div class="q-answer">Robert C. Martin, while consulting for Xerox to build software for their new printer systems. He defined it as: "Clients should not be forced to depend upon interfaces that they do not use."</div>
+  </div>
+ 
+  <div class="quiz-q" onclick="toggleQuiz(this)">
+    <div class="q-toggle">+</div>
+    <div class="q-text">How does DIP connect to OCP?</div>
+    <div class="q-answer">One of the key ways to achieve OCP is to use DIP! By depending on abstractions (interfaces), you can add new behavior (OCP = open for extension) by creating new concrete classes WITHOUT modifying existing code (OCP = closed for modification).</div>
+  </div>
+ 
+  <div class="quiz-q" onclick="toggleQuiz(this)">
+    <div class="q-toggle">+</div>
+    <div class="q-text">What is Inversion of Control (IoC)?</div>
+    <div class="q-answer">IoC is basically used to invert different kinds of ADDITIONAL responsibilities of a class rather than the main responsibility. DI is one way of implementing IoC. The client doesn't control how objects are created — it works via an interface. This is inverse to trivial programming, hence the name "Inversion of Control".</div>
+  </div>
+ 
+  <div class="quiz-q" onclick="toggleQuiz(this)">
+    <div class="q-toggle">+</div>
+    <div class="q-text">LSP Condition 2 vs Condition 3 — what's the difference?</div>
+    <div class="q-answer">Condition 2 (Preconditions): Input constraints CANNOT be made STRICTER in subclass. If parent accepts any integer, child cannot restrict to positive only.<br><br>Condition 3 (Postconditions): What the method guarantees after running CANNOT be WEAKENED. If parent closes DB connection, child cannot keep it open. You must deliver at least what the parent promised.</div>
+  </div>
+ 
+  <div class="quiz-q" onclick="toggleQuiz(this)">
+    <div class="q-toggle">+</div>
+    <div class="q-text">What is Covariant Return Type in Java?</div>
+    <div class="q-answer">Introduced in Java 5. An overriding method can return a SUBTYPE of the return type declared in the superclass method with the same signature. Example: Parent returns Circle → Child can return Square (if Square extends Circle). You CANNOT return a completely unrelated type.</div>
+  </div>
+ 
+  <div class="quiz-q" onclick="toggleQuiz(this)">
+    <div class="q-toggle">+</div>
+    <div class="q-text">What are the 3 components of the Strategy Design Pattern?</div>
+    <div class="q-answer">1. Context — maintains reference to a concrete strategy, communicates ONLY via the strategy interface. 2. Strategy Interface — common to all concrete strategies, declares the method the context uses. 3. Concrete Strategies — implement different variations of the algorithm.</div>
+  </div>
+</div>
+ 
+</main>
+ 
+<a href="#" class="scroll-top">↑</a>
+ 
+<script>
+function toggleQuiz(el) {
+  el.classList.toggle('open');
+}
+ 
+// Active nav highlighting
+const sections = document.querySelectorAll('.principle');
+const navLinks = document.querySelectorAll('nav a');
+ 
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 120) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.style.background = a.href.includes(current) && current ? 'var(--surface2)' : '';
+    a.style.borderColor = a.href.includes(current) && current ? 'var(--border)' : 'transparent';
+  });
+});
+</script>
+</body>
+</html>
+ 
