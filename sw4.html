@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OCL — Exam Preparation System</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e11;
+    --surface: #16161a;
+    --surface2: #1e1e24;
+    --border: #2a2a35;
+    --accent: #e8c547;
+    --accent2: #7c6ff7;
+    --accent3: #4ec9b0;
+    --text: #e8e8f0;
+    --muted: #7a7a90;
+    --correct: #3fb950;
+    --wrong: #f85149;
+    --radius: 12px;
+  }
+  .light {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #eceae4;
+    --border: #d8d6ce;
+    --accent: #c4962a;
+    --accent2: #5046e4;
+    --accent3: #1a8a76;
+    --text: #1a1a2e;
+    --muted: #6b6b80;
+    --correct: #2da44e;
+    --wrong: #cf222e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* HEADER */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+    backdrop-filter: blur(12px);
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 1.3rem;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--accent); }
+
+  nav { display: flex; gap: 4px; flex-wrap: wrap; }
+  nav button {
+    background: none; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem; font-weight: 500;
+    color: var(--muted);
+    padding: 6px 12px; border-radius: 6px;
+    transition: all 0.2s;
+  }
+  nav button:hover { color: var(--text); background: var(--surface2); }
+  nav button.active { color: var(--accent); background: var(--surface2); }
+
+  .header-right { display: flex; gap: 8px; align-items: center; }
+  .theme-btn {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); cursor: pointer; border-radius: 8px;
+    padding: 6px 12px; font-size: 0.8rem;
+    transition: all 0.2s;
+  }
+  .theme-btn:hover { border-color: var(--accent); }
+
+  /* SECTIONS */
+  .section { display: none; padding: 2.5rem 2rem; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+  /* TYPOGRAPHY */
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem; font-weight: 900;
+    line-height: 1.15; margin-bottom: 0.4rem;
+  }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 700;
+    margin: 2rem 0 0.8rem;
+    color: var(--text);
+    display: flex; align-items: center; gap: 10px;
+  }
+  h2::before { content: ''; display: block; width: 4px; height: 1.2em; background: var(--accent); border-radius: 2px; flex-shrink: 0; }
+  h3 { font-size: 1rem; font-weight: 600; margin: 1.2rem 0 0.5rem; color: var(--accent3); }
+
+  p { line-height: 1.75; color: var(--text); margin-bottom: 0.75rem; font-size: 0.95rem; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent2); }
+
+  /* CODE BLOCKS */
+  .code-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.65;
+    color: var(--accent3);
+    overflow-x: auto;
+    margin: 0.75rem 0;
+    white-space: pre;
+  }
+
+  /* BADGES */
+  .badge {
+    display: inline-block;
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em;
+    padding: 2px 8px; border-radius: 20px;
+    text-transform: uppercase;
+  }
+  .badge-concept { background: rgba(124,111,247,0.15); color: var(--accent2); border: 1px solid rgba(124,111,247,0.3); }
+  .badge-exam { background: rgba(232,197,71,0.15); color: var(--accent); border: 1px solid rgba(232,197,71,0.3); }
+  .badge-trap { background: rgba(248,81,73,0.15); color: var(--wrong); border: 1px solid rgba(248,81,73,0.3); }
+  .badge-tip { background: rgba(78,201,176,0.15); color: var(--accent3); border: 1px solid rgba(78,201,176,0.3); }
+
+  /* HIGHLIGHT BOX */
+  .highlight-box {
+    border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0;
+  }
+  .highlight-box.yellow { background: rgba(232,197,71,0.08); border: 1px solid rgba(232,197,71,0.25); }
+  .highlight-box.purple { background: rgba(124,111,247,0.08); border: 1px solid rgba(124,111,247,0.25); }
+  .highlight-box.teal { background: rgba(78,201,176,0.08); border: 1px solid rgba(78,201,176,0.25); }
+  .highlight-box.red { background: rgba(248,81,73,0.08); border: 1px solid rgba(248,81,73,0.25); }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.88rem; }
+  th {
+    background: var(--surface2); color: var(--accent);
+    padding: 0.6rem 0.9rem; text-align: left;
+    font-weight: 600; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase;
+    border-bottom: 2px solid var(--border);
+  }
+  td { padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--border); color: var(--text); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+
+  /* COLLAPSIBLE */
+  .collapsible-btn {
+    width: 100%; background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 0.9rem 1.2rem;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer; color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; font-weight: 500; margin-bottom: 2px;
+    transition: all 0.2s;
+  }
+  .collapsible-btn:hover { border-color: var(--accent2); background: var(--surface2); }
+  .collapsible-btn .arrow { transition: transform 0.25s; color: var(--muted); }
+  .collapsible-btn.open .arrow { transform: rotate(180deg); }
+  .collapsible-content {
+    background: var(--surface2); border: 1px solid var(--border); border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 1.2rem 1.4rem; margin-bottom: 0.75rem;
+    display: none;
+  }
+  .collapsible-content.open { display: block; animation: fadeIn 0.2s; }
+
+  /* MCQ */
+  .mcq-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem;
+  }
+  .mcq-card .q-num {
+    font-family: 'DM Mono', monospace; font-size: 0.75rem;
+    color: var(--accent); margin-bottom: 0.5rem; font-weight: 500;
+  }
+  .mcq-card .q-text { font-weight: 500; margin-bottom: 1rem; line-height: 1.6; }
+  .mcq-card .q-difficulty {
+    float: right; font-size: 0.7rem; font-weight: 600;
+    padding: 2px 8px; border-radius: 20px;
+  }
+  .diff-easy { background: rgba(63,185,80,0.15); color: var(--correct); }
+  .diff-med { background: rgba(232,197,71,0.15); color: var(--accent); }
+  .diff-hard { background: rgba(248,81,73,0.15); color: var(--wrong); }
+  .options { display: flex; flex-direction: column; gap: 6px; }
+  .option-btn {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.6rem 1rem;
+    cursor: pointer; text-align: left; font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem; color: var(--text); transition: all 0.15s;
+  }
+  .option-btn:hover:not([disabled]) { border-color: var(--accent2); background: rgba(124,111,247,0.08); }
+  .option-btn.correct { border-color: var(--correct); background: rgba(63,185,80,0.12); color: var(--correct); }
+  .option-btn.wrong { border-color: var(--wrong); background: rgba(248,81,73,0.12); color: var(--wrong); }
+  .explanation {
+    display: none; margin-top: 1rem; padding: 0.9rem 1rem;
+    background: rgba(124,111,247,0.07); border: 1px solid rgba(124,111,247,0.2);
+    border-radius: 8px; font-size: 0.87rem; line-height: 1.6;
+  }
+  .explanation.show { display: block; animation: fadeIn 0.2s; }
+  .score-bar {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 30px; padding: 0.8rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .score-bar span { font-size: 0.85rem; color: var(--muted); }
+  .score-bar strong { color: var(--accent); font-family: 'DM Mono', monospace; }
+
+  /* WRITTEN QS */
+  .written-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden; margin-bottom: 1rem;
+  }
+  .written-q {
+    padding: 1.1rem 1.4rem; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;
+    transition: background 0.2s;
+  }
+  .written-q:hover { background: var(--surface2); }
+  .written-q-text { font-weight: 500; font-size: 0.95rem; line-height: 1.5; }
+  .written-q-type {
+    font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 20px;
+    white-space: nowrap; align-self: flex-start; margin-top: 2px;
+  }
+  .type-short { background: rgba(78,201,176,0.15); color: var(--accent3); }
+  .type-long { background: rgba(124,111,247,0.15); color: var(--accent2); }
+  .model-answer {
+    display: none; padding: 1.2rem 1.4rem;
+    border-top: 1px solid var(--border); background: var(--surface2);
+  }
+  .model-answer.show { display: block; animation: fadeIn 0.2s; }
+  .model-answer-label {
+    font-size: 0.72rem; font-weight: 600; color: var(--accent);
+    letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.75rem;
+  }
+
+  /* REVISION SHEET */
+  .rev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  @media (max-width: 640px) { .rev-grid { grid-template-columns: 1fr; } nav { display: none; } }
+  .rev-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1rem;
+  }
+  .rev-item h4 {
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 0.6rem;
+  }
+  .rev-item ul { list-style: none; }
+  .rev-item li {
+    font-size: 0.84rem; padding: 3px 0; border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+  .rev-item li:last-child { border-bottom: none; }
+  .rev-item li::before { content: '→ '; color: var(--accent2); font-weight: 700; }
+
+  /* PROGRESS */
+  .progress-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; }
+  .progress-track { flex: 1; height: 4px; background: var(--surface2); border-radius: 2px; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
+
+  /* hero */
+  .hero {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 2rem; margin-bottom: 2rem; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,197,71,0.12) 0%, transparent 70%);
+  }
+  .hero-tag { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; margin-bottom: 0.5rem; }
+  .hero h1 { font-size: 1.9rem; }
+  .hero p { color: var(--muted); max-width: 500px; }
+
+  .kw { color: var(--accent); font-weight: 600; }
+  .kw2 { color: var(--accent2); font-weight: 600; }
+  .kw3 { color: var(--accent3); font-weight: 600; }
+  b { font-weight: 600; color: var(--text); }
+
+  ul.styled { list-style: none; padding-left: 0; }
+  ul.styled li { padding: 4px 0 4px 1.4em; position: relative; font-size: 0.92rem; line-height: 1.65; }
+  ul.styled li::before { content: '▸'; position: absolute; left: 0; color: var(--accent2); font-size: 0.75em; top: 6px; }
+
+  .section-intro { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+  .reset-btn {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    border-radius: 8px; padding: 6px 14px; font-size: 0.8rem; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .reset-btn:hover { border-color: var(--wrong); color: var(--wrong); }
+
+  .mobile-nav {
+    display: none; position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--bg); border-top: 1px solid var(--border);
+    padding: 8px; gap: 4px; flex-wrap: wrap; justify-content: center;
+    z-index: 200;
+  }
+  @media (max-width: 640px) {
+    .mobile-nav { display: flex; }
+    body { padding-bottom: 80px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">OCL <span>Study</span></div>
+  <nav id="mainNav">
+    <button class="active" onclick="showSection('explain',this)">📖 Explanation</button>
+    <button onclick="showSection('summary',this)">📋 Summary</button>
+    <button onclick="showSection('mcq',this)">❓ MCQs</button>
+    <button onclick="showSection('written',this)">✍️ Written</button>
+    <button onclick="showSection('revision',this)">⚡ Revision</button>
+  </nav>
+  <div class="header-right">
+    <button class="theme-btn" onclick="toggleTheme()">☀️ Light</button>
+  </div>
+</header>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav">
+  <button class="theme-btn" onclick="showSection('explain',this)">📖</button>
+  <button class="theme-btn" onclick="showSection('summary',this)">📋</button>
+  <button class="theme-btn" onclick="showSection('mcq',this)">❓</button>
+  <button class="theme-btn" onclick="showSection('written',this)">✍️</button>
+  <button class="theme-btn" onclick="showSection('revision',this)">⚡</button>
+</div>
+
+<!-- ===================== SECTION 1: EXPLANATION ===================== -->
+<div class="section active" id="explain">
+  <div class="hero">
+    <div class="hero-tag">Software Engineering 2 · Dr. Salwa Osama</div>
+    <h1>Object Constraint Language</h1>
+    <p>A complete, deeply explained study guide covering MDE, modeling languages, OCL syntax, constraints, and collection operations — structured for exam success.</p>
+  </div>
+
+  <!-- ---- Part 1: Model Types ---- -->
+  <h2>1. The Three Types of Models</h2>
+  <p>Before understanding OCL, we need to understand <kw>Model-Driven Engineering (MDE)</kw> and why models matter. Any model falls into one of three categories:</p>
+  <div style="overflow-x:auto">
+  <table>
+    <tr><th>Type</th><th>Purpose</th><th>Key Word</th><th>Example</th></tr>
+    <tr><td><span class="kw">Predictive</span></td><td>Analyze the <b>past</b> to predict the <b>future</b></td><td>Forecast</td><td>Weather prediction, sales forecasting</td></tr>
+    <tr><td><span class="kw">Descriptive</span></td><td>Describe <b>relationships</b> and group data</td><td>Grouping</td><td>Customer segmentation, clustering</td></tr>
+    <tr><td><span class="kw">Prescriptive</span></td><td>Make <b>decisions</b> based on all elements</td><td>Prescribe/Decide</td><td>Route optimization, resource allocation</td></tr>
+  </table>
+  </div>
+  <div class="highlight-box yellow">
+    <span class="badge badge-exam">Exam Tip</span>
+    <p style="margin-top:0.4rem">MDE uses <b>Prescriptive models</b> as programs — they actively make decisions. Don't confuse with predictive (past→future) or descriptive (grouping).</p>
+  </div>
+
+  <!-- ---- Part 2: MDE ---- -->
+  <h2>2. Model-Driven Engineering (MDE)</h2>
+  <p>MDE is about using <span class="kw">prescriptive models as programs</span>. Instead of writing everything in low-level code, engineers work at a higher abstraction level using models.</p>
+  <div class="card">
+    <h3>🔧 What MDE Involves</h3>
+    <ul class="styled">
+      <li>Engineering <b>domain-specific languages (DSLs)</b> for capturing models</li>
+      <li>Defining <b>precise abstract syntax</b> for the language</li>
+      <li>Supporting <b>graphical and textual</b> modeling tools</li>
+      <li>Expressing and <b>checking validity constraints</b> for models</li>
+      <li>Analyzing and <b>simulating</b> models</li>
+      <li>Transforming models into <b>other models</b> or <b>software products</b></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>❓ Why MDE? — The Real Reasons</h3>
+    <ul class="styled">
+      <li>Implementation-level abstractions are <b>not satisfactory</b> for complex domains</li>
+      <li>Engineers copy/paste <b>boilerplate code</b> repeatedly (see ATM example below)</li>
+      <li>To make one change, engineers must modify <b>several inter-related artifacts</b></li>
+      <li>Reasoning about <b>system properties</b> is too hard at implementation level</li>
+    </ul>
+  </div>
+  <div class="highlight-box teal">
+    <span class="badge badge-tip">Real Example 1: Boilerplate Code</span>
+    <p>An ATM class with a <code>screen</code> attribute requires writing a getter, setter, constructor, and error handling manually. MDE tools like <b>Visual Paradigm</b> generate this boilerplate from a simple model diagram automatically.</p>
+  </div>
+  <div class="highlight-box teal">
+    <span class="badge badge-tip">Real Example 2: Property Analysis</span>
+    <p>A traffic light switch statement in code is hard to analyze. A <b>state machine model</b> makes the color transitions visually obvious and allows automated <b>reachability analysis</b> — impossible at the code level for large systems.</p>
+  </div>
+
+  <!-- ---- Part 3: Modeling Languages ---- -->
+  <h2>3. Modeling Languages & DSLs</h2>
+  <p>There are many off-the-shelf modeling languages. Each focuses on a <span class="kw">specific class of domains</span>:</p>
+  <table>
+    <tr><th>Language</th><th>Domain</th></tr>
+    <tr><td><span class="kw">UML</span></td><td>Object-oriented systems</td></tr>
+    <tr><td><span class="kw">Simulink</span></td><td>Control systems</td></tr>
+    <tr><td><span class="kw">Archimate</span></td><td>Enterprise architecture</td></tr>
+    <tr><td><span class="kw">BPMN</span></td><td>Business process modeling</td></tr>
+    <tr><td><span class="kw">ER Diagrams</span></td><td>Relational databases</td></tr>
+  </table>
+  <p>Sometimes existing languages <b>lack appropriate abstractions</b> for a specific problem — this is where <span class="kw">Domain-Specific Languages (DSLs)</span> come in. Example: A conference organization system needs its own language to model tracks, talks, speakers, breaks, etc.</p>
+
+  <!-- ---- Part 4: Why Not Just UML ---- -->
+  <h2>4. Why UML Alone Is Not Enough</h2>
+  <p>UML gives us structural and behavioral diagrams, but it <b>cannot express constraints</b> precisely. For example, how do you say in a UML diagram: "parallel tracks must be in different rooms"?</p>
+  <div class="highlight-box purple">
+    <span class="badge badge-concept">Key Decision</span>
+    <p>We need a <b>specification add-on</b>, not a brand-new language. Candidates considered:</p>
+    <ul class="styled">
+      <li><b>First-Order Logic</b> — too mathematical, not OO-friendly</li>
+      <li><b>OCL</b> — object-oriented, standardized, widely adopted ✅</li>
+    </ul>
+  </div>
+
+  <!-- ---- Part 5: OCL Introduction ---- -->
+  <h2>5. What Is OCL?</h2>
+  <div class="card">
+    <p><span class="kw">OCL (Object Constraint Language)</span> is a formal language used to specify constraints on object-oriented systems. It is part of the <b>UML standard</b>.</p>
+    <ul class="styled">
+      <li>First developed in <b>1995 as IBEL</b> by IBM's Insurance division</li>
+      <li>Used to define <b>UML 1.2 itself</b></li>
+      <li>Backed by major companies: Rational, Microsoft, IBM, Oracle, HP, etc.</li>
+      <li>It is the <b>only standardized</b> OO constraint language</li>
+    </ul>
+  </div>
+  <h3>Where Can OCL Be Used?</h3>
+  <ul class="styled">
+    <li>Specify <b>invariants</b> for classes and types</li>
+    <li>Specify <b>pre- and post-conditions</b> for operations</li>
+    <li>As a <b>navigation language</b> to traverse associations</li>
+    <li>To constrain <b>operations</b></li>
+    <li>As <b>test requirements</b> and specifications</li>
+  </ul>
+  <h3>Advantages of OCL / Formal Constraints</h3>
+  <ul class="styled">
+    <li><b>Better documentation</b> — adds information beyond what diagrams show</li>
+    <li><b>More precision</b> — formal semantics reduce ambiguity in UML</li>
+    <li><b>Communication without misunderstanding</b> — unambiguous between developers</li>
+  </ul>
+
+  <!-- ---- Part 6: Core OCL Concepts ---- -->
+  <h2>6. Core OCL Concepts: Invariants, Context & Self</h2>
+  <div class="card">
+    <h3>Invariant</h3>
+    <p>A <span class="kw">constraint (invariant)</span> is a <b>boolean OCL expression</b> that must <b>always evaluate to true</b>. It is a rule that must never be violated.</p>
+  </div>
+  <div class="card">
+    <h3>Context</h3>
+    <p>Every constraint is bound to a specific <b>type/class</b> in the UML model — this is its <span class="kw">context</span>. Written as:</p>
+    <div class="code-block">context &lt;ClassName&gt;
+invariant [optionalName]: &lt;boolean expression&gt;</div>
+  </div>
+  <div class="card">
+    <h3>Self</h3>
+    <p><span class="kw">self</span> refers to the <b>current instance</b> of the context class — like <code>this</code> in Java. It can be omitted (implicit).</p>
+    <div class="code-block">context Mortgage
+invariant: self.startDate &lt; self.endDate
+-- Same as:
+invariant: startDate &lt; endDate</div>
+  </div>
+
+  <!-- ---- Part 7: OCL Constraint Types ---- -->
+  <h2>7. Types of OCL Constraints</h2>
+  <table>
+    <tr><th>Type</th><th>When It Holds</th><th>Keyword</th></tr>
+    <tr><td><span class="kw">Invariant</span></td><td>Always — must hold at all times</td><td><code>invariant</code></td></tr>
+    <tr><td><span class="kw">Pre-condition</span></td><td>Before an operation executes</td><td><code>pre</code></td></tr>
+    <tr><td><span class="kw">Post-condition</span></td><td>After an operation executes</td><td><code>post</code></td></tr>
+    <tr><td><span class="kw">Guard</span></td><td>On a state machine transition</td><td>condition on transition</td></tr>
+  </table>
+  <div class="code-block">context Company::hire(p : Person)
+pre  hirePre1: p.isDefined()
+pre  hirePre2: employee->excludes(p)
+post hirePost: employee->includes(p)
+
+context Company::fire(p : Person)
+pre  firePre: employee->includes(p)
+post firePost: employee->excludes(p)</div>
+  <div class="highlight-box yellow">
+    <span class="badge badge-exam">Post-condition Special: @pre</span>
+    <p>In post-conditions, <span class="kw">@pre</span> refers to the value of an attribute <b>before</b> the operation executed.</p>
+    <div class="code-block">-- After burn(i), points decreases by i
+post: points = points@pre - i</div>
+  </div>
+
+  <!-- ---- Part 8: Navigation ---- -->
+  <h2>8. Navigation in OCL</h2>
+  <p>OCL expressions <span class="kw">navigate associations</span> to reach related objects. Starting from the context object, you follow role names:</p>
+  <div class="code-block">-- Navigate from CustomerCard to its owner (Customer)
+context CustomerCard
+invariant: owner.age >= 18
+
+-- owner is a Customer; .age is an Integer</div>
+  <div class="card">
+    <h3>Navigation Across Multiplicity &gt; 1 → Collections</h3>
+    <p>When navigating an association with <b>many</b> multiplicity (0..*), you get a <span class="kw">Collection</span>. Use <code>-></code> to call collection operations:</p>
+    <div class="code-block">context CustomerCard
+invariant: owner.Membership->includes(membership)
+-- owner.Membership is a Set of Membership instances</div>
+  </div>
+  <div class="highlight-box red">
+    <span class="badge badge-trap">Common Trap</span>
+    <p>Use <code>.</code> (dot) to access attributes/operations on a <b>single object</b>. Use <code>-></code> (arrow) to call <b>collection operations</b>. Mixing them is a common exam mistake.</p>
+  </div>
+
+  <!-- ---- Part 9: Collections ---- -->
+  <h2>9. OCL Collections</h2>
+  <p>OCL has a rich collection type system. <span class="kw">Collection</span> is the parent type. Operations on collections <b>never change the original</b> — they return new collections.</p>
+  <table>
+    <tr><th>Type</th><th>Duplicates?</th><th>Ordered?</th><th>Use When</th></tr>
+    <tr><td><span class="kw">Set</span></td><td>No</td><td>No</td><td>Default navigation result (unique objects)</td></tr>
+    <tr><td><span class="kw">Bag</span></td><td>Yes</td><td>No</td><td>Multi-step navigation (e.g. account.transaction)</td></tr>
+    <tr><td><span class="kw">Sequence</span></td><td>Yes</td><td>Yes</td><td>Ordered collections (first, last, indexOf)</td></tr>
+    <tr><td><span class="kw">OrderedSet</span></td><td>No</td><td>Yes</td><td>Unique + ordered</td></tr>
+  </table>
+  <div class="code-block">-- Single navigation → Set of Accounts
+context Customer
+account  -- produces a Set&lt;Account&gt;
+
+-- Two-step navigation → Bag of Transactions
+account.transaction  -- produces a Bag&lt;Transaction&gt;
+
+-- Convert Bag to Set
+account.transaction -> asSet()</div>
+
+  <h3>Core Collection Operations (use <code>-></code>)</h3>
+  <table>
+    <tr><th>Operation</th><th>Returns</th><th>Description</th></tr>
+    <tr><td><code>size()</code></td><td>Integer</td><td>Number of elements</td></tr>
+    <tr><td><code>isEmpty()</code></td><td>Boolean</td><td>True if no elements</td></tr>
+    <tr><td><code>notEmpty()</code></td><td>Boolean</td><td>True if has elements</td></tr>
+    <tr><td><code>includes(obj)</code></td><td>Boolean</td><td>True if obj is in collection</td></tr>
+    <tr><td><code>excludes(obj)</code></td><td>Boolean</td><td>True if obj is NOT in collection</td></tr>
+    <tr><td><code>includesAll(col)</code></td><td>Boolean</td><td>True if all of col are in this</td></tr>
+    <tr><td><code>count(obj)</code></td><td>Integer</td><td>Occurrences of obj</td></tr>
+    <tr><td><code>sum()</code></td><td>same type</td><td>Sum of numeric elements</td></tr>
+    <tr><td><code>select(cond)</code></td><td>Collection</td><td>Elements matching condition</td></tr>
+    <tr><td><code>reject(cond)</code></td><td>Collection</td><td>Elements NOT matching condition</td></tr>
+    <tr><td><code>collect(expr)</code></td><td>Bag</td><td>Apply transformation to each element</td></tr>
+    <tr><td><code>forAll(cond)</code></td><td>Boolean</td><td>True if ALL elements satisfy condition</td></tr>
+    <tr><td><code>exists(cond)</code></td><td>Boolean</td><td>True if ANY element satisfies condition</td></tr>
+  </table>
+
+  <h3>Illustrated Examples</h3>
+  <div class="code-block">-- select: books that are NOT available
+books->select(b | b.available = false)->isEmpty()
+
+-- collect + sum: total cart cost within balance
+items->collect(i | i.product.price * i.quantity)->sum() <= user.balance
+
+-- reject: no incomplete tasks should remain
+tasks->reject(t | t.completed)->isEmpty()
+
+-- forAll: every item quantity must be positive
+items->forAll(i | i.quantity > 0)
+
+-- exists: at least one book is popular
+books->exists(b | b.popularity > 100)</div>
+
+  <!-- ---- Part 10: Mortgage + Loyalty Examples ---- -->
+  <h2>10. Complete OCL Examples</h2>
+
+  <button class="collapsible-btn" onclick="toggleCollapse(this)">
+    💳 Mortgage System Constraints <span class="arrow">▼</span>
+  </button>
+  <div class="collapsible-content">
+    <p><b>Constraint 1:</b> A person may have a mortgage only on a house they own:</p>
+    <div class="code-block">context Mortgage
+invariant: security.owner = borrower</div>
+    <p><b>Constraint 2:</b> Start date must be before end date:</p>
+    <div class="code-block">context Mortgage
+invariant: startDate &lt; endDate</div>
+  </div>
+
+  <button class="collapsible-btn" onclick="toggleCollapse(this)">
+    🎖️ Loyalty Program Constraints <span class="arrow">▼</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="code-block">-- Partners must have at least 1 delivered service
+context LoyaltyProgram
+invariant minServices:
+  partners.deliveredservices->size() >= 1
+
+-- Number of programs = number of valid cards
+context Customer
+invariant sizesAgree:
+  Programs->size() = cards->select(valid=true)->size()
+
+-- No points earned/burned implies no loyalty accounts
+context LoyaltyProgram
+invariant noAccounts:
+  partners.deliveredservices->
+    forAll(pointsEarned = 0 and pointsBurned = 0)
+  implies Membership.account->isEmpty()</div>
+  </div>
+
+  <button class="collapsible-btn" onclick="toggleCollapse(this)">
+    🎓 Student/Module System Constraints <span class="arrow">▼</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="code-block">-- (a) Module must have > 7 students to be taken
+context Module
+invariant: taken_by->size() > 7
+
+-- (b) Assessment weights must total 100%
+context Module
+invariant: set_work.weight->sum() = 100
+
+-- (c) Students register for exactly 120 credits
+context Student
+invariant: takes.credit->sum() = 120
+
+-- (d) At least 90 credits from CS modules
+context Student
+invariant:
+  takes->select(code.substring(1,2) = 'CS').credit->sum() >= 90
+
+-- (e) At least one assessment worth over 50%
+context Module
+invariant: set_work->exists(weight > 50)
+
+-- (f) Students only assessed in modules they take
+context Student
+invariant: takes->includesAll(submits.for_module)</div>
+  </div>
+
+  <button class="collapsible-btn" onclick="toggleCollapse(this)">
+    🏦 LoyaltyAccount Pre/Post Conditions <span class="arrow">▼</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="code-block">-- burn operation
+context LoyaltyAccount::burn(i: Integer)
+pre:  points >= i and i >= 0
+post: points = points@pre - i
+
+-- earn operation
+context LoyaltyAccount::earn(i: Integer)
+pre:  i >= 0
+post: points = points@pre + i
+
+-- isEmpty operation
+context LoyaltyAccount::isEmpty(): Boolean
+post: result = (points = 0)</div>
+  </div>
+
+  <!-- ---- Logical Connectives ---- -->
+  <h2>11. Logical Connectives in OCL</h2>
+  <table>
+    <tr><th>Operator</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td><code>and</code></td><td>Both must be true</td><td><code>a > 0 and b > 0</code></td></tr>
+    <tr><td><code>or</code></td><td>At least one true</td><td><code>a > 0 or b > 0</code></td></tr>
+    <tr><td><code>not</code></td><td>Negation</td><td><code>not isEmpty()</code></td></tr>
+    <tr><td><code>implies</code></td><td>If A then B</td><td><code>a implies b</code></td></tr>
+    <tr><td><code>xor</code></td><td>Exactly one true</td><td><code>a xor b</code></td></tr>
+  </table>
+  <div class="highlight-box yellow">
+    <span class="badge badge-exam">Exam Note on implies</span>
+    <p><code>A implies B</code> is only <b>false</b> when A is true and B is false. If A is false, the whole expression is true regardless of B.</p>
+  </div>
+</div>
+
+<!-- ===================== SECTION 2: SUMMARY ===================== -->
+<div class="section" id="summary">
+  <h1>Smart Summary</h1>
+  <p class="section-intro">High-yield structured summary — all key facts for exam preparation.</p>
+
+  <h2>1. Model Types (3 Types)</h2>
+  <div class="card">
+    <ul class="styled">
+      <li><b>Predictive</b> — past → future analysis</li>
+      <li><b>Descriptive</b> — relationships & grouping in data</li>
+      <li><b>Prescriptive</b> — decision-making; <b>used as programs in MDE</b></li>
+    </ul>
+  </div>
+
+  <h2>2. Model-Driven Engineering (MDE)</h2>
+  <div class="card">
+    <ul class="styled">
+      <li>Uses <b>prescriptive models as programs</b></li>
+      <li>Reasons: boilerplate code, complex property analysis, inter-related artifacts</li>
+      <li>Produces: DSLs with precise abstract syntax, model transformation, simulation</li>
+    </ul>
+  </div>
+
+  <h2>3. Standard Modeling Languages</h2>
+  <div class="rev-grid" style="margin-top:0.5rem">
+    <div class="rev-item">
+      <h4>Off-the-Shelf</h4>
+      <ul><li>UML → OO systems</li><li>Simulink → Control</li><li>Archimate → Enterprise</li><li>BPMN → Business Process</li><li>ER → Databases</li></ul>
+    </div>
+    <div class="rev-item">
+      <h4>Why DSLs?</h4>
+      <ul><li>Existing languages lack abstractions</li><li>Domain-specific needs</li><li>Example: Conference scheduling</li></ul>
+    </div>
+  </div>
+
+  <h2>4. OCL — Key Facts</h2>
+  <div class="card">
+    <ul class="styled">
+      <li>Object Constraint Language — part of <b>UML standard</b></li>
+      <li>Developed 1995 by IBM as <b>IBEL</b></li>
+      <li>Used to define <b>UML 1.2</b> itself</li>
+      <li><b>Only standardized</b> OO constraint language</li>
+      <li>Benefits: Better docs, more precision, no misunderstanding</li>
+    </ul>
+  </div>
+
+  <h2>5. OCL Constraint Types</h2>
+  <div class="card">
+    <ul class="styled">
+      <li><b>Invariant</b> — always true</li>
+      <li><b>Pre-condition</b> — before operation</li>
+      <li><b>Post-condition</b> — after operation; use <b>@pre</b> for old values</li>
+      <li><b>Guard</b> — state machine transition</li>
+    </ul>
+  </div>
+
+  <h2>6. Navigation Rules</h2>
+  <div class="card">
+    <ul class="styled">
+      <li><b>Dot (.)</b> → single object attribute or operation</li>
+      <li><b>Arrow (->)</b> → collection operation</li>
+      <li>Navigate role names along associations from <b>self</b></li>
+      <li>Navigating multiplicity > 1 → returns a <b>Collection</b></li>
+      <li><b>context</b> keyword sets the class; <b>self</b> = current instance</li>
+    </ul>
+  </div>
+
+  <h2>7. Collection Types</h2>
+  <div class="card">
+    <ul class="styled">
+      <li><b>Set</b> — no duplicates, unordered (default single navigation)</li>
+      <li><b>Bag</b> — duplicates allowed, unordered (multi-step navigation)</li>
+      <li><b>Sequence</b> — duplicates allowed, <b>ordered</b></li>
+      <li><b>OrderedSet</b> — no duplicates, ordered</li>
+      <li>Convert: <code>->asSet()</code>, <code>->asBag()</code>, <code>->asSequence()</code></li>
+    </ul>
+  </div>
+
+  <h2>8. Critical Collection Operations</h2>
+  <div class="rev-grid">
+    <div class="rev-item">
+      <h4>Boolean Tests</h4>
+      <ul>
+        <li>isEmpty() / notEmpty()</li>
+        <li>includes(obj) / excludes(obj)</li>
+        <li>includesAll(col)</li>
+        <li>forAll(cond)</li>
+        <li>exists(cond)</li>
+      </ul>
+    </div>
+    <div class="rev-item">
+      <h4>Transformations</h4>
+      <ul>
+        <li>size() → count</li>
+        <li>sum() → total</li>
+        <li>count(obj) → occurrences</li>
+        <li>select(cond) → filter in</li>
+        <li>reject(cond) → filter out</li>
+        <li>collect(expr) → transform</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>9. OCL Syntax Template</h2>
+  <div class="code-block">context ClassName
+invariant [name]: &lt;boolean-expression&gt;
+
+context ClassName::operation(param: Type)
+pre  [name]: &lt;precondition&gt;
+post [name]: &lt;postcondition using @pre if needed&gt;
+
+-- Navigation
+self.role.attribute         -- dot for single object
+self.roles->operation()     -- arrow for collection</div>
+
+  <h2>10. Logical Connectives</h2>
+  <div class="card">
+    <p><code>and</code> · <code>or</code> · <code>not</code> · <code>implies</code> · <code>xor</code></p>
+    <p><span class="kw">implies</span>: only false when left=true AND right=false</p>
+  </div>
+</div>
+
+<!-- ===================== SECTION 3: MCQs ===================== -->
+<div class="section" id="mcq">
+  <h1>MCQ Exam Training</h1>
+  <p class="section-intro">Click an option to reveal whether it's correct, then read the explanation. 30 questions across all difficulty levels.</p>
+  <div class="score-bar">
+    <span>Score: <strong id="scoreDisplay">0 / 0</strong></span>
+    <button class="reset-btn" onclick="resetMCQ()">↺ Reset All</button>
+  </div>
+  <div id="mcq-container"></div>
+</div>
+
+<!-- ===================== SECTION 4: WRITTEN ===================== -->
+<div class="section" id="written">
+  <h1>Written Questions</h1>
+  <p class="section-intro">Click any question to reveal the model answer. Use these for exam practice.</p>
+  <div id="written-container"></div>
+</div>
+
+<!-- ===================== SECTION 5: REVISION ===================== -->
+<div class="section" id="revision">
+  <h1>⚡ Rapid Revision Sheet</h1>
+  <p class="section-intro">Night-before-exam cheat sheet. All the essential facts in one place.</p>
+
+  <div class="highlight-box yellow" style="margin-bottom:1.5rem">
+    <p><b>OCL in one sentence:</b> A formal, standardized language for adding precise, boolean constraints (invariants, pre/post-conditions) to UML object-oriented models using navigation, collection operations, and logical connectives.</p>
+  </div>
+
+  <div class="rev-grid">
+    <div class="rev-item">
+      <h4>3 Model Types</h4>
+      <ul>
+        <li>Predictive → past→future</li>
+        <li>Descriptive → grouping</li>
+        <li>Prescriptive → decisions (MDE uses this)</li>
+      </ul>
+    </div>
+    <div class="rev-item">
+      <h4>MDE Reasons</h4>
+      <ul>
+        <li>Bad implementation abstractions</li>
+        <li>Boilerplate code copy/paste</li>
+        <li>Many inter-related changes</li>
+        <li>Hard property analysis</li>
+      </ul>
+    </div>
+    <div class="rev-item">
+      <h4>OCL Facts</h4>
+      <ul>
+        <li>= Object Constraint Language</li>
+        <li>1995, IBM (IBEL)</li>
+        <li>Used in UML 1.2 itself</li>
+        <li>Only standardized OO constraint lang</li>
+      </ul>
+    </div>
+    <div class="rev-item">
+      <h4>Constraint Types</h4>
+      <ul>
+        <li>invariant → always holds</li>
+        <li>pre → before op</li>
+        <li>post → after op</li>
+        <li>guard → state transition</li>
+        <li>@pre → value before op</li>
+      </ul>
+    </div>
+    <div class="rev-item">
+      <h4>Collections</h4>
+      <ul>
+        <li>Set = no dup, unordered</li>
+        <li>Bag = dup ok, unordered</li>
+        <li>Sequence = dup ok, ordered</li>
+        <li>OrderedSet = no dup, ordered</li>
+      </ul>
+    </div>
+    <div class="rev-item">
+      <h4>Arrow vs Dot</h4>
+      <ul>
+        <li>obj.attr → single object</li>
+        <li>col->op() → collection</li>
+        <li>. for single, -> for many</li>
+      </ul>
+    </div>
+    <div class="rev-item">
+      <h4>select / reject</h4>
+      <ul>
+        <li>select(cond) → keep matches</li>
+        <li>reject(cond) → remove matches</li>
+        <li>both return collection</li>
+      </ul>
+    </div>
+    <div class="rev-item">
+      <h4>forAll / exists</h4>
+      <ul>
+        <li>forAll(cond) → all must match</li>
+        <li>exists(cond) → at least one</li>
+        <li>both return Boolean</li>
+      </ul>
+    </div>
+    <div class="rev-item">
+      <h4>Boolean Ops</h4>
+      <ul>
+        <li>isEmpty() / notEmpty()</li>
+        <li>includes(x) / excludes(x)</li>
+        <li>includesAll(col)</li>
+        <li>size() → integer</li>
+      </ul>
+    </div>
+    <div class="rev-item">
+      <h4>Logical Connectives</h4>
+      <ul>
+        <li>and, or, not, xor</li>
+        <li>implies: false only if left=T, right=F</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Quick Syntax Reference</h2>
+  <div class="code-block">-- INVARIANT
+context Class
+invariant [name]: boolean_expr
+
+-- PRE/POST
+context Class::op(p:T)
+pre:  condition_before
+post: condition_after     -- use @pre for old values
+
+-- NAVIGATION
+self.role            -- single object
+self.roles->op()     -- collection
+
+-- KEY PATTERNS
+->size() >= N               -- count check
+->sum() = N                 -- total check
+->select(cond)->size()      -- count filtered
+->forAll(attr > val)        -- all match
+->exists(attr > val)        -- at least one
+->includes(x)               -- membership
+->includesAll(collection)   -- subset check
+->isEmpty()                 -- empty check</div>
+
+  <h2>Modeling Languages Quick List</h2>
+  <div class="code-block">UML → OO | Simulink → Control | Archimate → Enterprise
+BPMN → Business Process | ER → Relational DB</div>
+
+  <div class="highlight-box red" style="margin-top:1.5rem">
+    <span class="badge badge-trap">Top Exam Traps</span>
+    <ul class="styled" style="margin-top:0.5rem">
+      <li>Using <code>.</code> instead of <code>-></code> for collection operations</li>
+      <li>Confusing <b>Bag</b> (multi-step nav) vs <b>Set</b> (single nav)</li>
+      <li>Forgetting <b>@pre</b> in post-conditions</li>
+      <li>Thinking OCL changes the original collection — <b>it never does</b></li>
+      <li>Confusing <b>select</b> (keep) vs <b>reject</b> (remove)</li>
+      <li>Writing <code>implies</code> incorrectly — false ONLY when left=true AND right=false</li>
+      <li>OCL was originally called <b>IBEL</b>, not OCL</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+// ===== THEME =====
+let isDark = true;
+function toggleTheme(){
+  isDark = !isDark;
+  document.body.classList.toggle('light', !isDark);
+  document.querySelector('.theme-btn').textContent = isDark ? '☀️ Light' : '🌙 Dark';
+}
+
+// ===== NAVIGATION =====
+function showSection(id, btn){
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
+
+// ===== COLLAPSIBLE =====
+function toggleCollapse(btn){
+  btn.classList.toggle('open');
+  const content = btn.nextElementSibling;
+  content.classList.toggle('open');
+}
+
+// ===== MCQ DATA =====
+const mcqs = [
+  { q:"What type of model is used as a program in Model-Driven Engineering (MDE)?", opts:["Predictive","Descriptive","Prescriptive","Analytical"], ans:2, diff:"easy", exp:"MDE uses prescriptive models as programs. Prescriptive models make decisions based on all elements. Predictive models analyze the past; descriptive models group data." },
+  { q:"OCL was originally developed in 1995 under what name?", opts:["UML","OCL","IBEL","DSL"], ans:2, diff:"medium", exp:"OCL was first developed by IBM's Insurance division in 1995 as IBEL (IBM Business Expression Language). It was later standardized as OCL." },
+  { q:"In OCL, what keyword refers to the current instance of the context class?", opts:["this","context","self","current"], ans:2, diff:"easy", exp:"'self' is the OCL keyword equivalent to 'this' in Java. It refers to the current object of the context class. It can be omitted (implicit)." },
+  { q:"Which symbol is used to call operations on OCL collections?", opts:[".","::","+","->"], ans:3, diff:"easy", exp:"The arrow -> is used to invoke collection operations (e.g., ->size(), ->forAll()). The dot . is used for single-object attribute access." },
+  { q:"An OCL invariant must evaluate to:", opts:["An integer","True at all times","True only after operations","A string"], ans:1, diff:"easy", exp:"An invariant is a boolean OCL expression that must ALWAYS evaluate to true. It represents a rule that must never be violated." },
+  { q:"Which OCL collection type allows duplicates but is unordered?", opts:["Set","Bag","Sequence","OrderedSet"], ans:1, diff:"medium", exp:"A Bag allows duplicate elements but has no defined order. Set = no duplicates, unordered. Sequence = duplicates, ordered. OrderedSet = no duplicates, ordered." },
+  { q:"What does the @pre suffix represent in a post-condition?", opts:["A pre-condition check","The value of an attribute before the operation","The first element","A precondition name"], ans:1, diff:"medium", exp:"@pre in a post-condition refers to the value of an attribute BEFORE the operation executed. Example: points = points@pre - i means points decreased by i." },
+  { q:"Which OCL operation returns a collection of elements that SATISFY a condition?", opts:["reject","collect","select","exists"], ans:2, diff:"easy", exp:"select returns elements that match the given condition (filter-in). reject returns elements that do NOT match (filter-out)." },
+  { q:"Navigating a many-multiplicity association in OCL produces what?", opts:["A single object","A String","A Collection","An Integer"], ans:2, diff:"medium", exp:"When you navigate an association with multiplicity > 1 (like 0..*), OCL returns a Collection type (typically a Set). You then use -> to call collection operations." },
+  { q:"What was OCL used to define?", opts:["Java 8 specification","UML 1.2 itself","SQL standards","Enterprise JavaBeans"], ans:1, diff:"medium", exp:"OCL was used to formally define UML 1.2 itself, demonstrating its power and precision for specification purposes." },
+  { q:"Which constraint type must hold BEFORE an operation executes?", opts:["invariant","post-condition","guard","pre-condition"], ans:3, diff:"easy", exp:"A pre-condition (keyword 'pre') must hold before the operation executes. Post-conditions hold after. Invariants must always hold." },
+  { q:"The OCL expression: context Module / invariant: taken_by->size() > 7 — what does it mean?", opts:["A module must have exactly 7 students","A module can only be taken if more than 7 students are registered","Students need 7 credits per module","Modules have 7 assessment types"], ans:1, diff:"medium", exp:"taken_by is the set of students registered for the module. size() > 7 means there must be more than 7 students registered for the module to be taken." },
+  { q:"Which collection operation checks if ALL elements satisfy a condition?", opts:["exists","select","forAll","includesAll"], ans:2, diff:"easy", exp:"forAll(condition) returns true only if EVERY element in the collection satisfies the condition. exists() checks if AT LEAST ONE element satisfies it." },
+  { q:"What is the main advantage of using OCL over plain UML?", opts:["It generates code automatically","It adds formal precision and reduces ambiguity","It replaces UML diagrams entirely","It is easier to learn than UML"], ans:1, diff:"easy", exp:"OCL adds formal semantics to UML constraints, reducing ambiguity. UML diagrams alone cannot precisely express rules like 'start date must be before end date'." },
+  { q:"The expression: cards->select(valid=true)->size() — what does this count?", opts:["All cards","Invalid cards only","Valid cards only","Cards with no points"], ans:2, diff:"medium", exp:"select(valid=true) filters the cards collection to keep only those where valid=true. size() then counts those filtered valid cards." },
+  { q:"Which is NOT a reason to use Model-Driven Engineering?", opts:["Boilerplate code exists","Reasoning about properties is hard","Implementation languages are too slow","Multiple inter-related artifacts need simultaneous change"], ans:2, diff:"medium", exp:"MDE reasons are: bad implementation abstractions, boilerplate code, inter-related artifacts, and hard property analysis. Speed of implementation languages is not a stated reason." },
+  { q:"In the expression: owner.title.concat(' ').concat(owner.name) — what is 'concat'?", opts:["An Integer operation","A Boolean operation","A String operation","A Collection operation"], ans:2, diff:"medium", exp:"concat(String):String is a String operation in OCL. It concatenates two strings together. owner.title and owner.name are both String attributes." },
+  { q:"When navigating Customer→account→transaction, what OCL type is returned?", opts:["Set of Transactions","Bag of Transactions","Sequence of Transactions","Single Transaction"], ans:1, diff:"hard", exp:"account is a Set of Accounts (one-step navigation). For each account, transaction gives more elements. Multi-step navigation produces a Bag (duplicates possible). Use ->asSet() to convert." },
+  { q:"Which of these correctly specifies that all players must be over 18?", opts:["context Player where: age > 18","context Player invariant: self.age >= 18","context Player constraint: age = 18+","context Player check: age > 18"], ans:1, diff:"easy", exp:"Correct OCL syntax is: context ClassName / invariant: condition. 'self.age >= 18' means the player's age attribute is at least 18." },
+  { q:"The 'implies' operator in OCL is FALSE only when:", opts:["Both sides are false","Left is false, right is true","Left is true, right is false","Both sides are true"], ans:2, diff:"hard", exp:"A implies B follows the logic table: T→T=T, T→F=F, F→T=T, F→F=T. It is only false when the antecedent (left) is true but the consequent (right) is false." },
+  { q:"Which operation returns a new collection after applying a transformation to each element?", opts:["select","forAll","collect","reject"], ans:2, diff:"medium", exp:"collect(expr) applies a transformation expression to each element and returns a new Bag with the transformed values. Used for computed values like prices * quantities." },
+  { q:"The 'context' keyword in OCL specifies:", opts:["The name of the constraint","The class to which the constraint applies","The return type of the expression","The navigation path"], ans:1, diff:"easy", exp:"The context keyword identifies which class or operation the constraint is attached to. It defines the class where 'self' refers to instances." },
+  { q:"An OCL Collection operation result is:", opts:["A modification of the original collection","A brand new collection; original is unchanged","An error if the collection is empty","Always a Set type"], ans:1, diff:"medium", exp:"OCL collection operations NEVER modify the original collection — they always return a new collection. This is a fundamental OCL rule." },
+  { q:"Which constraint correctly checks that assessment weights total 100%?", opts:["context Module inv: set_work->count() = 100","context Module inv: set_work.weight->sum() = 100","context Module inv: set_work->size() = 100","context Module inv: set_work->sum(weight) = 100"], ans:1, diff:"hard", exp:"set_work is a collection of Assessment objects. .weight navigates to the weight attribute of each. ->sum() adds them all. The result must equal 100." },
+  { q:"What does 'reject' do in OCL?", opts:["Returns elements that satisfy the condition","Returns elements that do NOT satisfy the condition","Deletes elements from the collection","Returns a boolean"], ans:1, diff:"easy", exp:"reject(condition) is the opposite of select. It returns a collection of elements that do NOT satisfy the given condition (filter-out operation)." },
+  { q:"Which is a Domain-Specific Language (DSL) designed for control systems?", opts:["UML","BPMN","Simulink","Archimate"], ans:2, diff:"easy", exp:"Simulink is the modeling language for control systems. UML is for OO systems, BPMN for business processes, Archimate for enterprise architecture." },
+  { q:"In OCL: context Student / invariant: takes->includesAll(submits.for_module) — what does this mean?", opts:["Students submit all modules","The modules a student submits must all be modules they are also taking","Students take all submitted modules","Assessment modules must include all taken modules"], ans:1, diff:"hard", exp:"takes is the set of modules the student is enrolled in. submits.for_module is the set of modules the student has submitted assessments for. includesAll ensures every submitted module is in the set of taken modules." },
+  { q:"Why is first-order logic NOT used instead of OCL for UML constraints?", opts:["It is too verbose","It is not object-oriented","It cannot express boolean conditions","It requires a special compiler"], ans:1, diff:"medium", exp:"First-order logic is not OO (object-oriented). UML models are OO, so OCL — which is designed for OO systems — is the appropriate choice. OCL was designed specifically as an OO-friendly formal language." },
+  { q:"Which operation checks if a specific object is NOT in a collection?", opts:["notIncludes","isEmpty","excludes","reject"], ans:2, diff:"medium", exp:"excludes(object) returns true if the specified object is NOT present in the collection. includes(object) does the opposite — checks if the object IS present." },
+  { q:"The OCL expression result = (points = 0) appears in which type of constraint?", opts:["invariant","pre-condition","post-condition","guard"], ans:2, diff:"hard", exp:"The 'result' keyword is only used in post-conditions to refer to the return value of an operation (here: isEmpty()). result = (points = 0) means the operation returns true iff points equals zero." },
+];
+
+let mcqScores = { correct:0, total:0 };
+
+function buildMCQs(){
+  const container = document.getElementById('mcq-container');
+  container.innerHTML = '';
+  mcqs.forEach((q,i)=>{
+    const card = document.createElement('div');
+    card.className = 'mcq-card';
+    card.innerHTML = `
+      <div class="q-num">Q${i+1} &nbsp;·&nbsp; <span class="q-difficulty diff-${q.diff}">${q.diff.toUpperCase()}</span></div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="opts-${i}">
+        ${q.opts.map((o,j)=>`<button class="option-btn" onclick="checkAnswer(${i},${j},${q.ans})">${String.fromCharCode(65+j)}. ${o}</button>`).join('')}
+      </div>
+      <div class="explanation" id="exp-${i}"><b>📌 Explanation:</b> ${q.exp}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function checkAnswer(qi, chosen, correct){
+  const opts = document.querySelectorAll(`#opts-${qi} .option-btn`);
+  if(opts[0].disabled) return;
+  opts.forEach((btn,j)=>{
+    btn.disabled = true;
+    if(j === correct) btn.classList.add('correct');
+    else if(j === chosen && j !== correct) btn.classList.add('wrong');
+  });
+  document.getElementById(`exp-${qi}`).classList.add('show');
+  mcqScores.total++;
+  if(chosen === correct) mcqScores.correct++;
+  document.getElementById('scoreDisplay').textContent = `${mcqScores.correct} / ${mcqScores.total}`;
+}
+
+function resetMCQ(){
+  mcqScores = {correct:0, total:0};
+  document.getElementById('scoreDisplay').textContent = '0 / 0';
+  buildMCQs();
+}
+
+// ===== WRITTEN QUESTIONS =====
+const written = [
+  { type:"short", q:"Define OCL and state three of its main uses.", ans:`<b>Definition:</b> OCL (Object Constraint Language) is a formal language used to specify constraints on object-oriented models in UML. It produces boolean expressions that must hold true under specified conditions.<br><br><b>Three main uses:</b><ul class="styled"><li>Specifying <b>invariants</b> for classes — rules that must always hold</li><li>Specifying <b>pre- and post-conditions</b> for operations</li><li>As a <b>navigation language</b> to traverse UML associations</li></ul>` },
+  { type:"short", q:"What is the difference between a pre-condition and a post-condition in OCL? Give one example of each.", ans:`<b>Pre-condition:</b> A condition that must be TRUE <em>before</em> an operation executes. Written with keyword <code>pre</code>.<br><b>Post-condition:</b> A condition that must be TRUE <em>after</em> an operation executes. Written with keyword <code>post</code>. Can use <code>@pre</code> to refer to values before execution.<br><br><div class="code-block">context LoyaltyAccount::burn(i: Integer)
+pre:  points >= i and i >= 0   -- enough points
+post: points = points@pre - i  -- deducted correctly</div>` },
+  { type:"short", q:"What is the difference between 'dot' (.) and 'arrow' (->) in OCL? Why does this distinction matter?", ans:`<b>Dot (.)</b> is used to access an attribute or operation on a <em>single object</em>.<br><b>Arrow (->)</b> is used to call an operation on a <em>collection</em>.<br><br>The distinction matters because navigating an association with multiplicity > 1 returns a collection, not a single object. Using dot on a collection would be a type error.<br><br><div class="code-block">owner.age         -- dot: owner is single Customer
+owner.Membership->includes(m)  -- arrow: Membership is a collection</div>` },
+  { type:"short", q:"List and briefly describe the four types of OCL collections.", ans:`<ul class="styled"><li><b>Set</b> — No duplicate elements, unordered. Default result of single-step navigation.</li><li><b>Bag</b> — Duplicate elements allowed, unordered. Result of multi-step navigation.</li><li><b>Sequence</b> — Duplicate elements allowed, ordered. Supports first(), last(), indexOf().</li><li><b>OrderedSet</b> — No duplicates, ordered. Combination of Set and Sequence properties.</li></ul>` },
+  { type:"short", q:"Explain what 'self' means in OCL and when it can be omitted.", ans:`<b>self</b> is a keyword that refers to the <em>current instance</em> of the context class, equivalent to <code>this</code> in Java. It is automatically in scope within any OCL expression.<br><br>It can be <b>omitted</b> when the attribute or role being referenced belongs directly to the context class, as OCL will implicitly resolve it:<br><div class="code-block">context Mortgage
+invariant: self.startDate < self.endDate
+-- is the same as:
+invariant: startDate < endDate</div>` },
+  { type:"long", q:"Explain Model-Driven Engineering (MDE). What types of models exist? Why is MDE useful? Give two concrete examples.", ans:`<b>Definition:</b> MDE is an engineering approach that uses <em>prescriptive models as programs</em>. Instead of coding directly in implementation languages, engineers work with high-level models that capture system behavior and structure.<br><br><b>The Three Model Types:</b><ul class="styled"><li><b>Predictive</b> — Analyze past data to forecast future outcomes</li><li><b>Descriptive</b> — Create relationships and groupings in data</li><li><b>Prescriptive</b> — Make decisions based on all elements; used as programs in MDE</li></ul><br><b>Why MDE is Useful:</b><ul class="styled"><li>When implementation-level abstractions are <b>insufficient</b> for the domain</li><li>Engineers must repeatedly copy/paste <b>boilerplate code</b></li><li>Changes require modifying <b>multiple inter-related artifacts</b></li><li>Reasoning about system <b>properties is too complex</b> at the code level</li></ul><br><b>Example 1 — Boilerplate:</b> An ATM class with a screen attribute requires manual getters/setters in code. MDE tools generate this from a simple model, saving time and reducing errors.<br><br><b>Example 2 — Property Analysis:</b> A traffic light controller in code is hard to verify. A state machine model makes all transitions visible. For large systems, automated reachability analysis (impossible at code level) becomes feasible.` },
+  { type:"long", q:"Write OCL constraints for the Student/Module system for all six given requirements (a–f). Briefly explain each.", ans:`Given: Student takes Modules; Modules have Assessments (Exam/Coursework with weight:Integer); Students submit Assessments for modules.<br><br><div class="code-block">-- (a) Modules can be taken iff > 7 students registered
+context Module
+invariant: taken_by->size() > 7
+
+-- (b) Assessment weights must total 100%
+context Module
+invariant: set_work.weight->sum() = 100
+
+-- (c) Students register for exactly 120 credits
+context Student
+invariant: takes.credit->sum() = 120
+
+-- (d) At least 90 credits from CS modules
+context Student
+invariant:
+  takes->select(code.substring(1,2) = 'CS').credit->sum() >= 90
+
+-- (e) At least one assessment worth over 50%
+context Module
+invariant: set_work->exists(weight > 50)
+
+-- (f) Students only assessed in modules they take
+context Student
+invariant: takes->includesAll(submits.for_module)</div><br><b>Explanations:</b><ul class="styled"><li>(b) navigates to .weight on each assessment, then sums the collection</li><li>(d) uses select to filter by CS code prefix, then sums credits</li><li>(e) exists() returns true if any one assessment exceeds 50</li><li>(f) includesAll ensures the set of submitted modules is a subset of taken modules</li></ul>` },
+  { type:"long", q:"Compare the four OCL collection operations: select, reject, collect, and forAll. Give the syntax and a usage example for each.", ans:`<table><tr><th>Operation</th><th>Returns</th><th>Meaning</th></tr><tr><td>select</td><td>Collection (same type)</td><td>Keep elements that match condition</td></tr><tr><td>reject</td><td>Collection (same type)</td><td>Remove elements that match condition</td></tr><tr><td>collect</td><td>Bag (transformed)</td><td>Apply transformation to each element</td></tr><tr><td>forAll</td><td>Boolean</td><td>True only if ALL elements match</td></tr></table><br><div class="code-block">-- select: books not available
+books->select(b | b.available = false)->isEmpty()
+
+-- reject: no incomplete tasks
+tasks->reject(t | t.completed)->isEmpty()
+
+-- collect + sum: total cart cost
+items->collect(i | i.product.price * i.quantity)->sum() <= user.balance
+
+-- forAll: all quantities positive
+items->forAll(i | i.quantity > 0)</div><br><b>Key Difference:</b> select and reject return a <em>subcollection</em>; collect returns a <em>transformed collection</em>; forAll returns a <em>boolean</em> — not a collection.` },
+  { type:"short", q:"What is the difference between 'exists' and 'forAll' in OCL?", ans:`<ul class="styled"><li><b>forAll(cond)</b> — Returns TRUE only if <em>every single element</em> in the collection satisfies the condition. If any one element fails, it returns false.</li><li><b>exists(cond)</b> — Returns TRUE if <em>at least one element</em> in the collection satisfies the condition.</li></ul><div class="code-block">-- forAll: ALL items must have quantity > 0
+items->forAll(i | i.quantity > 0)
+
+-- exists: AT LEAST ONE book is popular
+books->exists(b | b.popularity > 100)</div>` },
+  { type:"long", q:"Why is OCL needed alongside UML? What are the three formal advantages of using constraints? How is context specified?", ans:`<b>Why UML Alone Is Insufficient:</b><br>UML provides structure (class diagrams) and behavior (sequence, state diagrams) but cannot precisely express <em>rules and constraints</em>. For example, "parallel tracks must be in different rooms" or "a mortgage start date must precede its end date" cannot be expressed in a UML diagram alone.<br><br>OCL was chosen over alternatives because:<ul class="styled"><li>First-order logic is not object-oriented</li><li>OCL is the only <em>standardized</em> OO constraint language</li></ul><br><b>Three Formal Advantages:</b><ul class="styled"><li><b>Better documentation</b> — OCL constraints document the model elements and their relationships beyond what visuals show</li><li><b>More precision</b> — Formal semantics reduce ambiguity in UML models</li><li><b>Communication without misunderstanding</b> — Developers communicate unambiguously via formal expressions</li></ul><br><b>Specifying Context:</b><div class="code-block">-- Method 1: context keyword
+context Mortgage
+invariant: startDate < endDate
+
+-- Method 2: Dashed note line in UML diagram
+
+-- Named invariant:
+context Mortgage
+invariant correctDates: startDate < endDate</div>` },
+];
+
+function buildWritten(){
+  const container = document.getElementById('written-container');
+  container.innerHTML = '';
+  written.forEach((w,i)=>{
+    const card = document.createElement('div');
+    card.className = 'written-card';
+    card.innerHTML = `
+      <div class="written-q" onclick="toggleWritten(${i})">
+        <div>
+          <span class="written-q-type ${w.type==='short'?'type-short':'type-long'}">${w.type==='short'?'Short Answer':'Long Answer'}</span>
+          <div class="written-q-text" style="margin-top:0.4rem">Q${i+1}: ${w.q}</div>
+        </div>
+        <span style="color:var(--muted); font-size:1.2rem; flex-shrink:0" id="wa-arrow-${i}">▼</span>
+      </div>
+      <div class="model-answer" id="wa-${i}">
+        <div class="model-answer-label">✅ Model Answer</div>
+        ${w.ans}
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function toggleWritten(i){
+  const el = document.getElementById(`wa-${i}`);
+  const arrow = document.getElementById(`wa-arrow-${i}`);
+  const open = el.classList.toggle('show');
+  arrow.style.transform = open ? 'rotate(180deg)' : '';
+  arrow.style.transition = 'transform 0.25s';
+}
+
+// ===== INIT =====
+buildMCQs();
+buildWritten();
+</script>
+</body>
+</html>
