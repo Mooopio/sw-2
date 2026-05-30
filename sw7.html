@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Microservices Exam Prep — Advanced Software Engineering</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,300&family=Bitter:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+/* ===== THEME VARIABLES ===== */
+:root[data-theme="dark"] {
+  --bg:       #080c14;
+  --bg2:      #0d1220;
+  --bg3:      #111827;
+  --bg4:      #161e2e;
+  --border:   #1e2d45;
+  --border2:  #263548;
+  --accent:   #38bdf8;
+  --accent2:  #fb7185;
+  --accent3:  #34d399;
+  --accent4:  #fbbf24;
+  --text:     #e2eaf6;
+  --text2:    #8ba3c4;
+  --text3:    #4a6480;
+  --card:     #0d1525;
+  --card2:    #111c30;
+  --correct:  rgba(52,211,153,0.12);
+  --correctb: #34d399;
+  --wrong:    rgba(251,113,133,0.12);
+  --wrongb:   #fb7185;
+  --glow:     rgba(56,189,248,0.08);
+}
+:root[data-theme="light"] {
+  --bg:       #f0f5fb;
+  --bg2:      #ffffff;
+  --bg3:      #e8f0f9;
+  --bg4:      #dce8f5;
+  --border:   #c8d9ee;
+  --border2:  #b0c8e2;
+  --accent:   #0284c7;
+  --accent2:  #e11d48;
+  --accent3:  #059669;
+  --accent4:  #d97706;
+  --text:     #0f1e33;
+  --text2:    #3d5470;
+  --text3:    #7a96b4;
+  --card:     #ffffff;
+  --card2:    #f5f9ff;
+  --correct:  #dcfce7;
+  --correctb: #16a34a;
+  --wrong:    #ffe4e6;
+  --wrongb:   #be123c;
+  --glow:     rgba(2,132,199,0.04);
+}
+
+/* ===== RESET ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Bitter', Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.8;
+  min-height: 100vh;
+  transition: background 0.35s, color 0.35s;
+}
+::selection { background: var(--accent); color: #000; }
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ===== GRID OVERLAY (visual flair) ===== */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 60px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1.75rem;
+}
+.nav-brand {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 900;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.nav-brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{ opacity:1; } 50%{ opacity:0.4; } }
+.nav-tabs {
+  display: flex; gap: 0.2rem; list-style: none;
+}
+.nav-tab {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.69rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 5px;
+  cursor: pointer;
+  color: var(--text2);
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.nav-tab:hover { color: var(--text); border-color: var(--border2); }
+.nav-tab.active { background: var(--accent); color: #000; font-weight: 600; border-color: var(--accent); }
+.nav-right { display: flex; align-items: center; gap: 0.6rem; }
+.theme-btn {
+  width: 36px; height: 36px; border-radius: 7px;
+  border: 1px solid var(--border); background: var(--bg3);
+  color: var(--text2); cursor: pointer; font-size: 0.9rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ===== MAIN ===== */
+.main {
+  position: relative; z-index: 1;
+  margin-top: 60px;
+  max-width: 920px;
+  margin-left: auto; margin-right: auto;
+  padding: 2.5rem 1.5rem 7rem;
+}
+.section { display: none; animation: slideUp 0.38s ease; }
+.section.active { display: block; }
+@keyframes slideUp { from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:translateY(0); } }
+
+/* ===== HERO ===== */
+.hero {
+  padding: 2.5rem 0 3rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 3rem;
+}
+.hero-eyebrow {
+  display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.2rem;
+}
+.hero-eyebrow-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.eyebrow-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); }
+.hero h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  margin-bottom: 1rem;
+}
+.hero h1 .hl { color: var(--accent); }
+.hero-sub { color: var(--text2); font-size: 1rem; max-width: 540px; font-style: italic; margin-bottom: 2.5rem; }
+.stats-row { display: flex; gap: 2rem; flex-wrap: wrap; }
+.stat-item { text-align: center; }
+.stat-val {
+  font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 2.2rem;
+  color: var(--accent3); letter-spacing: -0.03em; display: block;
+}
+.stat-lbl {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3);
+}
+
+/* ===== SECTION HEADINGS ===== */
+h2.st {
+  font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.8rem;
+  letter-spacing: -0.03em; margin-bottom: 0.3rem; color: var(--text);
+}
+.st-line {
+  width: 40px; height: 3px; background: var(--accent);
+  border-radius: 2px; margin-bottom: 1.5rem;
+}
+h3.ss {
+  font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.1rem;
+  color: var(--text); margin: 2.25rem 0 0.75rem;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+h3.ss::before { content: '//'; font-family: 'JetBrains Mono', monospace; color: var(--accent); font-size: 0.85rem; font-weight: 400; }
+h4.mt {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--accent2); margin-bottom: 0.6rem;
+}
+p { color: var(--text2); margin-bottom: 0.9rem; }
+strong { color: var(--text); font-weight: 600; }
+.intro-p { color: var(--text2); font-style: italic; margin-bottom: 2rem; }
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 1.4rem 1.5rem;
+  margin-bottom: 1.1rem; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.card:hover { border-color: var(--border2); box-shadow: 0 0 20px var(--glow); }
+.card-blue {
+  background: var(--card); border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 10px 10px 0; padding: 1.2rem 1.4rem; margin-bottom: 1.1rem;
+}
+.card-red {
+  background: var(--card); border: 1px solid var(--border);
+  border-left: 4px solid var(--accent2);
+  border-radius: 0 10px 10px 0; padding: 1.2rem 1.4rem; margin-bottom: 1.1rem;
+}
+.card-green {
+  background: var(--card); border: 1px solid var(--border);
+  border-left: 4px solid var(--accent3);
+  border-radius: 0 10px 10px 0; padding: 1.2rem 1.4rem; margin-bottom: 1.1rem;
+}
+.card-yellow {
+  background: var(--card); border: 1px solid var(--border);
+  border-left: 4px solid var(--accent4);
+  border-radius: 0 10px 10px 0; padding: 1.2rem 1.4rem; margin-bottom: 1.1rem;
+}
+
+/* ===== TAGS ===== */
+.tag {
+  display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+  padding: 0.18rem 0.55rem; border-radius: 4px; margin: 0.12rem;
+}
+.tag-blue { background: rgba(56,189,248,0.1); color: var(--accent); }
+.tag-red  { background: rgba(251,113,133,0.1); color: var(--accent2); }
+.tag-green{ background: rgba(52,211,153,0.1); color: var(--accent3); }
+.tag-yellow{ background: rgba(251,191,36,0.1); color: var(--accent4); }
+
+/* ===== CODE BLOCK ===== */
+.code {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 7px; padding: 0.9rem 1.1rem; margin: 0.7rem 0 1rem;
+  color: var(--accent3); overflow-x: auto; line-height: 1.65;
+}
+.code .kw { color: var(--accent); }
+.code .cm { color: var(--text3); font-style: italic; }
+
+/* ===== COLLAPSIBLE ===== */
+.coll {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 9px; margin-bottom: 0.7rem; overflow: hidden;
+}
+.coll-h {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.95rem 1.2rem; cursor: pointer; transition: background 0.2s;
+  gap: 1rem;
+}
+.coll-h:hover { background: var(--bg3); }
+.coll-title {
+  font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.95rem;
+  color: var(--text); flex: 1;
+}
+.coll-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.6rem;
+  padding: 0.15rem 0.5rem; border-radius: 3px; white-space: nowrap;
+}
+.coll-icon { font-size: 0.75rem; color: var(--text3); transition: transform 0.3s; font-family: 'JetBrains Mono', monospace; }
+.coll.open .coll-icon { transform: rotate(180deg); }
+.coll-body {
+  padding: 0 1.2rem; max-height: 0; overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s;
+}
+.coll.open .coll-body { max-height: 4000px; padding: 0 1.2rem 1.2rem; }
+
+/* ===== TABLE ===== */
+.tbl-wrap { overflow-x: auto; margin: 1rem 0; }
+table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+th {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 0.6rem 0.9rem; background: var(--bg3); color: var(--text2);
+  border: 1px solid var(--border); text-align: left;
+}
+td {
+  padding: 0.6rem 0.9rem; border: 1px solid var(--border);
+  color: var(--text2); vertical-align: top;
+}
+tr:hover td { background: var(--bg4); }
+
+/* ===== BULLET LIST ===== */
+.bl { list-style: none; padding: 0; margin-bottom: 0.9rem; }
+.bl li {
+  padding: 0.35rem 0 0.35rem 1.4rem; color: var(--text2);
+  font-size: 0.95rem; position: relative;
+}
+.bl li::before { content: '›'; position: absolute; left: 0; color: var(--accent3); font-size: 0.85rem; top: 0.45rem; }
+.bl li strong { color: var(--text); }
+
+/* ===== COMPARE GRID ===== */
+.cmp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+@media(max-width:600px){ .cmp-grid { grid-template-columns: 1fr; } }
+.cmp-card { background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 1.1rem 1.2rem; }
+.cmp-label {
+  font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.85rem;
+  margin-bottom: 0.6rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+}
+.cmp-label.blue { color: var(--accent); }
+.cmp-label.red  { color: var(--accent2); }
+
+/* ===== MNEMONIC ===== */
+.mnemonic {
+  background: linear-gradient(135deg, rgba(56,189,248,0.05), rgba(52,211,153,0.05));
+  border: 1px dashed var(--accent3); border-radius: 10px;
+  padding: 1.25rem; margin: 1rem 0; text-align: center;
+}
+.mn-label { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent3); margin-bottom: 0.5rem; }
+.mn-word { font-family: 'Outfit', sans-serif; font-size: 2.2rem; font-weight: 900; letter-spacing: 0.12em; color: var(--text); margin-bottom: 0.4rem; }
+.mn-exp { font-size: 0.85rem; color: var(--text2); }
+
+/* ===== MCQ ===== */
+.mcq-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 1.4rem; margin-bottom: 1.5rem;
+}
+.mcq-meta { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.8rem; }
+.mcq-num { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text3); }
+.diff { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; padding: 0.13rem 0.48rem; border-radius: 100px; }
+.d-e { background: rgba(52,211,153,0.15); color: var(--accent3); }
+.d-m { background: rgba(251,191,36,0.15); color: var(--accent4); }
+.d-h { background: rgba(251,113,133,0.15); color: var(--accent2); }
+.mcq-q { font-size: 0.98rem; color: var(--text); margin-bottom: 1rem; line-height: 1.65; font-family: 'Bitter', serif; }
+.mcq-opts { display: flex; flex-direction: column; gap: 0.45rem; }
+.mcq-opt {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+  padding: 0.55rem 0.95rem; border-radius: 7px;
+  border: 1px solid var(--border); cursor: pointer;
+  color: var(--text2); background: var(--bg2);
+  transition: all 0.18s; display: flex; gap: 0.6rem; align-items: flex-start;
+}
+.mcq-opt:hover { border-color: var(--accent); color: var(--text); }
+.mcq-opt.correct { background: var(--correct); color: var(--correctb); border-color: var(--correctb); }
+.mcq-opt.wrong   { background: var(--wrong);   color: var(--wrongb);   border-color: var(--wrongb); }
+.mcq-opt.disabled { cursor: default; }
+.opt-l { font-weight: 700; color: var(--accent); min-width: 1rem; }
+.mcq-exp {
+  margin-top: 0.9rem; padding: 0.8rem 1rem;
+  background: var(--bg3); border-radius: 7px; font-size: 0.86rem;
+  color: var(--text2); border-left: 3px solid var(--accent3); display: none;
+}
+.mcq-exp.show { display: block; animation: slideUp 0.3s ease; }
+.prog-wrap { margin-bottom: 1.5rem; }
+.prog-lbl { font-family: 'JetBrains Mono', monospace; font-size: 0.67rem; color: var(--text3); display: flex; justify-content: space-between; margin-bottom: 0.3rem; }
+.prog-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); transition: width 0.5s ease; }
+.reset-btn {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+  padding: 0.45rem 1.1rem; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--bg2);
+  color: var(--text2); cursor: pointer; transition: all 0.2s; margin-top: 1rem;
+}
+.reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ===== WRITTEN ===== */
+.wq-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 1rem; }
+.wq-q { padding: 1.2rem 1.4rem; font-size: 0.98rem; color: var(--text); line-height: 1.65; }
+.wq-toggle {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+  padding: 0.45rem 1.2rem; background: var(--bg3); border: none;
+  border-top: 1px solid var(--border); color: var(--accent);
+  cursor: pointer; width: 100%; text-align: left; transition: background 0.2s;
+}
+.wq-toggle:hover { background: var(--bg4); }
+.wq-ans {
+  max-height: 0; overflow: hidden; padding: 0;
+  transition: max-height 0.4s ease, padding 0.3s;
+  font-size: 0.9rem; color: var(--text2);
+}
+.wq-ans.show { max-height: 2500px; padding: 1.2rem 1.4rem; border-top: 1px solid var(--border); }
+.model-lbl { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent3); margin-bottom: 0.5rem; }
+
+/* ===== REVISION ===== */
+.rev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; margin-bottom: 1.4rem; }
+@media(max-width:600px){ .rev-grid { grid-template-columns: 1fr; } }
+.rev-c { background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 1rem 1.1rem; }
+.rev-c h4 { font-family: 'Outfit', sans-serif; font-size: 0.88rem; font-weight: 700; color: var(--accent); margin-bottom: 0.55rem; }
+.ri { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text2); margin-bottom: 0.3rem; display: flex; gap: 0.35rem; }
+.ri::before { content: "→"; color: var(--accent3); flex-shrink: 0; }
+
+/* ===== DIVIDER ===== */
+hr.div { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+/* ===== PROGRESS BAR (bottom) ===== */
+.bot-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 3px; background: var(--border); z-index: 999; }
+.bot-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); transition: width 0.5s ease; }
+
+/* ===== MOBILE NAV ===== */
+.mob-nav {
+  display: none; position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--bg2); border-top: 1px solid var(--border);
+  padding: 0.4rem; z-index: 100; gap: 0.2rem; justify-content: space-around;
+}
+@media(max-width:768px){ .mob-nav { display: flex; } .nav-tabs { display: none; } }
+.mob-tab {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.58rem;
+  padding: 0.35rem 0.45rem; border-radius: 5px; cursor: pointer;
+  color: var(--text2); border: 1px solid transparent; text-align: center; flex: 1; transition: all 0.2s;
+}
+.mob-tab.active { background: var(--accent); color: #000; }
+
+/* ===== ARCH DIAGRAM ===== */
+.arch {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 10px;
+  padding: 1.5rem; margin: 1rem 0; font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem; color: var(--text2); overflow-x: auto;
+}
+.arch-title { color: var(--accent); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
+.arch-box {
+  display: inline-block; padding: 0.4rem 0.8rem; border: 1px solid var(--border2);
+  border-radius: 5px; background: var(--card); margin: 0.25rem; color: var(--text);
+  white-space: nowrap;
+}
+.arch-box.highlight { border-color: var(--accent); color: var(--accent); }
+.arch-box.green { border-color: var(--accent3); color: var(--accent3); }
+.arch-box.red { border-color: var(--accent2); color: var(--accent2); }
+.arch-arrow { color: var(--text3); margin: 0 0.2rem; }
+.arch-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 0.5rem; }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-brand"><span class="dot"></span> Microservices ExamPrep</div>
+  <ul class="nav-tabs">
+    <li class="nav-tab active"  onclick="show('explanation')">📖 Explanation</li>
+    <li class="nav-tab"         onclick="show('summary')">📋 Summary</li>
+    <li class="nav-tab"         onclick="show('memory')">🧩 Memory</li>
+    <li class="nav-tab"         onclick="show('mcq')">❓ MCQs</li>
+    <li class="nav-tab"         onclick="show('written')">✍️ Written</li>
+    <li class="nav-tab"         onclick="show('revision')">⚡ Revision</li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- ============================================================
+     SECTION 1 — EXPLANATION
+     ============================================================ -->
+<section id="explanation" class="section active">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">
+      <span class="hero-eyebrow-text">Advanced Software Engineering — Dr. Salwa Osama</span>
+      <div class="eyebrow-line"></div>
+    </div>
+    <h1><span class="hl">Micro</span>services<br/>Architecture</h1>
+    <p class="hero-sub">A complete exam preparation system covering every concept, definition, example, and design pattern from the lecture slides.</p>
+    <div class="stats-row">
+      <div class="stat-item"><span class="stat-val">7</span><span class="stat-lbl">Core Concepts</span></div>
+      <div class="stat-item"><span class="stat-val">6</span><span class="stat-lbl">Benefits</span></div>
+      <div class="stat-item"><span class="stat-val">7</span><span class="stat-lbl">Challenges</span></div>
+      <div class="stat-item"><span class="stat-val">38</span><span class="stat-lbl">MCQ Questions</span></div>
+    </div>
+  </div>
+
+  <!-- 1. MONOLITHIC -->
+  <h2 class="st">1. Monolithic Architecture</h2>
+  <div class="st-line"></div>
+
+  <div class="card-blue">
+    <h4 class="mt">Definition</h4>
+    <p>A <strong>monolithic application</strong> is a single-tiered software application in which the <strong>user interface and data access code are combined into a single program from a single platform</strong>.</p>
+    <p>It is self-contained and independent from other computing applications. The design philosophy is that the application is responsible not just for a particular task, but can <strong>perform every step needed to complete a particular function</strong>.</p>
+  </div>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">🏗️ How a Monolith Works — The Hospital Analogy</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>The slides use a <strong>Hospital OPD (OutPatient Department)</strong> as the example for transitioning from monolithic to microservices.</p>
+      <p>In a <em>monolithic hospital system</em>: the entire patient journey — registration, doctor consultation, lab tests, pharmacy, billing — all lives inside one massive application. One failure (say, the billing module crashes) could take the whole system down.</p>
+      <p>In a <em>microservices hospital system</em>: Registration, Consultation, Lab, Pharmacy, and Billing are each <strong>separate independent services</strong> with their own data stores, deployable independently.</p>
+    </div>
+  </div>
+
+  <hr class="div"/>
+
+  <!-- 2. MICROSERVICES -->
+  <h2 class="st">2. Microservices — Definition & Characteristics</h2>
+  <div class="st-line"></div>
+
+  <div class="card-green">
+    <h4 class="mt">Core Definition</h4>
+    <p>Microservices are <strong>small, independent, and loosely coupled</strong> services. A single small team of developers can write and maintain a service.</p>
+  </div>
+
+  <h3 class="ss">10 Key Characteristics</h3>
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">1. Separate Codebase per Service</span>
+      <span class="coll-badge tag-blue">Core</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>Each microservice is a <strong>separate codebase</strong> that can be managed by a small dedicated development team. No single massive repository holds everything.</p>
+    </div>
+  </div>
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">2. Independent Deployment</span>
+      <span class="coll-badge tag-green">Critical</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>Services can be <strong>deployed independently</strong>. A team can update an existing service <strong>without rebuilding and redeploying the entire application</strong>. This is perhaps the biggest operational advantage.</p>
+      <p><strong>Analogy:</strong> You can replace a single engine part in an airplane without grounding the whole fleet.</p>
+    </div>
+  </div>
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">3. Own Data Persistence</span>
+      <span class="coll-badge tag-blue">Core</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>Services are responsible for <strong>persisting their own data or external state</strong>. This differs from the traditional model where a separate shared data layer handles all data persistence.</p>
+      <div class="card-red">
+        <p>⚠️ <strong>Exam Trap:</strong> This is why <em>data consistency</em> becomes a challenge in microservices — each service owns its own database, so cross-service consistency is hard.</p>
+      </div>
+    </div>
+  </div>
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">4. Well-defined API Communication</span>
+      <span class="coll-badge tag-yellow">Important</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>Services communicate with each other using <strong>well-defined APIs</strong>. The internal implementation details of each service are <strong>hidden from other services</strong> (encapsulation at the service level).</p>
+    </div>
+  </div>
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">5. Polyglot Programming Support</span>
+      <span class="coll-badge tag-green">Key Feature</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>Microservices support <strong>polyglot programming</strong>. Services <strong>don't need to share the same technology stack, libraries, or frameworks</strong>. Service A can be Python + PostgreSQL; Service B can be Node.js + MongoDB.</p>
+    </div>
+  </div>
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">6–10. Additional Characteristics</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <ul class="bl">
+        <li><strong>Single Responsibility</strong> — each service does one thing well</li>
+        <li><strong>Business Boundary</strong> — services are defined by business logic using DDD (Domain-Driven Design)</li>
+        <li><strong>Function Boundary</strong> — services are bounded by development functions</li>
+        <li><strong>Small team manageable</strong> — "two-pizza team" rule applies</li>
+        <li><strong>Loosely coupled</strong> — changes to one service minimally affect others</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="div"/>
+
+  <!-- 3. DOMAIN DRIVEN DESIGN -->
+  <h2 class="st">3. Domain-Driven Design (DDD)</h2>
+  <div class="st-line"></div>
+  <div class="card-blue">
+    <h4 class="mt">Definition</h4>
+    <p><strong>Domain-Driven Design (DDD)</strong> is a major software design approach that focuses on <strong>modeling software to match a domain according to input from that domain's experts</strong>.</p>
+    <p>Under DDD, the <strong>structure and language of software code</strong> (class names, class methods, class variables) <strong>should match the business domain</strong>. For example, a banking system should have classes named <code>Account</code>, <code>Transaction</code>, <code>Ledger</code> — not generic names like <code>DataHandler</code>.</p>
+  </div>
+  <p>DDD is the principle behind the <strong>Business Boundary</strong> characteristic of microservices — each microservice aligns to a specific domain (e.g., Payments domain, Inventory domain, Customer domain).</p>
+
+  <hr class="div"/>
+
+  <!-- 4. BENEFITS -->
+  <h2 class="st">4. Benefits of Microservices Architecture</h2>
+  <div class="st-line"></div>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">🚀 1. Faster Deployments</span>
+      <span class="coll-badge tag-blue">Benefit</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>Microservices architecture allows for <strong>faster development and deployments</strong> since it simplifies the design. Each module is easily <strong>built, tested and deployed independently</strong>, giving businesses increased agility and faster time to market.</p>
+      <p><strong>Analogy:</strong> Rather than shipping an entire factory, you ship individual product lines — faster and more targeted.</p>
+    </div>
+  </div>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">📈 2. Scalability</span>
+      <span class="coll-badge tag-blue">Benefit</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>Offers <strong>ease in scalability</strong> since the modules work independently and each has a <strong>bounded context</strong>. The design allows fast addition of new features. With <strong>test automation</strong>, each module is tested independently and the whole system can be tested in minutes automatically.</p>
+      <p><strong>Analogy:</strong> If your checkout service is overloaded on Black Friday, scale only that service — not the whole application.</p>
+    </div>
+  </div>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">⬆️ 3. Guaranteed Up-time</span>
+      <span class="coll-badge tag-blue">Benefit</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>With the right microservices architecture, it is <strong>almost impossible for the whole system to go down</strong>. Since each microservice is built, deployed and managed independently and is totally <strong>isolated at runtime</strong>, the whole system can never go down from a single failure.</p>
+    </div>
+  </div>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">🔓 4. No Vendor Lock-in</span>
+      <span class="coll-badge tag-blue">Benefit</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>Microservices are based on <strong>open standards</strong> backed by the open-source community. Almost all commercial microservices platforms follow these open standards, making it easy to <strong>migrate</strong> from them if needed. Standard-based APIs make it easy to extend and use different programming languages and technologies.</p>
+    </div>
+  </div>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">🛡️ 5. Resilience &amp; Robustness</span>
+      <span class="coll-badge tag-blue">Benefit</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>Platforms are far more <strong>resilient and robust</strong>. <strong>Kubernetes or OpenShift</strong> container platforms monitor and <strong>self-heal</strong> whenever the system is affected. Orchestration capabilities can <strong>self-monitor and restart failed components</strong>. Self-healing extends from monitoring infrastructure, clusters to nodes and pods.</p>
+      <div class="card-yellow">
+        <p>📌 <strong>Exam Note:</strong> Kubernetes and OpenShift are the specific platform examples given in the lecture for orchestration and self-healing.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">👥 6. Dynamic Talent Pool</span>
+      <span class="coll-badge tag-blue">Benefit</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>With microservices, it's easier to <strong>onboard new team members</strong> as well as hire software engineers with <strong>different coding backgrounds</strong>. Since services are independent and can use different tech stacks, specialists in different technologies can each contribute to their relevant service.</p>
+    </div>
+  </div>
+
+  <hr class="div"/>
+
+  <!-- 5. CHALLENGES -->
+  <h2 class="st">5. Challenges in Microservices</h2>
+  <div class="st-line"></div>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">⚡ 1. Complexity</span>
+      <span class="coll-badge tag-red">Challenge</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>A microservices application has <strong>more moving parts</strong> than the equivalent monolithic application. Each service is simpler, but the <strong>entire system as a whole is more complex</strong>. You now manage dozens of services, deployments, and communications instead of one monolith.</p>
+    </div>
+  </div>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">🛠️ 2. Development and Testing</span>
+      <span class="coll-badge tag-red">Challenge</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>Writing a small service that relies on other <strong>dependent services requires a different approach</strong>. Existing tools are not always designed to work with service dependencies. <strong>Refactoring across service boundaries can be difficult</strong>. It is also challenging to test service dependencies, especially when the application is evolving quickly.</p>
+    </div>
+  </div>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">🌐 3. Network Congestion &amp; Latency</span>
+      <span class="coll-badge tag-red">Challenge</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>The use of many small, granular services results in <strong>more inter-service communication</strong>. If the chain of service dependencies gets too long (Service A calls B, which calls C...), the <strong>additional latency can become a problem</strong>.</p>
+      <ul class="bl">
+        <li>Design APIs carefully</li>
+        <li>Avoid overly <strong>chatty APIs</strong></li>
+        <li>Think about <strong>serialization formats</strong></li>
+        <li>Use <strong>asynchronous communication patterns</strong> like queue-based load leveling</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">🗄️ 4. Data Integrity</span>
+      <span class="coll-badge tag-red">Challenge</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>With each microservice responsible for its <strong>own data persistence</strong>, <strong>data consistency can be a challenge</strong>. Maintaining consistency across multiple service-owned databases (distributed data) requires distributed transaction patterns that are complex to implement.</p>
+    </div>
+  </div>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">🔢 5. Versioning</span>
+      <span class="coll-badge tag-red">Challenge</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p><strong>Updates to a service must not break services that depend on it</strong>. Multiple services could be updated at any given time, so without careful design, you might have problems with <strong>backward or forward compatibility</strong>.</p>
+    </div>
+  </div>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">🎓 6. Skill Set</span>
+      <span class="coll-badge tag-red">Challenge</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>Microservices are <strong>highly distributed systems</strong>. Teams must carefully evaluate whether they have the <strong>skills and experience</strong> to be successful. Understanding concepts like distributed computing, container orchestration, and service mesh requires advanced expertise.</p>
+    </div>
+  </div>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">🏛️ 7. Lack of Governance</span>
+      <span class="coll-badge tag-red">Challenge</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>The <strong>decentralized approach</strong> has advantages, but can also lead to problems. You might end up with <strong>so many different languages and frameworks</strong> that the application becomes hard to maintain. Without governance standards, teams make incompatible technology choices.</p>
+    </div>
+  </div>
+
+  <hr class="div"/>
+
+  <!-- 6. COMMUNICATION -->
+  <h2 class="st">6. Communication Design</h2>
+  <div class="st-line"></div>
+
+  <div class="cmp-grid">
+    <div class="cmp-card">
+      <div class="cmp-label blue">Synchronous Communication</div>
+      <ul class="bl">
+        <li>A service calls an <strong>API that another service exposes</strong></li>
+        <li>Protocol: <strong>HTTP</strong> or <strong>gRPC</strong></li>
+        <li>Caller <strong>waits for a response</strong> from receiver</li>
+        <li>Also called: <strong>HTTP Communication</strong> / REST API</li>
+        <li>Simple; good for request-reply patterns</li>
+        <li>⚠️ Risk: chain latency if many services depend on each other</li>
+      </ul>
+    </div>
+    <div class="cmp-card">
+      <div class="cmp-label red">Asynchronous Communication</div>
+      <ul class="bl">
+        <li>A service <strong>sends message without waiting</strong> for a response</li>
+        <li>One or more services process the message asynchronously</li>
+        <li>Types: <strong>Message Communication</strong> (message broker) and <strong>Event-driven Communication</strong></li>
+        <li>Better for latency-sensitive or high-volume systems</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 class="ss">Three Communication Types</h3>
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">1. HTTP Communication (Synchronous)</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>Also known as <strong>Synchronous communication</strong>. Calls between services via <strong>REST API</strong> is a viable option for service-to-service communication. The caller waits for the callee to respond.</p>
+    </div>
+  </div>
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">2. Message Communication (Asynchronous)</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>Also known as <strong>Asynchronous communication</strong>. Services push messages to a <strong>message broker</strong> that other services <strong>subscribe to</strong>. Examples: RabbitMQ, Apache Kafka.</p>
+      <p><strong>Analogy:</strong> Like a postal system — you drop a letter (message) in a mailbox (broker), and the recipient picks it up when ready.</p>
+    </div>
+  </div>
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">3. Event-Driven Communication (Asynchronous)</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>Another type of <strong>Asynchronous communication</strong>. Services <strong>don't need to know the common message structure</strong> — they react to events. This is the most decoupled form of communication.</p>
+      <p><strong>Analogy:</strong> Like a smoke alarm — every device reacts to the event (smoke detected) independently, without knowing about each other.</p>
+    </div>
+  </div>
+
+  <hr class="div"/>
+
+  <!-- 7. API GATEWAY -->
+  <h2 class="st">7. API Gateway</h2>
+  <div class="st-line"></div>
+  <div class="card-green">
+    <h4 class="mt">Definition</h4>
+    <p>An <strong>API Gateway</strong> is a fully managed service that makes it easy for developers to <strong>create, publish, maintain, monitor, and secure APIs at any scale</strong>. APIs act as the <strong>"front door"</strong> for applications to access data, business logic, or functionality from backend services.</p>
+  </div>
+  <div class="card-yellow">
+    <p>📌 <strong>Exam Note from slides:</strong> <strong>Microsoft Azure</strong> is cited as the best API Gateway product, supporting Dashboard configuration. The slides explicitly say "The Best one — supports Dashboard configuration."</p>
+  </div>
+
+  <div class="arch">
+    <div class="arch-title">// API Gateway Architecture Pattern</div>
+    <div class="arch-row">
+      <span class="arch-box">Mobile Client</span>
+      <span class="arch-arrow">→</span>
+      <span class="arch-box highlight">API Gateway</span>
+      <span class="arch-arrow">→</span>
+      <span class="arch-box green">User Service</span>
+    </div>
+    <div class="arch-row">
+      <span class="arch-box">Web Client</span>
+      <span class="arch-arrow">→</span>
+      <span class="arch-box highlight">API Gateway</span>
+      <span class="arch-arrow">→</span>
+      <span class="arch-box green">Order Service</span>
+    </div>
+    <div class="arch-row">
+      <span class="arch-box">3rd Party</span>
+      <span class="arch-arrow">→</span>
+      <span class="arch-box highlight">API Gateway</span>
+      <span class="arch-arrow">→</span>
+      <span class="arch-box green">Payment Service</span>
+    </div>
+  </div>
+
+  <hr class="div"/>
+
+  <!-- 8. SERVICE DISCOVERY -->
+  <h2 class="st">8. Service Discovery</h2>
+  <div class="st-line"></div>
+
+  <div class="card-blue">
+    <h4 class="mt">The Problem</h4>
+    <p>In a modern cloud-based microservices application, service instances have <strong>dynamically assigned network locations</strong>. The set of instances changes dynamically because of <strong>autoscaling, failures, and upgrades</strong>. Client code cannot simply read from a static config file to find services — it needs an <strong>elaborate service discovery mechanism</strong>.</p>
+  </div>
+
+  <div class="card-green">
+    <h4 class="mt">Solution: Service Registry</h4>
+    <p>A <strong>Service Registry</strong> is a database of available service instances. Services register themselves when they start and de-register when they stop. Clients query the registry to find available instances.</p>
+  </div>
+
+  <h3 class="ss">Three Properties of Service Discovery</h3>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">⚖️ 1. Load Balanced</span>
+      <span class="coll-badge tag-blue">Property</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>Service Discovery should <strong>dynamically load balance requests</strong> across all service instances to ensure that service invocations are <strong>spread across all service instances managed by it</strong>. No single instance gets overwhelmed.</p>
+      <p><strong>Analogy:</strong> Like a traffic controller at a toll plaza — directing cars to the least-busy lane.</p>
+    </div>
+  </div>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">🔄 2. Resilient</span>
+      <span class="coll-badge tag-green">Property</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>The client should <strong>"cache" service information locally</strong>. Local caching allows for <strong>gradual degradation</strong> of the service discovery feature so that if the service discovery service becomes unavailable, applications can still function and locate services based on information in its <strong>local cache</strong>.</p>
+    </div>
+  </div>
+
+  <div class="coll open">
+    <div class="coll-h" onclick="toggleColl(this)">
+      <span class="coll-title">🛡️ 3. Fault-tolerant</span>
+      <span class="coll-badge tag-yellow">Property</span>
+      <span class="coll-icon">▼</span>
+    </div>
+    <div class="coll-body">
+      <p>Service Discovery should <strong>detect when a service instance isn't healthy</strong> and <strong>remove the instance from the list</strong> of available services. This ensures clients are never directed to a failed or unhealthy instance.</p>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ============================================================
+     SECTION 2 — SUMMARY
+     ============================================================ -->
+<section id="summary" class="section">
+  <h2 class="st">Smart Summary</h2>
+  <div class="st-line"></div>
+  <p class="intro-p">High-impact, hierarchical, exam-optimized summary of every key concept.</p>
+
+  <div class="card">
+    <h4 class="mt">🏗️ Monolithic vs Microservices — Core Contrast</h4>
+    <ul class="bl">
+      <li><strong>Monolithic:</strong> Single-tiered, UI + data access in one program, self-contained, does everything in one platform</li>
+      <li><strong>Microservices:</strong> Small + independent + loosely coupled; each team owns one service; polyglot; own DB per service; API communication</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h4 class="mt">📋 10 Microservice Characteristics (High-Yield)</h4>
+    <ul class="bl">
+      <li><strong>Small, independent, loosely coupled</strong></li>
+      <li><strong>Separate codebase</strong> per service, managed by small team</li>
+      <li><strong>Independent deployment</strong> — no full rebuild needed</li>
+      <li><strong>Own data persistence</strong> — not a shared database</li>
+      <li><strong>Well-defined APIs</strong> — internal details hidden</li>
+      <li><strong>Polyglot programming</strong> — different stacks per service</li>
+      <li><strong>Single Responsibility</strong></li>
+      <li><strong>Business Boundary</strong> via DDD</li>
+      <li><strong>Function Boundary</strong> for development</li>
+      <li><strong>Loosely coupled</strong> interactions</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h4 class="mt">✅ 6 Benefits (FSGN RD)</h4>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Benefit</th><th>Key Fact</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Faster Deployments</strong></td><td>Build, test, deploy independently; agility; time to market</td></tr>
+          <tr><td>2</td><td><strong>Scalability</strong></td><td>Bounded context; scale individual services; test automation</td></tr>
+          <tr><td>3</td><td><strong>Guaranteed Up-time</strong></td><td>Isolated at runtime; whole system can never go down</td></tr>
+          <tr><td>4</td><td><strong>No Vendor Lock-in</strong></td><td>Open standards; easy migration; standard APIs</td></tr>
+          <tr><td>5</td><td><strong>Resilience &amp; Robustness</strong></td><td>Kubernetes/OpenShift; self-healing; orchestration</td></tr>
+          <tr><td>6</td><td><strong>Dynamic Talent Pool</strong></td><td>Easier onboarding; different tech backgrounds</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="mt">⚠️ 7 Challenges (CDNDVSL)</h4>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Challenge</th><th>Core Issue</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Complexity</strong></td><td>More moving parts; simpler parts, complex whole</td></tr>
+          <tr><td>2</td><td><strong>Development &amp; Testing</strong></td><td>Service dependencies; hard to test; existing tools limited</td></tr>
+          <tr><td>3</td><td><strong>Network Congestion &amp; Latency</strong></td><td>Chatty APIs; long dependency chains; need async patterns</td></tr>
+          <tr><td>4</td><td><strong>Data Integrity</strong></td><td>Each service owns its DB; distributed consistency is hard</td></tr>
+          <tr><td>5</td><td><strong>Versioning</strong></td><td>Backward/forward compatibility; no breaking dependent services</td></tr>
+          <tr><td>6</td><td><strong>Skill Set</strong></td><td>Highly distributed systems; need experienced team</td></tr>
+          <tr><td>7</td><td><strong>Lack of Governance</strong></td><td>Decentralized → many languages/frameworks → hard to maintain</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="mt">📡 3 Communication Types</h4>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Type</th><th>Category</th><th>Protocol/Tool</th><th>Caller Waits?</th></tr></thead>
+        <tbody>
+          <tr><td><strong>HTTP</strong></td><td>Synchronous</td><td>HTTP / gRPC / REST API</td><td>Yes</td></tr>
+          <tr><td><strong>Message</strong></td><td>Asynchronous</td><td>Message Broker (Kafka, RabbitMQ)</td><td>No</td></tr>
+          <tr><td><strong>Event-Driven</strong></td><td>Asynchronous</td><td>Events; no shared message structure</td><td>No</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="mt">🔍 API Gateway &amp; Service Discovery</h4>
+    <ul class="bl">
+      <li><strong>API Gateway:</strong> "Front door" — create, publish, maintain, monitor, secure APIs at scale. Best product: Microsoft Azure</li>
+      <li><strong>Service Discovery Problem:</strong> Dynamic IPs + autoscaling → static config files don't work</li>
+      <li><strong>Service Registry:</strong> Database of available services (Load balanced + Resilient + Fault-tolerant)</li>
+      <li><strong>Load Balanced:</strong> Dynamically spread requests across all instances</li>
+      <li><strong>Resilient:</strong> Client caches service info locally; works even if registry goes down</li>
+      <li><strong>Fault-tolerant:</strong> Detects unhealthy instances and removes them from the list</li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SECTION 3 — MEMORY
+     ============================================================ -->
+<section id="memory" class="section">
+  <h2 class="st">🧩 Memory Optimization</h2>
+  <div class="st-line"></div>
+  <p class="intro-p">Mnemonics, traps, chunking, and comparison tables to lock in every concept.</p>
+
+  <div class="mnemonic">
+    <div class="mn-label">🔤 Mnemonic — 6 Benefits of Microservices</div>
+    <div class="mn-word">FSGN·RD</div>
+    <div class="mn-exp">
+      <strong>F</strong>aster Deployments &nbsp;·&nbsp; <strong>S</strong>calability &nbsp;·&nbsp; <strong>G</strong>uaranteed Up-time &nbsp;·&nbsp; <strong>N</strong>o Vendor Lock &nbsp;·&nbsp; <strong>R</strong>esilience &amp; Robustness &nbsp;·&nbsp; <strong>D</strong>ynamic Talent Pool
+    </div>
+  </div>
+
+  <div class="mnemonic">
+    <div class="mn-label">🔤 Mnemonic — 7 Challenges</div>
+    <div class="mn-word">C·DNDVSL</div>
+    <div class="mn-exp">
+      <strong>C</strong>omplexity &nbsp;·&nbsp; <strong>D</strong>evelopment &amp; Testing &nbsp;·&nbsp; <strong>N</strong>etwork Latency &nbsp;·&nbsp; <strong>D</strong>ata Integrity &nbsp;·&nbsp; <strong>V</strong>ersioning &nbsp;·&nbsp; <strong>S</strong>kill Set &nbsp;·&nbsp; <strong>L</strong>ack of Governance
+    </div>
+  </div>
+
+  <div class="mnemonic">
+    <div class="mn-label">🔤 Mnemonic — 3 Service Discovery Properties</div>
+    <div class="mn-word">L·R·F</div>
+    <div class="mn-exp">
+      <strong>L</strong>oad Balanced &nbsp;·&nbsp; <strong>R</strong>esilient &nbsp;·&nbsp; <strong>F</strong>ault-tolerant
+    </div>
+  </div>
+
+  <div class="mnemonic">
+    <div class="mn-label">🔤 Mnemonic — 3 Communication Types</div>
+    <div class="mn-word">H·M·E</div>
+    <div class="mn-exp">
+      <strong>H</strong>TTP (Sync) &nbsp;·&nbsp; <strong>M</strong>essage Broker (Async) &nbsp;·&nbsp; <strong>E</strong>vent-Driven (Async)
+    </div>
+  </div>
+
+  <h3 class="ss">⚠️ Common Exam Traps</h3>
+
+  <div class="card-red">
+    <h4 class="mt">Trap 1 — "Microservices = Simple System"</h4>
+    <p>FALSE. Each individual service is simpler, but the <strong>entire system as a whole is MORE complex</strong>, not less. This is one of the core challenges (Complexity). Don't confuse part-simplicity with system-simplicity.</p>
+  </div>
+
+  <div class="card-red">
+    <h4 class="mt">Trap 2 — Shared Database in Microservices</h4>
+    <p>In microservices, each service has its <strong>own data persistence</strong>. They do NOT share a central database. This is a fundamental difference from monolithic architecture and the reason why Data Integrity is a challenge.</p>
+  </div>
+
+  <div class="card-red">
+    <h4 class="mt">Trap 3 — Message vs Event-Driven Communication</h4>
+    <ul class="bl">
+      <li><strong>Message Communication:</strong> Uses a <em>message broker</em>; services subscribe to it; they DO share a common message structure</li>
+      <li><strong>Event-Driven Communication:</strong> Services <em>don't need to know the common message structure</em> — this is the key differentiator</li>
+    </ul>
+  </div>
+
+  <div class="card-red">
+    <h4 class="mt">Trap 4 — Resilient ≠ Fault-tolerant (in Service Discovery)</h4>
+    <ul class="bl">
+      <li><strong>Resilient</strong> = client caches service info locally; app still works even if the discovery service itself goes down</li>
+      <li><strong>Fault-tolerant</strong> = the discovery service detects and removes unhealthy service instances</li>
+    </ul>
+  </div>
+
+  <div class="card-red">
+    <h4 class="mt">Trap 5 — Lack of Governance is NOT a benefit</h4>
+    <p>The decentralized nature of microservices is both a <em>benefit</em> (polyglot, flexibility) AND a <em>challenge</em> (Lack of Governance). The exam might try to confuse these. The challenge is when decentralization leads to an unmanageable mix of languages and frameworks.</p>
+  </div>
+
+  <div class="card-red">
+    <h4 class="mt">Trap 6 — API Gateway is NOT Service Discovery</h4>
+    <ul class="bl">
+      <li><strong>API Gateway:</strong> Entry point for external clients; manages API lifecycle (create, publish, secure)</li>
+      <li><strong>Service Discovery:</strong> Internal mechanism for services to find each other dynamically</li>
+    </ul>
+  </div>
+
+  <h3 class="ss">📊 Monolithic vs Microservices Comparison</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Dimension</th><th>Monolithic</th><th>Microservices</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Size</strong></td><td>Large single unit</td><td>Many small services</td></tr>
+        <tr><td><strong>Deployment</strong></td><td>Deploy entire application</td><td>Deploy individual services</td></tr>
+        <tr><td><strong>Data</strong></td><td>Single shared database</td><td>Each service owns its data</td></tr>
+        <tr><td><strong>Scaling</strong></td><td>Scale entire application</td><td>Scale individual services</td></tr>
+        <tr><td><strong>Technology</strong></td><td>One tech stack</td><td>Polyglot (multiple stacks)</td></tr>
+        <tr><td><strong>Failure impact</strong></td><td>One failure = system down</td><td>Isolated; others continue</td></tr>
+        <tr><td><strong>Team structure</strong></td><td>Large shared team</td><td>Small teams per service</td></tr>
+        <tr><td><strong>Complexity</strong></td><td>Simple overall structure</td><td>Complex distributed system</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="ss">📦 Chunking — The "SILO" Model for Microservices</h3>
+  <div class="card-blue">
+    <p>Think of each microservice as a <strong>SILO</strong>:</p>
+    <ul class="bl">
+      <li><strong>S</strong>eparate codebase — its own repository</li>
+      <li><strong>I</strong>ndependent deployment — deployed without touching others</li>
+      <li><strong>L</strong>oosely coupled — communicates only via API</li>
+      <li><strong>O</strong>wns its data — its own database</li>
+    </ul>
+  </div>
+
+  <h3 class="ss">🔁 Spaced Repetition Schedule</h3>
+  <div class="card">
+    <ul class="bl">
+      <li><strong>Day 1:</strong> Write all 10 microservice characteristics from memory. Check against slides.</li>
+      <li><strong>Day 2:</strong> Memorize all 6 benefits using FSGN·RD. Explain each in one sentence.</li>
+      <li><strong>Day 3:</strong> Memorize all 7 challenges. Write each and its core issue.</li>
+      <li><strong>Day 4:</strong> Draw the 3 communication types and API Gateway flow diagram from memory.</li>
+      <li><strong>Day 5:</strong> Explain Service Discovery (problem + solution + 3 properties) without notes.</li>
+      <li><strong>Day 6:</strong> Do all 38 MCQs. Review wrong answers only.</li>
+      <li><strong>Exam Eve:</strong> Read Revision Sheet only. Trust the work.</li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SECTION 4 — MCQ
+     ============================================================ -->
+<section id="mcq" class="section">
+  <h2 class="st">MCQ Exam Training</h2>
+  <div class="st-line"></div>
+  <p class="intro-p">38 questions — Easy → Medium → Hard. Click any option to reveal the answer and explanation.</p>
+
+  <div class="prog-wrap">
+    <div class="prog-lbl"><span>Quiz Progress</span><span id="mcq-prog-txt">0 / 38 answered</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="mcq-prog-bar" style="width:0%"></div></div>
+  </div>
+
+  <div id="mcq-container"></div>
+  <button class="reset-btn" onclick="resetMCQ()">↺ Reset All Questions</button>
+</section>
+
+
+<!-- ============================================================
+     SECTION 5 — WRITTEN
+     ============================================================ -->
+<section id="written" class="section">
+  <h2 class="st">Written Questions &amp; Model Answers</h2>
+  <div class="st-line"></div>
+  <p class="intro-p">Short and long-form questions with complete model answers. Click "Show Answer" to reveal.</p>
+
+  <h3 class="ss">Short Answer Questions</h3>
+  <div id="short-wq"></div>
+
+  <h3 class="ss">Long-Form / Essay Questions</h3>
+  <div id="long-wq"></div>
+</section>
+
+
+<!-- ============================================================
+     SECTION 6 — REVISION
+     ============================================================ -->
+<section id="revision" class="section">
+  <h2 class="st">⚡ Rapid Revision Sheet</h2>
+  <div class="st-line"></div>
+  <p class="intro-p">Night-before-exam cheat sheet. Every critical fact, compressed to the minimum.</p>
+
+  <div class="rev-grid">
+    <div class="rev-c">
+      <h4>Monolithic Definition</h4>
+      <div class="ri">Single-tiered: UI + data access in ONE program</div>
+      <div class="ri">Self-contained; does everything for a function</div>
+      <div class="ri">One failure = system down</div>
+    </div>
+    <div class="rev-c">
+      <h4>Microservices Core</h4>
+      <div class="ri">Small + independent + loosely coupled</div>
+      <div class="ri">Own codebase, own DB, own deployment</div>
+      <div class="ri">Well-defined APIs; hidden internals</div>
+      <div class="ri">Polyglot: different stacks per service</div>
+    </div>
+    <div class="rev-c">
+      <h4>6 Benefits (FSGN·RD)</h4>
+      <div class="ri">Faster Deployments — independent CI/CD</div>
+      <div class="ri">Scalability — bounded context, test automation</div>
+      <div class="ri">Guaranteed Up-time — isolated at runtime</div>
+      <div class="ri">No Vendor Lock — open standards</div>
+      <div class="ri">Resilience — Kubernetes/OpenShift self-heal</div>
+      <div class="ri">Dynamic Talent Pool — diverse skills</div>
+    </div>
+    <div class="rev-c">
+      <h4>7 Challenges (C·DNDVSL)</h4>
+      <div class="ri">Complexity — more moving parts</div>
+      <div class="ri">Dev &amp; Testing — service deps hard to test</div>
+      <div class="ri">Network Latency — chatty APIs, long chains</div>
+      <div class="ri">Data Integrity — distributed DB consistency</div>
+      <div class="ri">Versioning — backward/forward compat</div>
+      <div class="ri">Skill Set — distributed systems expertise</div>
+      <div class="ri">Governance — too many languages/frameworks</div>
+    </div>
+    <div class="rev-c">
+      <h4>Communication (H·M·E)</h4>
+      <div class="ri">HTTP = Sync; REST API; caller waits</div>
+      <div class="ri">Message = Async; message broker; subscribe</div>
+      <div class="ri">Event-Driven = Async; no shared msg structure</div>
+      <div class="ri">gRPC also used for synchronous calls</div>
+    </div>
+    <div class="rev-c">
+      <h4>API Gateway</h4>
+      <div class="ri">Front door for all client requests</div>
+      <div class="ri">Create + publish + monitor + secure APIs</div>
+      <div class="ri">Best product: Microsoft Azure</div>
+    </div>
+    <div class="rev-c">
+      <h4>Service Discovery (L·R·F)</h4>
+      <div class="ri">Problem: Dynamic IPs + autoscaling</div>
+      <div class="ri">Solution: Service Registry</div>
+      <div class="ri">Load Balanced → spread requests across instances</div>
+      <div class="ri">Resilient → client caches locally</div>
+      <div class="ri">Fault-tolerant → removes unhealthy instances</div>
+    </div>
+    <div class="rev-c">
+      <h4>DDD + Characteristics</h4>
+      <div class="ri">DDD: code structure matches business domain</div>
+      <div class="ri">Business Boundary → DDD-based service scope</div>
+      <div class="ri">Function Boundary → development-based scope</div>
+      <div class="ri">Single Responsibility → one thing per service</div>
+      <div class="ri">Hospital OPD = key example from slides</div>
+    </div>
+  </div>
+
+  <div class="card-blue">
+    <h4 class="mt">🌙 Last-Minute Reminders</h4>
+    <ul class="bl">
+      <li><strong>Key difference:</strong> Monolithic = single platform; Microservices = distributed, independent services</li>
+      <li><strong>Each service owns its own data</strong> — NOT a shared database (causes Data Integrity challenge)</li>
+      <li><strong>Event-driven</strong> = services don't need to know the common message structure (unique trait)</li>
+      <li><strong>Kubernetes/OpenShift</strong> = resilience via self-healing and orchestration</li>
+      <li><strong>Service Discovery</strong> solves: dynamic IP problem in cloud environments</li>
+      <li><strong>Microsoft Azure</strong> = best API Gateway product per the lecture</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<!-- Mobile Nav -->
+<div class="mob-nav">
+  <div class="mob-tab active" onclick="show('explanation')">📖<br/>Explain</div>
+  <div class="mob-tab"        onclick="show('summary')">📋<br/>Summary</div>
+  <div class="mob-tab"        onclick="show('memory')">🧩<br/>Memory</div>
+  <div class="mob-tab"        onclick="show('mcq')">❓<br/>MCQs</div>
+  <div class="mob-tab"        onclick="show('written')">✍️<br/>Written</div>
+  <div class="mob-tab"        onclick="show('revision')">⚡<br/>Revise</div>
+</div>
+
+<div class="bot-bar"><div class="bot-fill" id="bot-fill" style="width:0%"></div></div>
+
+<script>
+// ============================================================
+// DATA — MCQs
+// ============================================================
+const MCQ = [
+  // EASY (1-12)
+  { q: "What is a monolithic application?", opts:["A distributed multi-service application","A single-tiered app where UI and data access are combined in a single program","An application with no user interface","A cloud-native microservice"], ans:1, diff:"e", exp:"A monolithic application is a single-tiered software application in which the user interface and data access code are combined into a single program from a single platform." },
+  { q: "Which of the following best describes microservices?", opts:["Large, tightly coupled components","Small, independent, and loosely coupled services","Shared codebase managed by one team","Single database application"], ans:1, diff:"e", exp:"Microservices are defined as small, independent, and loosely coupled. Each service has its own codebase and can be managed by a small team." },
+  { q: "In microservices architecture, how do services communicate with each other?", opts:["Shared memory","Direct database calls","Well-defined APIs","Shared codebase calls"], ans:2, diff:"e", exp:"Services communicate with each other by using well-defined APIs. Internal implementation details of each service are hidden from other services." },
+  { q: "What does 'polyglot programming' mean in the context of microservices?", opts:["All services must use the same technology stack","Services can use different technology stacks, libraries, or frameworks","A service can run in multiple languages simultaneously","Services are translated between languages automatically"], ans:1, diff:"e", exp:"Polyglot programming means services don't need to share the same technology stack, libraries, or frameworks. Different services can be built with different technologies." },
+  { q: "Which benefit of microservices refers to the ability to deploy individual services without rebuilding the whole application?", opts:["Scalability","No Vendor Lock","Faster Deployments","Dynamic Talent Pool"], ans:2, diff:"e", exp:"Faster Deployments means each module is easily built, tested and deployed independently, giving businesses increased agility and faster time to market." },
+  { q: "What is Domain-Driven Design (DDD)?", opts:["A database design approach","A software design approach focusing on modeling software to match a business domain","A testing methodology","A deployment strategy"], ans:1, diff:"e", exp:"DDD is a major software design approach focusing on modeling software to match a domain according to input from domain experts. Code structure and language should match the business domain." },
+  { q: "What is an API Gateway?", opts:["A type of database","A front door for applications to access backend services","A service discovery mechanism","A load balancer for databases"], ans:1, diff:"e", exp:"An API Gateway is a fully managed service that acts as the 'front door' for applications to access data, business logic, or functionality from backend services." },
+  { q: "In synchronous communication between microservices, what happens after a service sends a request?", opts:["It processes other tasks immediately","It waits for a response from the receiver","It stores the request in a queue","It sends the request to all services"], ans:1, diff:"e", exp:"In synchronous communication, the caller waits for a response from the receiver. This is the key characteristic that makes it synchronous." },
+  { q: "Which API Gateway product is cited as 'the best' in the lecture slides?", opts:["AWS API Gateway","Google Apigee","Microsoft Azure","Kong Gateway"], ans:2, diff:"e", exp:"Microsoft Azure is cited as the best API Gateway product in the slides, supporting Dashboard configuration." },
+  { q: "What is the primary problem that Service Discovery solves in microservices?", opts:["Slow database queries","Dynamically assigned network locations of service instances","Poor UI performance","Code duplication across services"], ans:1, diff:"e", exp:"Service instances in cloud-based microservices have dynamically assigned network locations that change due to autoscaling, failures, and upgrades. Static config files cannot track this." },
+  { q: "Which communication type uses a message broker where services subscribe to messages?", opts:["HTTP Communication","Event-Driven Communication","Message Communication","gRPC Communication"], ans:2, diff:"e", exp:"Message Communication (Asynchronous) uses a message broker that other services subscribe to. Services push messages to the broker and subscribers consume them." },
+  { q: "What is meant by 'Guaranteed Up-time' in microservices?", opts:["100% availability guaranteed by SLA","Services are isolated at runtime, so the whole system can never go down","Services auto-restart every hour","Databases have backup systems"], ans:1, diff:"e", exp:"With microservices, since each service is deployed and managed independently and totally isolated at runtime, the whole system can never go down due to a single failure." },
+
+  // MEDIUM (13-27)
+  { q: "How does service data persistence differ in microservices vs traditional models?", opts:["Microservices share one large database","Microservices use a separate data layer","Each microservice is responsible for persisting its own data","Microservices don't store any data"], ans:2, diff:"m", exp:"Services are responsible for persisting their own data or external state. This differs from the traditional model where a separate data layer handles data persistence." },
+  { q: "Which of the following is a consequence of microservices each having their own database?", opts:["Faster database queries","Data integrity and consistency challenges","Reduced storage costs","Better SQL performance"], ans:1, diff:"m", exp:"With each microservice responsible for its own data persistence, data consistency can be a challenge because maintaining consistency across distributed databases is complex." },
+  { q: "What does 'Resilient' mean in the context of Service Discovery?", opts:["The service discovery server never goes down","Clients cache service information locally so the app still works if discovery fails","New services are automatically registered","Services heal themselves after failure"], ans:1, diff:"m", exp:"Resilient means clients should cache service information locally. This allows for gradual degradation so that if the service discovery service becomes unavailable, applications can still function." },
+  { q: "What does 'Fault-tolerant' mean in Service Discovery?", opts:["The system can process requests despite network errors","Service Discovery detects unhealthy service instances and removes them from the list","Services automatically retry failed requests","Clients connect to backup servers"], ans:1, diff:"m", exp:"Fault-tolerant means Service Discovery detects when a service instance isn't healthy and removes the instance from the list of available services, preventing clients from reaching failed services." },
+  { q: "Which orchestration platform is specifically mentioned in the lecture for self-healing capabilities?", opts:["Docker Swarm","Apache Mesos","Kubernetes or OpenShift","AWS ECS"], ans:2, diff:"m", exp:"Kubernetes or OpenShift Container platforms are mentioned as examples that monitor and self-heal whenever the system is affected, with self-monitoring and restart capabilities." },
+  { q: "What is a key recommendation when dealing with the Network Congestion challenge in microservices?", opts:["Use only synchronous APIs","Avoid asynchronous communication","Avoid overly chatty APIs and use asynchronous communication patterns","Increase server bandwidth only"], ans:2, diff:"m", exp:"The lecture recommends: avoid overly chatty APIs, think about serialization formats, and look for places to use asynchronous communication patterns like queue-based load leveling." },
+  { q: "What characterizes 'Event-Driven Communication' compared to 'Message Communication'?", opts:["Event-driven uses a message broker; message doesn't","Event-driven is synchronous; message is asynchronous","Event-driven services don't need to know the common message structure","Event-driven uses HTTP; message uses gRPC"], ans:2, diff:"m", exp:"The key differentiator for Event-Driven Communication is that services don't need to know the common message structure. In Message Communication, services share a common structure via the broker." },
+  { q: "What is the 'No Vendor Lock-in' benefit of microservices based on?", opts:["Proprietary licensing agreements","Open standards backed by the open-source community and standard-based APIs","Government regulations","Patent protections"], ans:1, diff:"m", exp:"No Vendor Lock-in is because microservices are based on open standards backed by the open-source community. Standard-based APIs make it easy to migrate and use different technologies." },
+  { q: "The 'Versioning' challenge in microservices relates to:", opts:["Choosing version control tools like Git","Ensuring service updates don't break dependent services; backward/forward compatibility","Database schema versioning","UI version management"], ans:1, diff:"m", exp:"Updates to a service must not break services that depend on it. Multiple services could be updated at any given time, creating backward or forward compatibility problems." },
+  { q: "What is the relationship between 'Single Responsibility' and 'Business Boundary' in microservice characteristics?", opts:["They are the same concept","Single Responsibility is about code; Business Boundary is about domain (DDD)","Business Boundary is about code; Single Responsibility is about DDD","They are unrelated"], ans:1, diff:"m", exp:"Single Responsibility means each service does one thing. Business Boundary is the scope defined by DDD — the domain that the service covers. SR is the principle; BB is how that principle maps to business domains." },
+  { q: "Which statement correctly describes 'Load Balanced' in Service Discovery?", opts:["Requests are always sent to the fastest server","Service Discovery statically assigns clients to servers","Requests are dynamically balanced across all managed service instances","Load balancing is done at the database level"], ans:2, diff:"m", exp:"Load Balanced means Service Discovery dynamically load balances requests across all service instances to ensure service invocations are spread across all instances it manages." },
+  { q: "What is the 'Skill Set' challenge in microservices specifically about?", opts:["Services require developers to speak multiple languages","Microservices are highly distributed systems requiring advanced skills and experience","Teams must learn a specific framework","Only senior developers can work on microservices"], ans:1, diff:"m", exp:"Microservices are highly distributed systems. Teams must carefully evaluate whether they have the skills and experience to be successful with this architecture." },
+  { q: "Under DDD, what should class names, methods, and variables match?", opts:["Technical design patterns","The business domain","The programming language used","The database schema"], ans:1, diff:"m", exp:"Under domain-driven design, the structure and language of software code (class names, class methods, class variables) should match the business domain." },
+  { q: "Why is 'Development and Testing' a challenge in microservices?", opts:["Services are too large to test","Existing tools don't always support service dependencies; refactoring across boundaries is difficult","Testing is not necessary for microservices","Services can only be tested after deployment"], ans:1, diff:"m", exp:"Writing a service that relies on dependent services requires a different approach. Existing tools are not always designed for service dependencies, and refactoring across service boundaries is difficult." },
+  { q: "What does 'Function Boundary' mean as a microservice characteristic?", opts:["The maximum number of functions a service can have","The boundary defined by development/engineering functions that determines the scope of a service","The API boundary exposed to clients","The memory limit of a service"], ans:1, diff:"m", exp:"Function Boundary means the service scope is defined by development/engineering functions. It's the developer-perspective boundary (vs Business Boundary which is the business/DDD perspective)." },
+
+  // HARD (28-38)
+  { q: "A company has a Hospital system where Registration, Lab, and Billing are separate services each with their own database. A patient record in Registration needs to match billing. This is an example of which challenge?", opts:["Complexity","Network Latency","Data Integrity","Versioning"], ans:2, diff:"h", exp:"This is a Data Integrity challenge. When each service has its own database, maintaining data consistency across services (like matching patient records between Registration and Billing) is difficult — a core microservices challenge." },
+  { q: "Which statement about the overall complexity of microservices is TRUE?", opts:["Microservices are simpler than monolithic systems overall","Each service is simpler, but the entire system as a whole is more complex","Both individual services and the overall system are simpler","Complexity depends on the number of developers"], ans:1, diff:"h", exp:"The lecture explicitly states: 'Each service is simpler, but the entire system as a whole is more complex.' This is the core Complexity challenge — don't confuse part-simplicity with whole-system complexity." },
+  { q: "Service A calls Service B, which calls Service C, which calls Service D to complete a user request. What microservices problem does this scenario illustrate?", opts:["Data Integrity","Lack of Governance","Network Congestion and Latency — long dependency chains","Versioning incompatibility"], ans:2, diff:"h", exp:"Long chains of service dependencies (A→B→C→D) accumulate latency at each hop, potentially making the system too slow. This is the Network Congestion & Latency challenge — specifically the 'too long dependency chain' problem." },
+  { q: "A company using microservices has 30 different services using 15 different programming languages and 20 different frameworks with no standards enforced. Which challenge does this represent?", opts:["Skill Set","Lack of Governance","Versioning","Complexity"], ans:1, diff:"h", exp:"This is Lack of Governance. The decentralized approach leads to teams making incompatible technology choices, resulting in so many languages and frameworks that the application becomes hard to maintain." },
+  { q: "What is the difference between how an API Gateway and Service Discovery work in a microservices architecture?", opts:["They are the same component","API Gateway handles external client requests; Service Discovery handles internal service-to-service location","Service Discovery manages external APIs; API Gateway manages internal routing","Both manage load balancing the same way"], ans:1, diff:"h", exp:"API Gateway is the front door for external clients — it creates, manages, monitors, and secures APIs. Service Discovery is internal — it helps services dynamically find each other's locations without static configuration." },
+  { q: "If a Service Discovery system goes down, a 'Resilient' system would:", opts:["Immediately fail all requests","Fail over to a backup discovery server automatically","Allow applications to still function using locally cached service information","Restart all service instances"], ans:2, diff:"h", exp:"Resilient means the client caches service information locally. This local caching allows for gradual degradation so that if the service discovery service becomes unavailable, applications can still function using cached data." },
+  { q: "Which combination correctly describes both types of asynchronous communication in microservices?", opts:["Message (uses HTTP) + Event-driven (uses gRPC)","Message (uses broker, shared structure) + Event-driven (no shared structure needed)","Message (no broker) + Event-driven (uses broker)","Message (synchronous) + Event-driven (asynchronous)"], ans:1, diff:"h", exp:"Message Communication uses a message broker with a shared message structure that subscribers understand. Event-Driven Communication is also async but services don't need to know the common message structure — they just react to events." },
+  { q: "In DDD applied to a Hospital microservices system, which approach is CORRECT?", opts:["Create classes named DataProcessor, ItemHandler, RecordManager","Create classes named Patient, Appointment, Prescription that match the OPD domain","Use generic class names to maintain flexibility","Design all services around database tables"], ans:1, diff:"h", exp:"Under DDD, the structure and language of software code should match the business domain. For a hospital, classes like Patient, Appointment, Prescription directly mirror the real-world domain concepts — this is the DDD principle." },
+  { q: "Which statement is FALSE about microservices deployment?", opts:["Services can be deployed independently","A team can update one service without rebuilding the entire application","All services must be deployed together to ensure compatibility","Services are separately managed codebases"], ans:2, diff:"h", exp:"The FALSE statement is C. In microservices, a team can update an existing service WITHOUT rebuilding and redeploying the entire application. This independent deployment is a fundamental characteristic, not a constraint." },
+  { q: "A company's Product Catalog service runs on Python+PostgreSQL, its Order service on Java+MySQL, and its Notification service on Node.js+MongoDB. This is an example of:", opts:["Poor architecture design","Lack of Governance challenge","Polyglot programming as a feature","Service Discovery problem"], ans:2, diff:"h", exp:"This demonstrates Polyglot Programming — a key microservices feature/characteristic. Services using different tech stacks (Python, Java, Node.js) and databases (PostgreSQL, MySQL, MongoDB) are fully supported and expected in microservices architecture." },
+  { q: "Why does microservices architecture support a 'Dynamic Talent Pool'?", opts:["All developers must know all technologies","Since services are independent with potentially different tech stacks, specialists in different technologies can contribute to their respective services","New developers must be retrained completely","Only polyglot developers can join"], ans:1, diff:"h", exp:"Because each microservice is independent and can use different tech stacks, developers with different specializations (Python experts, Java experts, frontend specialists) can each work on services aligned with their skills, making hiring and onboarding easier." },
+];
+
+const SHORT_WQ = [
+  { q:"Define a Monolithic Application and explain its design philosophy.", ans:"A monolithic application is a single-tiered software application in which the user interface and data access code are combined into a single program from a single platform. It is self-contained and independent from other computing applications. The design philosophy is that the application is responsible not just for a particular task, but can perform every step needed to complete a particular function — meaning one application handles the entire business process end-to-end." },
+  { q:"List 5 key characteristics of microservices architecture.", ans:"1. Small, independent, and loosely coupled — each service is minimal and changes don't cascade.\n2. Separate codebase — each service has its own code repository managed by a small team.\n3. Independent deployment — services are deployed individually without rebuilding the whole application.\n4. Own data persistence — each service manages its own data store (not a shared database).\n5. Well-defined APIs — services communicate via APIs; internal details are hidden from other services.\nBonus: Polyglot programming — different services can use different tech stacks." },
+  { q:"What is Domain-Driven Design (DDD) and how does it relate to microservices?", ans:"Domain-Driven Design (DDD) is a major software design approach that focuses on modeling software to match a domain according to input from that domain's experts. Under DDD, the structure and language of software code (class names, methods, variables) should match the business domain.\n\nIn microservices, DDD defines the 'Business Boundary' characteristic — each microservice is scoped to a specific business domain. This means a Hospital system would have services like PatientRegistration, LabService, and PharmacyService, each matching real business domains and using domain-appropriate terminology." },
+  { q:"Explain the 'No Vendor Lock-in' benefit of microservices.", ans:"The No Vendor Lock-in benefit exists because microservices architecture and its principles are based on open standards backed by the open-source community. Almost all commercial microservices platforms follow these open standards, making it easy to migrate from one platform to another if needed. Additionally, by design, microservices have standard-based APIs which makes it easy to extend services and use different programming languages and technologies, preventing any single vendor from having a chokehold on the system." },
+  { q:"Explain the 'Resilience & Robustness' benefit with the specific technologies mentioned in the lecture.", ans:"With microservices, platforms are far more resilient and robust. Specifically, Kubernetes or OpenShift Container platforms provide monitoring and self-healing capabilities whenever the system is affected. Their orchestration capabilities can self-monitor and restart failed components. This self-healing extends from monitoring infrastructure, clusters, to nodes and pods. The combination of self-monitoring and self-healing ensures resilience for applications and systems, meaning the system can recover automatically from failures without manual intervention." },
+  { q:"What are the three properties of Service Discovery and what does each mean?", ans:"1. Load Balanced: Service Discovery dynamically load balances requests across all service instances to ensure service invocations are spread across all instances it manages — no single instance is overwhelmed.\n\n2. Resilient: Clients should cache service information locally. Local caching allows for gradual degradation — if the service discovery service itself becomes unavailable, applications can still function and locate services using the information in their local cache.\n\n3. Fault-tolerant: Service Discovery detects when a service instance isn't healthy and removes that instance from the list of available services, preventing clients from being directed to failed instances." },
+  { q:"Compare Synchronous and Asynchronous communication in microservices.", ans:"Synchronous Communication:\n- Pattern: A service calls an API that another service exposes\n- Protocol: HTTP or gRPC\n- Behavior: The caller WAITS for a response from the receiver\n- Also called: HTTP Communication via REST API\n- Risk: Long dependency chains add latency\n\nAsynchronous Communication:\n- Pattern: A service sends a message without waiting for a response\n- Types: Message Communication (uses a message broker; services subscribe) and Event-Driven Communication (services don't need to know the common message structure)\n- Behavior: One or more services process the message at their own pace\n- Benefit: Better for high-throughput, latency-sensitive, decoupled systems" },
+  { q:"Explain the 'Lack of Governance' challenge and how it arises from microservices' strengths.", ans:"The Lack of Governance challenge is paradoxically caused by one of microservices' greatest strengths — decentralization. Since each team is free to choose their own technology stack (polyglot programming), without governance standards, teams might independently choose different languages, frameworks, and tools. Over time, the application might have so many different languages and frameworks (15 languages, 20 frameworks in a large system) that it becomes extremely difficult to maintain, onboard new developers, or enforce quality standards. Governance policies (e.g., 'teams may use only Java, Python, or Go') are needed to balance flexibility with manageability." },
+];
+
+const LONG_WQ = [
+  { q:"Compare Monolithic and Microservices architectures across 5 dimensions. Use the Hospital OPD example from the lecture to illustrate the transition.", ans:"MONOLITHIC vs MICROSERVICES ARCHITECTURE COMPARISON\n\n1. Structure:\nMonolithic: The entire hospital system — registration, consultation, lab, pharmacy, billing — runs as one large application in a single codebase on a single platform.\nMicroservices: Each hospital function becomes its own independent service: RegistrationService, ConsultationService, LabService, PharmacyService, BillingService.\n\n2. Deployment:\nMonolithic: Updating the Billing module requires redeploying the entire hospital application, risking downtime for all departments.\nMicroservices: Updating BillingService is deployed independently. Registration continues without interruption.\n\n3. Data Management:\nMonolithic: One shared database contains all patient, billing, and lab data — easy consistency, hard to scale.\nMicroservices: Each service owns its data (LabService has its own DB, BillingService has its own DB) — better isolation, but requires distributed consistency mechanisms.\n\n4. Technology:\nMonolithic: All departments use one technology stack (e.g., Java + Oracle).\nMicroservices: LabService might use Python + PostgreSQL; BillingService might use Java + MySQL — polyglot programming.\n\n5. Failure Impact:\nMonolithic: If the billing module crashes due to a bug, the entire hospital system goes down — no registrations, no lab orders, nothing.\nMicroservices: If BillingService goes down, Registration and Lab continue operating. The system degrades gracefully rather than catastrophically.\n\nConclusion: The Hospital OPD example demonstrates why microservices are preferred for complex, evolving systems — they enable independent development, deployment, and scaling of each service while isolating failures to specific domains." },
+  { q:"Describe all 7 challenges of Microservices architecture in detail. For each challenge, explain why it exists and what mitigation is suggested.", ans:"SEVEN CHALLENGES OF MICROSERVICES ARCHITECTURE\n\n1. Complexity:\nWhy: A microservices application has more moving parts than the equivalent monolithic application. You now manage dozens of services, deployment pipelines, API contracts, and inter-service communications.\nKey insight: Each service is simpler, but the entire system as a whole is more complex.\nMitigation: Use orchestration tools (Kubernetes), service meshes, and strong DevOps practices.\n\n2. Development and Testing:\nWhy: Writing a service that relies on other dependent services requires a different approach. Existing tools weren't designed for service dependency testing. Refactoring across service boundaries is difficult.\nMitigation: Use contract testing, mock services, and dedicated service simulation tools.\n\n3. Network Congestion and Latency:\nWhy: Many small, granular services generate more inter-service communication. Long chains (A calls B calls C calls D) accumulate latency at each hop.\nMitigation: Avoid chatty APIs, choose efficient serialization formats, use asynchronous communication patterns like queue-based load leveling.\n\n4. Data Integrity:\nWhy: Each service owns its own data persistence — there is no shared database to maintain consistency. Cross-service data consistency requires complex distributed transaction patterns.\nMitigation: Use Saga pattern, eventual consistency models, or compensating transactions.\n\n5. Versioning:\nWhy: Multiple services can be updated simultaneously. An update to Service B might break Service A, which depends on B's old API contract.\nMitigation: Maintain backward compatibility, use API versioning (v1, v2), and establish deprecation policies.\n\n6. Skill Set:\nWhy: Microservices are highly distributed systems requiring expertise in distributed computing, container orchestration, service discovery, and more.\nMitigation: Invest in training, hire experienced architects, start with monolith-first and migrate gradually.\n\n7. Lack of Governance:\nWhy: The freedom to choose different languages and frameworks (polyglot programming benefit) can lead to an unmanageable mix of technologies without standards.\nMitigation: Establish governance policies — define approved tech stacks, shared libraries, coding standards — while still allowing team flexibility." },
+  { q:"Explain the three types of inter-service communication in microservices. Compare their advantages and disadvantages with real-world analogies.", ans:"THREE TYPES OF MICROSERVICES COMMUNICATION\n\nTYPE 1: HTTP Communication (Synchronous)\nMechanism: A service calls a REST API or gRPC endpoint that another service exposes. The caller waits for the response before proceeding.\nProtocol: HTTP, REST API, gRPC\nAdvantages: Simple to implement and debug; immediate response; well-understood; easy error handling.\nDisadvantages: Caller is blocked waiting for response; if the called service is slow or down, the caller is affected; long dependency chains multiply latency.\nAnalogy: Ordering at a restaurant counter — you stand and wait until the cashier confirms your order before doing anything else.\n\nTYPE 2: Message Communication (Asynchronous)\nMechanism: Services push messages to a message broker (e.g., RabbitMQ, Kafka). Other services subscribe to the broker and process messages at their own pace. Both sides share a common message structure.\nAdvantages: Decoupled — sender doesn't need the receiver to be running; better throughput; resilient to receiver downtime.\nDisadvantages: More complex to debug; requires message broker infrastructure; eventual consistency; message ordering challenges.\nAnalogy: Sending a letter via postal service — you drop it in the mailbox (broker) and continue your day. The recipient picks it up when they're ready.\n\nTYPE 3: Event-Driven Communication (Asynchronous)\nMechanism: Services emit and react to events. KEY DISTINCTION: services don't need to know the common message structure. They simply react to events that occur, making them the most decoupled form of communication.\nAdvantages: Highest decoupling — services don't know about each other at all; extremely scalable; easy to add new consumers.\nDisadvantages: Very hard to trace and debug event flows; no guarantee of processing order; eventual consistency.\nAnalogy: A smoke alarm system — every device (sprinklers, alarms, notifications) reacts independently to the 'smoke detected' event without knowing about each other or the message format.\n\nWhen to use which:\n- Use HTTP for user-facing requests needing immediate response (login, checkout).\n- Use Message for high-volume background processing (order processing, email notifications).\n- Use Event-Driven for highly decoupled domain events where multiple services react to the same occurrence." },
+  { q:"What is Service Discovery? Explain the problem it solves, the solution approach, and describe each of its three key properties in detail.", ans:"SERVICE DISCOVERY IN MICROSERVICES\n\nTHE PROBLEM:\nIn traditional applications running on physical hardware, network locations (IP addresses and ports) are relatively static and can be stored in a configuration file. However, in modern cloud-based microservices:\n- Service instances have DYNAMICALLY assigned network locations (IPs change on restart)\n- The set of service instances CHANGES DYNAMICALLY due to autoscaling (more instances added under load), failures (instances crash), and upgrades (rolling updates)\n- Therefore, client code cannot use static configuration files to locate services\n\nExample: Your Order Service needs to call the Payment Service. But the Payment Service might be running as 1 instance in the morning and 10 instances during peak hours — all with different IP addresses.\n\nTHE SOLUTION: Service Registry\nA Service Registry is a database that tracks all currently available service instances. Services register themselves when they start (with their IP and port) and de-register when they stop. Clients query the registry to find where to send requests.\n\nTHREE PROPERTIES OF SERVICE DISCOVERY:\n\n1. LOAD BALANCED:\nDefinition: Service Discovery dynamically load balances requests across all service instances to ensure that service invocations are spread across all instances it manages.\nWhy it matters: Without load balancing, all traffic might go to one instance while others sit idle, causing that one instance to be overwhelmed.\nAnalogy: A smart traffic controller directing cars to the least-congested lane at a toll plaza.\n\n2. RESILIENT:\nDefinition: The client should cache service information locally. Local caching allows for gradual degradation so that if the service discovery service itself becomes unavailable, applications can still function using their local cache.\nWhy it matters: If Service Discovery goes down, the entire system shouldn't fail immediately. Cached information provides a safety net.\nAnalogy: Your phone has offline maps downloaded — if Google Maps loses internet connection, you can still navigate using the cached maps.\n\n3. FAULT-TOLERANT:\nDefinition: Service Discovery should detect when a service instance isn't healthy and remove that instance from the list of available services.\nWhy it matters: Without this, clients might repeatedly try to reach a crashed instance, wasting resources and failing requests.\nMechanism: Health checks — the registry periodically polls service instances; if an instance doesn't respond to health checks, it's removed from the registry.\nAnalogy: A restaurant app that automatically shows 'closed' for restaurants that are no longer operating — you never get directed to a closed restaurant." },
+];
+
+// ============================================================
+// RENDER MCQ
+// ============================================================
+let answered = 0;
+function renderMCQ() {
+  const c = document.getElementById('mcq-container');
+  c.innerHTML = '';
+  MCQ.forEach((q, i) => {
+    const dc = q.diff === 'e' ? 'd-e' : q.diff === 'm' ? 'd-m' : 'd-h';
+    const dl = q.diff === 'e' ? 'Easy' : q.diff === 'm' ? 'Medium' : 'Hard';
+    const L = ['A','B','C','D'];
+    c.innerHTML += `
+      <div class="mcq-card" id="mcq${i}">
+        <div class="mcq-meta">
+          <span class="mcq-num">Q${i+1}</span>
+          <span class="diff ${dc}">${dl}</span>
+        </div>
+        <div class="mcq-q">${q.q}</div>
+        <div class="mcq-opts">
+          ${q.opts.map((o,oi) => `<div class="mcq-opt" id="opt${i}_${oi}" onclick="pick(${i},${oi})"><span class="opt-l">${L[oi]}</span><span>${o}</span></div>`).join('')}
+        </div>
+        <div class="mcq-exp" id="exp${i}"><strong>📌 Explanation:</strong> ${q.exp}</div>
+      </div>`;
+  });
+}
+
+function pick(qi, oi) {
+  const q = MCQ[qi];
+  const opts = document.querySelectorAll(`[id^="opt${qi}_"]`);
+  if (opts[0].classList.contains('disabled')) return;
+  opts.forEach((o, i) => {
+    o.classList.add('disabled');
+    if (i === q.ans) o.classList.add('correct');
+    else if (i === oi && i !== q.ans) o.classList.add('wrong');
+  });
+  document.getElementById(`exp${qi}`).classList.add('show');
+  answered++;
+  const pct = Math.round((answered / MCQ.length) * 100);
+  document.getElementById('mcq-prog-bar').style.width = pct + '%';
+  document.getElementById('mcq-prog-txt').textContent = `${answered} / ${MCQ.length} answered`;
+  document.getElementById('bot-fill').style.width = pct + '%';
+}
+
+function resetMCQ() {
+  answered = 0;
+  document.getElementById('mcq-prog-bar').style.width = '0%';
+  document.getElementById('mcq-prog-txt').textContent = `0 / ${MCQ.length} answered`;
+  document.getElementById('bot-fill').style.width = '0%';
+  renderMCQ();
+}
+
+// ============================================================
+// RENDER WRITTEN
+// ============================================================
+function renderWritten() {
+  const sc = document.getElementById('short-wq');
+  const lc = document.getElementById('long-wq');
+  SHORT_WQ.forEach((q, i) => {
+    sc.innerHTML += `
+      <div class="wq-card">
+        <div class="wq-q"><strong>Q${i+1}:</strong> ${q.q}</div>
+        <button class="wq-toggle" onclick="toggleWQ(this)">▶ Show Model Answer</button>
+        <div class="wq-ans">
+          <div class="model-lbl">✦ Model Answer</div>
+          <p style="white-space:pre-line;font-family:'Bitter',serif;font-size:0.92rem;">${q.ans}</p>
+        </div>
+      </div>`;
+  });
+  LONG_WQ.forEach((q, i) => {
+    lc.innerHTML += `
+      <div class="wq-card">
+        <div class="wq-q"><strong>Q${i+1}:</strong> ${q.q}</div>
+        <button class="wq-toggle" onclick="toggleWQ(this)">▶ Show Model Answer</button>
+        <div class="wq-ans">
+          <div class="model-lbl">✦ Model Answer</div>
+          <p style="white-space:pre-line;font-family:'Bitter',serif;font-size:0.92rem;">${q.ans}</p>
+        </div>
+      </div>`;
+  });
+}
+
+function toggleWQ(btn) {
+  const ans = btn.nextElementSibling;
+  const open = ans.classList.contains('show');
+  ans.classList.toggle('show');
+  btn.textContent = open ? '▶ Show Model Answer' : '▼ Hide Answer';
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+const SECTIONS = ['explanation','summary','memory','mcq','written','revision'];
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab, .mob-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx = SECTIONS.indexOf(id);
+  const tabs = document.querySelectorAll('.nav-tab');
+  const mobs = document.querySelectorAll('.mob-tab');
+  if (tabs[idx]) tabs[idx].classList.add('active');
+  if (mobs[idx]) mobs[idx].classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+// COLLAPSIBLE
+// ============================================================
+function toggleColl(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+// ============================================================
+// THEME
+// ============================================================
+function toggleTheme() {
+  const html = document.documentElement;
+  const light = html.getAttribute('data-theme') === 'light';
+  html.setAttribute('data-theme', light ? 'dark' : 'light');
+  document.querySelector('.theme-btn').textContent = light ? '🌙' : '☀️';
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  renderMCQ();
+  renderWritten();
+});
+</script>
+</body>
+</html>
