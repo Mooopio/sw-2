@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Cloud & Docker — Exam Prep System</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0b0f1a;
+    --surface: #131929;
+    --surface2: #1a2236;
+    --border: #2a3553;
+    --accent: #4f9cf9;
+    --accent2: #a78bfa;
+    --accent3: #34d399;
+    --accent4: #fb923c;
+    --danger: #f87171;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --heading: #f8fafc;
+    --card-glow: 0 0 0 1px var(--border), 0 4px 24px rgba(79,156,249,0.07);
+    --radius: 12px;
+    --radius-sm: 7px;
+    --transition: 0.22s cubic-bezier(.4,0,.2,1);
+  }
+  [data-theme="light"] {
+    --bg: #f0f4fc;
+    --surface: #ffffff;
+    --surface2: #e8edf8;
+    --border: #c8d3eb;
+    --accent: #2563eb;
+    --accent2: #7c3aed;
+    --accent3: #059669;
+    --accent4: #ea580c;
+    --danger: #dc2626;
+    --text: #1e293b;
+    --text2: #475569;
+    --text3: #94a3b8;
+    --heading: #0f172a;
+    --card-glow: 0 0 0 1px var(--border), 0 4px 16px rgba(37,99,235,0.06);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Lora', Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.72;
+    transition: background var(--transition), color var(--transition);
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; gap: 1.5rem;
+    height: 62px;
+    backdrop-filter: blur(12px);
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.1rem;
+    color: var(--heading);
+    white-space: nowrap;
+    letter-spacing: -0.02em;
+  }
+  .logo span { color: var(--accent); }
+  nav { display: flex; gap: 4px; flex-wrap: wrap; flex: 1; }
+  nav button {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem; font-weight: 600;
+    padding: 5px 13px;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+  }
+  nav button:hover { color: var(--text); background: var(--surface2); border-color: var(--border); }
+  nav button.active { background: var(--accent); color: #fff; border-color: transparent; }
+  .theme-toggle {
+    margin-left: auto; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 20px;
+    padding: 5px 13px; cursor: pointer;
+    font-size: 0.8rem; color: var(--text2);
+    font-family: 'Syne', sans-serif; font-weight: 600;
+    transition: all var(--transition); white-space: nowrap;
+  }
+  .theme-toggle:hover { color: var(--text); border-color: var(--accent); }
+
+  /* ─── MAIN LAYOUT ─── */
+  main { max-width: 920px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+  section { display: none; animation: fadeSlide 0.35s ease; }
+  section.active { display: block; }
+  @keyframes fadeSlide { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ─── HERO BANNER ─── */
+  .hero {
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2.4rem 2.5rem;
+    margin-bottom: 2.5rem;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -60px; right: -60px;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(79,156,249,0.13) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace; font-size: 0.72rem;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); background: rgba(79,156,249,0.1);
+    border: 1px solid rgba(79,156,249,0.25);
+    border-radius: 20px; padding: 3px 12px; margin-bottom: 1rem;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 800; line-height: 1.15;
+    color: var(--heading); letter-spacing: -0.03em;
+    margin-bottom: 0.7rem;
+  }
+  .hero p { color: var(--text2); font-size: 0.97rem; max-width: 560px; }
+  .hero-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1.4rem; }
+  .chip {
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    padding: 4px 11px; border-radius: 20px; font-weight: 400;
+  }
+  .chip-blue { background: rgba(79,156,249,0.12); color: var(--accent); border: 1px solid rgba(79,156,249,0.22); }
+  .chip-purple { background: rgba(167,139,250,0.12); color: var(--accent2); border: 1px solid rgba(167,139,250,0.22); }
+  .chip-green { background: rgba(52,211,153,0.12); color: var(--accent3); border: 1px solid rgba(52,211,153,0.22); }
+  .chip-orange { background: rgba(251,146,60,0.12); color: var(--accent4); border: 1px solid rgba(251,146,60,0.22); }
+
+  /* ─── SECTION HEADINGS ─── */
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem; font-weight: 800;
+    color: var(--heading); letter-spacing: -0.02em;
+    margin-bottom: 0.3rem;
+  }
+  .section-sub { color: var(--text2); font-size: 0.9rem; margin-bottom: 2rem; }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.6rem 1.8rem;
+    margin-bottom: 1.2rem;
+    box-shadow: var(--card-glow);
+    transition: border-color var(--transition);
+  }
+  .card:hover { border-color: color-mix(in srgb, var(--accent) 35%, var(--border)); }
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem; font-weight: 700;
+    color: var(--heading); margin-bottom: 0.7rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-icon {
+    width: 28px; height: 28px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; flex-shrink: 0;
+  }
+
+  /* ─── EXPLANATION STYLES ─── */
+  .concept-block { margin-bottom: 2.2rem; }
+  .concept-label {
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 0.6rem; display: block;
+  }
+  .concept-block h3 {
+    font-family: 'Syne', sans-serif; font-size: 1.15rem;
+    font-weight: 700; color: var(--heading);
+    margin-bottom: 0.6rem; letter-spacing: -0.01em;
+  }
+  .concept-block p { color: var(--text); margin-bottom: 0.6rem; font-size: 0.96rem; }
+  .analogy-box {
+    background: rgba(167,139,250,0.07);
+    border-left: 3px solid var(--accent2);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 0.9rem 1.1rem;
+    margin: 0.8rem 0;
+    font-style: italic; font-size: 0.92rem; color: var(--text2);
+  }
+  .analogy-box strong { color: var(--accent2); font-style: normal; }
+  .key-box {
+    background: rgba(79,156,249,0.07);
+    border: 1px solid rgba(79,156,249,0.2);
+    border-radius: var(--radius-sm);
+    padding: 0.85rem 1.1rem;
+    margin: 0.8rem 0;
+    font-size: 0.9rem;
+  }
+  .key-box .kl { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.35rem; display: block; }
+  ul.check { list-style: none; padding: 0; }
+  ul.check li { padding: 0.22rem 0 0.22rem 1.5rem; position: relative; font-size: 0.95rem; color: var(--text); }
+  ul.check li::before { content: '✦'; position: absolute; left: 0; color: var(--accent3); font-size: 0.65rem; top: 0.38rem; }
+  .compare-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.88rem; }
+  .compare-table th { background: var(--surface2); color: var(--heading); font-family: 'Syne', sans-serif; font-weight: 700; padding: 0.6rem 0.9rem; text-align: left; border: 1px solid var(--border); }
+  .compare-table td { padding: 0.55rem 0.9rem; border: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+  .compare-table tr:nth-child(even) td { background: var(--surface2); }
+  .highlight { background: rgba(251,146,60,0.15); color: var(--accent4); padding: 1px 5px; border-radius: 4px; font-weight: 600; font-style: normal; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+  /* ─── SUMMARY ─── */
+  .summary-group { margin-bottom: 1.5rem; }
+  .summary-group h3 {
+    font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700;
+    color: var(--accent); letter-spacing: 0.01em; margin-bottom: 0.5rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .summary-group h3::before { content: ''; display: block; width: 12px; height: 3px; background: var(--accent); border-radius: 2px; }
+  .bullet-list { list-style: none; padding: 0; }
+  .bullet-list li { padding: 0.18rem 0 0.18rem 1.3rem; position: relative; font-size: 0.92rem; color: var(--text2); }
+  .bullet-list li::before { content: '›'; position: absolute; left: 0; color: var(--text3); }
+  .bullet-list li strong { color: var(--text); }
+
+  /* ─── MCQ ─── */
+  .mcq-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.5rem 1.7rem;
+    margin-bottom: 1.1rem; transition: border-color var(--transition);
+  }
+  .mcq-card.revealed { border-color: rgba(52,211,153,0.35); }
+  .mcq-q {
+    font-family: 'Syne', sans-serif; font-size: 0.97rem; font-weight: 600;
+    color: var(--heading); margin-bottom: 1rem; line-height: 1.4;
+  }
+  .mcq-num {
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    color: var(--text3); margin-bottom: 0.4rem; display: block;
+  }
+  .mcq-diff { float: right; font-size: 0.67rem; padding: 2px 8px; border-radius: 20px; font-family: 'DM Mono', monospace; margin-top: 2px; }
+  .diff-easy { background: rgba(52,211,153,0.1); color: var(--accent3); }
+  .diff-medium { background: rgba(251,146,60,0.1); color: var(--accent4); }
+  .diff-hard { background: rgba(248,113,113,0.1); color: var(--danger); }
+  .mcq-options { display: flex; flex-direction: column; gap: 7px; }
+  .mcq-opt {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0.55rem 0.9rem; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); cursor: pointer;
+    font-size: 0.9rem; color: var(--text2);
+    transition: all var(--transition); user-select: none;
+    font-family: 'Lora', serif;
+  }
+  .mcq-opt:hover:not(.locked) { border-color: var(--accent); color: var(--text); background: rgba(79,156,249,0.05); }
+  .mcq-opt .opt-key {
+    font-family: 'DM Mono', monospace; font-size: 0.72rem;
+    width: 22px; height: 22px; border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface2); color: var(--text3);
+    flex-shrink: 0; transition: all var(--transition);
+  }
+  .mcq-opt.correct { border-color: var(--accent3); background: rgba(52,211,153,0.08); color: var(--text); }
+  .mcq-opt.correct .opt-key { background: var(--accent3); color: #fff; }
+  .mcq-opt.wrong { border-color: var(--danger); background: rgba(248,113,113,0.06); color: var(--text); opacity: 0.7; }
+  .mcq-opt.selected-wrong { border-color: var(--danger); background: rgba(248,113,113,0.08); }
+  .mcq-opt.locked { cursor: default; pointer-events: none; }
+  .mcq-reveal-btn {
+    margin-top: 1rem; padding: 7px 16px;
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: transparent; color: var(--text2);
+    font-size: 0.8rem; cursor: pointer;
+    font-family: 'Syne', sans-serif; font-weight: 600;
+    transition: all var(--transition);
+  }
+  .mcq-reveal-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .mcq-explanation {
+    display: none; margin-top: 1rem;
+    background: var(--surface2); border-radius: var(--radius-sm);
+    padding: 0.85rem 1rem;
+    font-size: 0.87rem; color: var(--text2);
+    border-left: 3px solid var(--accent3);
+    line-height: 1.6;
+  }
+  .mcq-explanation.visible { display: block; animation: fadeSlide 0.25s ease; }
+  .mcq-score {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1rem 1.4rem;
+    margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  }
+  .score-num { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--accent); }
+  .score-label { font-size: 0.85rem; color: var(--text2); }
+  .reset-btn {
+    margin-left: auto; padding: 7px 18px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); cursor: pointer;
+    font-family: 'Syne', sans-serif; font-weight: 600;
+    font-size: 0.8rem; color: var(--text2); transition: all var(--transition);
+  }
+  .reset-btn:hover { border-color: var(--danger); color: var(--danger); }
+  .filter-bar { display: flex; gap: 6px; margin-bottom: 1.2rem; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 5px 13px; border-radius: 20px;
+    border: 1px solid var(--border); background: transparent;
+    font-size: 0.76rem; font-family: 'Syne', sans-serif; font-weight: 600;
+    color: var(--text2); cursor: pointer; transition: all var(--transition);
+  }
+  .filter-btn.active { background: var(--accent); color: #fff; border-color: transparent; }
+
+  /* ─── WRITTEN QUESTIONS ─── */
+  .wq-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); margin-bottom: 1.1rem; overflow: hidden;
+  }
+  .wq-header {
+    padding: 1.2rem 1.7rem; cursor: pointer;
+    display: flex; align-items: flex-start; gap: 12px;
+    transition: background var(--transition);
+  }
+  .wq-header:hover { background: var(--surface2); }
+  .wq-badge {
+    font-family: 'DM Mono', monospace; font-size: 0.67rem;
+    padding: 2px 8px; border-radius: 20px; flex-shrink: 0; margin-top: 2px;
+  }
+  .badge-short { background: rgba(79,156,249,0.1); color: var(--accent); }
+  .badge-long { background: rgba(167,139,250,0.1); color: var(--accent2); }
+  .wq-q { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--heading); flex: 1; line-height: 1.4; }
+  .wq-chevron { color: var(--text3); font-size: 0.85rem; margin-left: auto; transition: transform var(--transition); flex-shrink: 0; padding-top: 2px; }
+  .wq-card.open .wq-chevron { transform: rotate(180deg); }
+  .wq-body {
+    display: none; padding: 1.2rem 1.7rem;
+    border-top: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .wq-card.open .wq-body { display: block; animation: fadeSlide 0.2s ease; }
+  .wq-body p { color: var(--text); font-size: 0.92rem; margin-bottom: 0.5rem; line-height: 1.7; }
+  .wq-body ul { padding-left: 1.2rem; color: var(--text2); font-size: 0.9rem; }
+  .wq-body ul li { margin-bottom: 0.3rem; }
+  .model-tag { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--accent3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; display: block; }
+
+  /* ─── REVISION SHEET ─── */
+  .rev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+  @media(max-width: 640px) { .rev-grid { grid-template-columns: 1fr; } }
+  .rev-block {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.2rem 1.3rem;
+  }
+  .rev-block-title {
+    font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 800;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    margin-bottom: 0.8rem; padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .rev-def { font-size: 0.82rem; color: var(--text2); margin-bottom: 0.35rem; }
+  .rev-def strong { color: var(--text); }
+  .cheat-alert {
+    background: rgba(251,146,60,0.1); border: 1px solid rgba(251,146,60,0.3);
+    border-radius: var(--radius); padding: 1rem 1.4rem; margin-bottom: 1.5rem;
+    font-size: 0.88rem; color: var(--accent4);
+  }
+  .cheat-alert strong { font-family: 'Syne', sans-serif; font-size: 0.9rem; }
+  .mnemonic-box {
+    background: rgba(167,139,250,0.07); border: 1px solid rgba(167,139,250,0.2);
+    border-radius: var(--radius-sm); padding: 0.9rem 1.1rem; margin: 0.5rem 0;
+    font-size: 0.87rem;
+  }
+  .mnemonic-box .ml { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--accent2); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.3rem; display: block; }
+  .trap-box {
+    background: rgba(248,113,113,0.06); border-left: 3px solid var(--danger);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 0.75rem 1rem; font-size: 0.86rem; color: var(--text2);
+    margin-bottom: 0.6rem;
+  }
+  .trap-box strong { color: var(--danger); }
+
+  /* ─── MEMORY SECTION ─── */
+  .memory-section { margin-bottom: 2rem; }
+  .memory-section h3 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--heading); margin-bottom: 0.8rem; letter-spacing: -0.01em; }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* ─── RESPONSIVE ─── */
+  @media(max-width: 600px) {
+    header { padding: 0 1rem; gap: 0.7rem; }
+    main { padding: 1.5rem 1rem 4rem; }
+    .hero { padding: 1.5rem; }
+    .card { padding: 1.2rem 1.1rem; }
+    .logo { font-size: 0.95rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Cloud<span>Prep</span></div>
+  <nav>
+    <button class="active" onclick="showSection('explain', this)">📖 Concepts</button>
+    <button onclick="showSection('summary', this)">📋 Summary</button>
+    <button onclick="showSection('memory', this)">🧩 Memory</button>
+    <button onclick="showSection('mcq', this)">❓ MCQs</button>
+    <button onclick="showSection('written', this)">✏️ Written</button>
+    <button onclick="showSection('revision', this)">⚡ Revision</button>
+  </nav>
+  <button class="theme-toggle" onclick="toggleTheme()">☀ Light</button>
+</header>
+
+<main>
+
+<!-- ═══════════ SECTION: EXPLAIN ═══════════ -->
+<section id="explain" class="active">
+  <div class="hero">
+    <div class="hero-tag">Advanced Software Engineering</div>
+    <h1>Cloud-Based Software & Docker</h1>
+    <p>A complete exam preparation guide covering Cloud fundamentals, Virtualization, Docker, and Everything-as-a-Service models.</p>
+    <div class="hero-chips">
+      <span class="chip chip-blue">Cloud Computing</span>
+      <span class="chip chip-green">Docker & Containers</span>
+      <span class="chip chip-purple">Virtual Machines</span>
+      <span class="chip chip-orange">IaaS / PaaS / SaaS</span>
+    </div>
+  </div>
+
+  <!-- CLOUD -->
+  <div class="concept-block">
+    <span class="concept-label">Topic 01</span>
+    <h3>What is the Cloud?</h3>
+    <p>The cloud is a massive collection of <strong>remote servers</strong> owned by companies and offered for rent. These are not physical boxes sitting in your room — they are <strong>virtual servers</strong>, meaning they are created in software (not hardware).</p>
+    <div class="analogy-box">
+      <strong>Analogy:</strong> Think of the cloud like electricity from the power grid. You don't build your own power plant; you just plug in and pay for what you use. Similarly, you don't buy physical servers; you "plug into" the cloud and rent what you need.
+    </div>
+    <div class="key-box">
+      <span class="kl">Key Properties</span>
+      <ul class="check">
+        <li>Rent as many servers as needed — scale up or down on demand</li>
+        <li>Cloud servers can be started and shut down as demand changes</li>
+        <li>Access from any networked device: laptop, tablet, TV</li>
+        <li>Two models: rent a server and install your own software, <em>OR</em> pay for ready-made cloud software products</li>
+      </ul>
+    </div>
+  </div>
+  <hr class="divider"/>
+
+  <!-- BENEFITS -->
+  <div class="concept-block">
+    <span class="concept-label">Topic 02</span>
+    <h3>Benefits of Cloud for Software Development</h3>
+    <p>Using the cloud instead of private/on-premises servers gives you major advantages:</p>
+    <ul class="check">
+      <li><strong>Cost:</strong> No upfront capital expense on hardware procurement.</li>
+      <li><strong>Startup Time:</strong> Servers can be up and running in <em>minutes</em>, not days/weeks waiting for hardware delivery.</li>
+      <li><strong>Server Choice / Scalability:</strong> Easily upgrade to more powerful systems; add servers temporarily for load testing.</li>
+      <li><strong>Distributed Development:</strong> Geographically dispersed teams all share the same environment — seamless collaboration, no sync issues.</li>
+    </ul>
+  </div>
+  <hr class="divider"/>
+
+  <!-- VM vs PHYSICAL -->
+  <div class="concept-block">
+    <span class="concept-label">Topic 03</span>
+    <h3>Physical Servers vs. Virtual Machines</h3>
+    <p><strong>Physical Server:</strong> Dedicated to a single user. Has its own OS, memory, hard drive, processor, and network. Expensive and inflexible.</p>
+    <p><strong>Virtual Machine (VM):</strong> Software-simulated computer that acts like a real computer with its own OS. Created using a <strong>Hypervisor</strong> installed on a physical server.</p>
+    <div class="analogy-box">
+      <strong>Analogy:</strong> A physical server is like owning a house. A VM is like dividing that house into multiple apartments — same building, but each apartment (VM) has its own rooms (resources), lock (OS), and tenants (applications).
+    </div>
+    <div class="key-box">
+      <span class="kl">Hypervisor Role</span>
+      A hypervisor is software installed on a physical server that enables creating and managing multiple VMs. Each VM gets its own OS, resources, and server applications. When a VM is used as a server → it's called a <strong>Virtual Server</strong>.
+    </div>
+  </div>
+  <hr class="divider"/>
+
+  <!-- CONTAINERS -->
+  <div class="concept-block">
+    <span class="concept-label">Topic 04</span>
+    <h3>Container-Based Virtualization</h3>
+    <p>When you have a cloud system running <strong>many instances</strong> of the same applications (all using the same OS), you can use a <strong>lighter and faster</strong> alternative to VMs called <strong>Containers</strong>.</p>
+    <div class="analogy-box">
+      <strong>Analogy:</strong> If VMs are full apartments with their own kitchens, bathrooms, and walls — containers are like hotel rooms in the same building. The building's infrastructure (OS kernel) is shared, but each room is isolated and self-contained.
+    </div>
+    <table class="compare-table">
+      <tr><th></th><th>Virtual Machine</th><th>Container</th></tr>
+      <tr><td><strong>OS</strong></td><td>Own full OS per VM</td><td>Shares host OS kernel</td></tr>
+      <tr><td><strong>Size</strong></td><td>Gigabytes</td><td>Megabytes</td></tr>
+      <tr><td><strong>Start time</strong></td><td>Minutes</td><td>Seconds</td></tr>
+      <tr><td><strong>Isolation</strong></td><td>Strong (hardware-level)</td><td>Process-level</td></tr>
+      <tr><td><strong>Use case</strong></td><td>Different OSes needed</td><td>Many instances, same OS</td></tr>
+    </table>
+    <div class="key-box">
+      <span class="kl">Benefits of Containerization</span>
+      <ul class="check">
+        <li><strong>Portability:</strong> Run anywhere Docker is installed — laptop, server, cloud</li>
+        <li><strong>Lightweight:</strong> No full OS overhead; much smaller footprint</li>
+        <li><strong>Speed:</strong> Start/stop in seconds vs. minutes for VMs</li>
+      </ul>
+    </div>
+  </div>
+  <hr class="divider"/>
+
+  <!-- DOCKER -->
+  <div class="concept-block">
+    <span class="concept-label">Topic 05</span>
+    <h3>Docker — The Container Engine</h3>
+    <p>Docker is an <strong>open-source container management service</strong>. It is installed on your OS (Linux preferred, but also Windows/macOS) and enables you to build, run, and manage containers.</p>
+    <p>Multiple Docker containers can run simultaneously on a single operating system.</p>
+
+    <div class="key-box">
+      <span class="kl">Core Docker Terminology</span>
+      <ul class="check">
+        <li><strong>Dockerfile:</strong> A plain text file with instructions to build an image. Specifies base image, packages, files, and configuration. Automates reproducible image creation.</li>
+        <li><strong>Docker Image:</strong> A lightweight, standalone, executable software package containing everything needed to run an application (code, runtime, libraries, settings). Read-only template. Can be versioned and shared via Docker Hub.</li>
+        <li><strong>Docker Container:</strong> A <em>running instance</em> of an image. Your application in action, isolated from other containers.</li>
+        <li><strong>Docker Registry:</strong> Stores Docker images. <strong>Docker Hub</strong> is the default public registry. Private registries are also possible.</li>
+        <li><strong>Docker Daemon (dockerd):</strong> Background service that listens for Docker API requests and manages images, containers, networks, and volumes. The most critical component — acts as middleman between CLI and containers.</li>
+        <li><strong>Docker Client:</strong> The primary interface for users (CLI commands like <code>docker run</code>, <code>docker pull</code>). Sends commands to the daemon via the Docker API.</li>
+      </ul>
+    </div>
+
+    <div class="analogy-box">
+      <strong>Dockerfile → Image → Container analogy:</strong> A Dockerfile is like a <em>recipe</em>. The Docker Image is like the <em>finished dish photo</em> (read-only). A Container is a <em>serving of that dish</em> that someone is actually eating right now (running instance).
+    </div>
+    <p>The <strong><code>docker pull</code></strong> command downloads images from a registry (default: Docker Hub). The <strong><code>docker build</code></strong> command creates an image from a Dockerfile. The <strong><code>docker run</code></strong> command starts a container from an image.</p>
+  </div>
+  <hr class="divider"/>
+
+  <!-- DOCKER ARCH -->
+  <div class="concept-block">
+    <span class="concept-label">Topic 06</span>
+    <h3>Docker Architecture</h3>
+    <p>Docker uses a <strong>client-server architecture</strong> with these components:</p>
+    <ul class="check">
+      <li><strong>Client:</strong> Issues commands (<code>docker build</code>, <code>docker pull</code>, <code>docker run</code>)</li>
+      <li><strong>Docker Daemon (DOCKER_HOST):</strong> Receives commands, manages all Docker objects</li>
+      <li><strong>Registry:</strong> Stores images; daemon fetches images from here</li>
+    </ul>
+    <p>Docker also uses <strong>Namespaces</strong> to provide the isolated workspace (container). When a container runs, Docker creates a set of namespaces. Each aspect of the container runs in its own namespace — process isolation, network, filesystem, etc.</p>
+  </div>
+  <hr class="divider"/>
+
+  <!-- WINDOWS/LINUX CONTAINERS -->
+  <div class="concept-block">
+    <span class="concept-label">Topic 07</span>
+    <h3>Can You Run Windows AND Linux Containers Together?</h3>
+    <p><strong>Not natively.</strong> Containers share the host OS kernel. Linux containers need a Linux kernel; Windows containers need a Windows kernel. You cannot mix kernels because containers don't emulate OS — they share it.</p>
+    <div class="key-box">
+      <span class="kl">Workarounds</span>
+      <ul class="check">
+        <li><strong>Docker Desktop on Windows:</strong> Uses WSL 2 (Windows Subsystem for Linux v2) to run a Linux kernel inside Windows. Can switch between Linux and Windows containers, but <em>not simultaneously</em>.</li>
+        <li><strong>Virtual Machines:</strong> Run a Linux VM on a Windows host (for Linux containers) or a Windows VM on a Linux host (for Windows containers).</li>
+      </ul>
+    </div>
+  </div>
+  <hr class="divider"/>
+
+  <!-- EVERYTHING AS A SERVICE -->
+  <div class="concept-block">
+    <span class="concept-label">Topic 08</span>
+    <h3>Everything as a Service (XaaS)</h3>
+    <p>Cloud computing is fundamentally about <strong>renting instead of owning</strong>. There are three main service models:</p>
+    <table class="compare-table">
+      <tr><th>Model</th><th>What you get</th><th>You manage</th><th>Vendor manages</th></tr>
+      <tr><td><strong>IaaS</strong></td><td>Virtual servers, compute, network, storage</td><td>Applications, Data, Runtime, Middleware, OS</td><td>Virtualization, Servers, Storage, Networking</td></tr>
+      <tr><td><strong>PaaS</strong></td><td>Libraries, frameworks, SQL/NoSQL DBs</td><td>Applications, Data</td><td>Everything below app layer</td></tr>
+      <tr><td><strong>SaaS</strong></td><td>Complete software via browser/mobile app</td><td>Nothing (just use it)</td><td>Everything</td></tr>
+    </table>
+    <div class="analogy-box">
+      <strong>Pizza Analogy:</strong> On-Premises = cook everything at home. IaaS = buy raw ingredients delivered. PaaS = buy a ready pizza kit. SaaS = order from a restaurant and just eat.
+    </div>
+  </div>
+  <hr class="divider"/>
+
+  <!-- SAAS -->
+  <div class="concept-block">
+    <span class="concept-label">Topic 09</span>
+    <h3>SaaS — Advantages & Disadvantages</h3>
+    <p><strong>Advantages for customers:</strong></p>
+    <ul class="check">
+      <li>No upfront costs for software or servers</li>
+      <li>Immediate software updates</li>
+      <li>Reduced software management costs</li>
+      <li>Accessible from mobile, laptop, and desktop</li>
+    </ul>
+    <p style="margin-top: 0.8rem;"><strong>Disadvantages / Data Issues:</strong></p>
+    <ul class="check">
+      <li><strong>Regulation:</strong> EU countries have strict data storage laws that may conflict with the SaaS provider's home country laws.</li>
+      <li><strong>Network Constraints:</strong> High data transfer needs may be limited by network speed — problem for smaller companies.</li>
+      <li><strong>Security Concerns:</strong> Sensitive data handed to an external provider; even large providers have had breaches.</li>
+      <li><strong>Data Exchange:</strong> Difficult to exchange data between cloud services and local apps unless the cloud service provides a public API.</li>
+      <li><strong>Loss of Control:</strong> Provider controls when/how software is updated.</li>
+      <li><strong>Service Lock-in:</strong> Hard to switch providers once deeply integrated.</li>
+    </ul>
+  </div>
+  <hr class="divider"/>
+
+  <!-- SAAS DESIGN ISSUES -->
+  <div class="concept-block">
+    <span class="concept-label">Topic 10</span>
+    <h3>SaaS Design Issues</h3>
+    <ul class="check">
+      <li><strong>Local vs. Remote Processing:</strong> Some features run locally in the browser/app (reduces network traffic, speeds up response), some on remote server. Local processing uses more device power.</li>
+      <li><strong>Authentication:</strong> Options include own system (extra credentials to remember), OAuth via Google/Facebook/LinkedIn, or <em>federated authentication</em> (delegating to the user's employer).</li>
+      <li><strong>Information Leakage:</strong> Multiple organizations on the same platform risk data leaking between tenants. Security design must prevent cross-tenant access.</li>
+    </ul>
+  </div>
+  <hr class="divider"/>
+
+  <!-- MULTI-TENANT -->
+  <div class="concept-block">
+    <span class="concept-label">Topic 11</span>
+    <h3>Multi-Tenant vs. Multi-Instance Systems</h3>
+    <table class="compare-table">
+      <tr><th></th><th>Multi-Tenant</th><th>Multi-Instance</th></tr>
+      <tr><td><strong>Definition</strong></td><td>ALL customers share ONE system instance and ONE database</td><td>Each customer gets their OWN copy of system + database</td></tr>
+      <tr><td><strong>Data separation</strong></td><td>Logical: tenant identifier tags each record</td><td>Physical: separate DBs per customer</td></tr>
+      <tr><td><strong>Schema</strong></td><td>Single, shared (defined by provider)</td><td>Per-instance, customizable</td></tr>
+      <tr><td><strong>Updates</strong></td><td>One update reaches all customers simultaneously</td><td>Must update each instance separately</td></tr>
+      <tr><td><strong>Complexity</strong></td><td>Higher (managing many users)</td><td>Lower per-instance</td></tr>
+    </table>
+
+    <div class="key-box">
+      <span class="kl">Multi-Tenant Database Details</span>
+      <ul class="check">
+        <li>Database is <strong>partitioned</strong> — each company has its own "space"</li>
+        <li>All records tagged with a <strong>tenant identifier</strong></li>
+        <li>Access software uses tenant ID to provide <strong>logical isolation</strong> (users feel like they have their own DB)</li>
+        <li>Single schema defined and controlled by the SaaS provider</li>
+      </ul>
+    </div>
+
+    <p><strong>Multi-Tenant Advantages:</strong></p>
+    <ul class="check">
+      <li><strong>Resource utilization:</strong> Provider controls and optimizes all resources efficiently</li>
+      <li><strong>Security:</strong> Designed for security from scratch; only one DB copy to patch</li>
+      <li><strong>Update management:</strong> Single update reaches all customers simultaneously</li>
+    </ul>
+    <p style="margin-top: 0.8rem;"><strong>Multi-Tenant Disadvantages:</strong></p>
+    <ul class="check">
+      <li><strong>Inflexibility:</strong> All customers use the same schema — limited customization</li>
+      <li><strong>Security risk:</strong> Data leak between tenants is theoretically possible; a breach affects ALL customers</li>
+      <li><strong>Complexity:</strong> More complex to build and maintain; higher bug risk</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════ SECTION: SUMMARY ═══════════ -->
+<section id="summary">
+  <div class="hero">
+    <div class="hero-tag">Phase 2</div>
+    <h1>Smart Summary</h1>
+    <p>High-yield bullet-point summary — study this before any exam.</p>
+  </div>
+
+  <div class="card">
+    <div class="summary-group">
+      <h3>Cloud Fundamentals</h3>
+      <ul class="bullet-list">
+        <li>Cloud = large pool of <strong>remote virtual servers</strong> rented on-demand</li>
+        <li><strong>Virtual servers</strong> = implemented in software, not hardware</li>
+        <li>Scale up/down dynamically; start/stop as needed</li>
+        <li>Access from any networked device</li>
+      </ul>
+    </div>
+    <div class="summary-group">
+      <h3>Cloud Development Benefits</h3>
+      <ul class="bullet-list">
+        <li><strong>Cost</strong> – no hardware procurement capital</li>
+        <li><strong>Startup time</strong> – servers ready in minutes</li>
+        <li><strong>Server choice</strong> – upgrade/add servers as needed</li>
+        <li><strong>Distributed dev</strong> – shared environment for remote teams</li>
+      </ul>
+    </div>
+    <div class="summary-group">
+      <h3>VMs vs Containers</h3>
+      <ul class="bullet-list">
+        <li>VM = full OS per instance; <strong>GBs</strong>; starts in <strong>minutes</strong>; strong isolation</li>
+        <li>Container = shares host kernel; <strong>MBs</strong>; starts in <strong>seconds</strong>; process isolation</li>
+        <li>Hypervisor creates/manages VMs on physical hardware</li>
+        <li>Docker = open-source container management engine</li>
+      </ul>
+    </div>
+    <div class="summary-group">
+      <h3>Docker Terminology</h3>
+      <ul class="bullet-list">
+        <li><strong>Dockerfile</strong> → text file with build instructions (recipe)</li>
+        <li><strong>Image</strong> → read-only, executable package (built from Dockerfile)</li>
+        <li><strong>Container</strong> → running instance of an image</li>
+        <li><strong>Registry</strong> → stores images (Docker Hub = default public registry)</li>
+        <li><strong>Daemon (dockerd)</strong> → background service; manages all Docker objects</li>
+        <li><strong>Client</strong> → CLI that sends commands to daemon via API</li>
+        <li><strong>Namespaces</strong> → provide process isolation for containers</li>
+      </ul>
+    </div>
+    <div class="summary-group">
+      <h3>XaaS Service Models</h3>
+      <ul class="bullet-list">
+        <li><strong>IaaS</strong> – raw infrastructure (compute, network, storage); you manage OS up</li>
+        <li><strong>PaaS</strong> – platform + frameworks + DBs; you manage app + data only</li>
+        <li><strong>SaaS</strong> – complete software via browser; vendor manages everything</li>
+      </ul>
+    </div>
+    <div class="summary-group">
+      <h3>SaaS Issues</h3>
+      <ul class="bullet-list">
+        <li><strong>Data regulation</strong> – conflicting laws between countries</li>
+        <li><strong>Network constraints</strong> – slow connections limit responsiveness</li>
+        <li><strong>Security</strong> – giving control of data to external provider</li>
+        <li><strong>Data exchange</strong> – hard without public API</li>
+        <li><strong>Lock-in, loss of control over updates</strong></li>
+      </ul>
+    </div>
+    <div class="summary-group">
+      <h3>Multi-Tenant vs Multi-Instance</h3>
+      <ul class="bullet-list">
+        <li><strong>Multi-tenant</strong> = one DB, all customers; logical isolation via tenant ID</li>
+        <li><strong>Multi-instance</strong> = separate DB/system per customer</li>
+        <li>Multi-tenant pros: resource efficiency, centralized security, easy updates</li>
+        <li>Multi-tenant cons: inflexible schema, security risk affects all, more complex</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SECTION: MEMORY ═══════════ -->
+<section id="memory">
+  <div class="hero">
+    <div class="hero-tag">Phase 3</div>
+    <h1>Memory Optimization</h1>
+    <p>Mnemonics, traps, comparisons, and chunking strategies to lock concepts in long-term memory.</p>
+  </div>
+
+  <div class="memory-section">
+    <h3>🎯 Mnemonics</h3>
+    <div class="mnemonic-box">
+      <span class="ml">Mnemonic #1 — Docker flow</span>
+      <strong>D-I-C-R-D</strong> = <em>Developers Insist Containers Run Dependably</em><br/>
+      → <strong>D</strong>ockerfile → <strong>I</strong>mage → <strong>C</strong>ontainer → <strong>R</strong>egistry → <strong>D</strong>aemon
+    </div>
+    <div class="mnemonic-box">
+      <span class="ml">Mnemonic #2 — XaaS models (bottom to top)</span>
+      <strong>"I Put Software"</strong> → <strong>I</strong>aaS, <strong>P</strong>aaS, <strong>S</strong>aaS<br/>
+      Stack order: IaaS (lowest, most control) → PaaS (middle) → SaaS (highest, least control)
+    </div>
+    <div class="mnemonic-box">
+      <span class="ml">Mnemonic #3 — SaaS Disadvantages</span>
+      <strong>"Really Nice Security Doesn't Lock Systems"</strong><br/>
+      → <strong>R</strong>egulation, <strong>N</strong>etwork constraints, <strong>S</strong>ecurity, <strong>D</strong>ata exchange, <strong>L</strong>ock-in, <strong>S</strong>oftware update control loss
+    </div>
+    <div class="mnemonic-box">
+      <span class="ml">Mnemonic #4 — Cloud Benefits</span>
+      <strong>"C S S D"</strong> = <em>Companies Save Some Dollars</em><br/>
+      → <strong>C</strong>ost, <strong>S</strong>tartup time, <strong>S</strong>erver choice, <strong>D</strong>istributed development
+    </div>
+  </div>
+
+  <div class="memory-section">
+    <h3>⚠️ Common Exam Traps</h3>
+    <div class="trap-box"><strong>TRAP:</strong> "Containers have their own OS" — <em>WRONG.</em> Containers SHARE the host OS kernel. VMs have their own OS.</div>
+    <div class="trap-box"><strong>TRAP:</strong> "A Docker Image is a running application" — <em>WRONG.</em> An IMAGE is a static template. A CONTAINER is the running instance.</div>
+    <div class="trap-box"><strong>TRAP:</strong> "Multi-tenant means multiple databases" — <em>WRONG.</em> Multi-tenant = ONE database shared by all customers, logically separated by tenant ID.</div>
+    <div class="trap-box"><strong>TRAP:</strong> "Docker can run Windows and Linux containers simultaneously natively" — <em>WRONG.</em> You need WSL2 or VMs, and still can't run both at the exact same time natively.</div>
+    <div class="trap-box"><strong>TRAP:</strong> "SaaS gives customers full control over data storage" — <em>WRONG.</em> SaaS customers lose control over data storage location, which creates regulatory problems.</div>
+    <div class="trap-box"><strong>TRAP:</strong> "Multi-tenant databases are always more secure than multi-instance" — <em>PARTIALLY WRONG.</em> They are better designed for security, but a breach affects ALL customers at once.</div>
+    <div class="trap-box"><strong>TRAP:</strong> "IaaS means you manage nothing" — <em>WRONG.</em> With IaaS, you still manage the OS, middleware, runtime, data, and application.</div>
+  </div>
+
+  <div class="memory-section">
+    <h3>🔢 Chunking: Numbers to Remember</h3>
+    <div class="card">
+      <ul class="check">
+        <li>Containers = <strong>Megabytes</strong> in size | VMs = <strong>Gigabytes</strong></li>
+        <li>Containers start in <strong>seconds</strong> | VMs start in <strong>minutes</strong></li>
+        <li>Cloud servers can be up in <strong>minutes</strong> (vs. days/weeks for physical hardware delivery)</li>
+        <li>Docker is installed on OS; multiple containers run on <strong>one OS simultaneously</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="memory-section">
+    <h3>🔗 Concept Relationships</h3>
+    <div class="card">
+      <p style="font-size:0.9rem; color: var(--text2);">Understanding HOW concepts connect locks them in memory:</p>
+      <ul class="check" style="margin-top: 0.6rem;">
+        <li><strong>Dockerfile</strong> is used to BUILD a <strong>Docker Image</strong></li>
+        <li>A <strong>Docker Image</strong> is RUN to create a <strong>Docker Container</strong></li>
+        <li><strong>Images</strong> are stored in and retrieved from a <strong>Docker Registry</strong></li>
+        <li>The <strong>Docker Client</strong> sends commands to the <strong>Docker Daemon</strong></li>
+        <li>The <strong>Daemon</strong> manages Images, Containers, Networks, and Volumes</li>
+        <li><strong>Namespaces</strong> → isolation mechanism used inside containers</li>
+        <li>VMs use a <strong>Hypervisor</strong>; Containers use <strong>Docker Engine</strong></li>
+        <li><strong>SaaS</strong> uses multi-tenant or multi-instance architecture for serving customers</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="memory-section">
+    <h3>📊 Quick Comparison: IaaS vs PaaS vs SaaS</h3>
+    <table class="compare-table">
+      <tr><th>Feature</th><th>IaaS</th><th>PaaS</th><th>SaaS</th></tr>
+      <tr><td>Control level</td><td>Highest</td><td>Medium</td><td>Lowest</td></tr>
+      <tr><td>You manage</td><td>OS, App, Data, Runtime</td><td>App + Data</td><td>Nothing</td></tr>
+      <tr><td>Example</td><td>AWS EC2, Azure VMs</td><td>Google App Engine</td><td>Gmail, Dropbox</td></tr>
+      <tr><td>Target users</td><td>DevOps, Sysadmins</td><td>Developers</td><td>End users</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════ SECTION: MCQ ═══════════ -->
+<section id="mcq">
+  <div class="hero">
+    <div class="hero-tag">Phase 4</div>
+    <h1>MCQ Exam Training</h1>
+    <p>Click an option to check your answer. Use the filter to practice by difficulty.</p>
+  </div>
+
+  <div class="mcq-score">
+    <div>
+      <div class="score-num" id="score-display">0 / 0</div>
+      <div class="score-label">Questions answered correctly</div>
+    </div>
+    <button class="reset-btn" onclick="resetMCQ()">↺ Reset All</button>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterMCQ('all', this)">All</button>
+    <button class="filter-btn" onclick="filterMCQ('easy', this)">🟢 Easy</button>
+    <button class="filter-btn" onclick="filterMCQ('medium', this)">🟡 Medium</button>
+    <button class="filter-btn" onclick="filterMCQ('hard', this)">🔴 Hard</button>
+  </div>
+
+  <div id="mcq-container"></div>
+</section>
+
+<!-- ═══════════ SECTION: WRITTEN ═══════════ -->
+<section id="written">
+  <div class="hero">
+    <div class="hero-tag">Phase 4B</div>
+    <h1>Written Questions</h1>
+    <p>Click to expand model answers. Practice these for high marks.</p>
+  </div>
+  <div id="written-container"></div>
+</section>
+
+<!-- ═══════════ SECTION: REVISION ═══════════ -->
+<section id="revision">
+  <div class="hero">
+    <div class="hero-tag">Phase 5</div>
+    <h1>⚡ Rapid Revision Sheet</h1>
+    <p>Night-before-exam cheat sheet. Read this 30 minutes before walking in.</p>
+  </div>
+
+  <div class="cheat-alert">
+    <strong>🔥 Night Before Reminder:</strong> Focus on definitions, compare VMs vs Containers, understand multi-tenant vs multi-instance, and memorize XaaS layer responsibilities.
+  </div>
+
+  <div class="rev-grid">
+    <div class="rev-block">
+      <div class="rev-block-title" style="color: var(--accent);">Key Definitions</div>
+      <div class="rev-def"><strong>Cloud:</strong> Remote virtual servers rented on demand</div>
+      <div class="rev-def"><strong>VM:</strong> Software-simulated computer; needs hypervisor</div>
+      <div class="rev-def"><strong>Container:</strong> Isolated process using shared host OS kernel</div>
+      <div class="rev-def"><strong>Docker:</strong> Open-source container management engine</div>
+      <div class="rev-def"><strong>Dockerfile:</strong> Text file with image build instructions</div>
+      <div class="rev-def"><strong>Docker Image:</strong> Read-only app package (built from Dockerfile)</div>
+      <div class="rev-def"><strong>Docker Container:</strong> Running instance of an image</div>
+      <div class="rev-def"><strong>Docker Daemon:</strong> Background service managing all Docker objects</div>
+      <div class="rev-def"><strong>Docker Registry:</strong> Storage for Docker images (Hub = default)</div>
+      <div class="rev-def"><strong>Namespace:</strong> Docker's isolation mechanism for containers</div>
+      <div class="rev-def"><strong>Hypervisor:</strong> Software that creates/manages VMs on physical server</div>
+    </div>
+
+    <div class="rev-block">
+      <div class="rev-block-title" style="color: var(--accent2);">VM vs Container (CRITICAL)</div>
+      <div class="rev-def"><strong>VM Size:</strong> Gigabytes | <strong>Container:</strong> Megabytes</div>
+      <div class="rev-def"><strong>VM Start:</strong> Minutes | <strong>Container:</strong> Seconds</div>
+      <div class="rev-def"><strong>VM OS:</strong> Own OS per instance | <strong>Container:</strong> Shared host kernel</div>
+      <div class="rev-def"><strong>VM Isolation:</strong> Hardware-level | <strong>Container:</strong> Process-level</div>
+      <div class="rev-def" style="margin-top:0.8rem;"><strong>Windows + Linux containers at once?</strong> NO. Needs WSL2/VM workaround. Still can't run simultaneously.</div>
+    </div>
+
+    <div class="rev-block">
+      <div class="rev-block-title" style="color: var(--accent3);">XaaS Layers</div>
+      <div class="rev-def"><strong>IaaS:</strong> Virtual infra (compute, storage, network). You manage: OS → App</div>
+      <div class="rev-def"><strong>PaaS:</strong> Platform + frameworks. You manage: App + Data only</div>
+      <div class="rev-def"><strong>SaaS:</strong> Full software via browser. Vendor manages everything.</div>
+      <div class="rev-def" style="margin-top:0.6rem;"><em>Stack bottom-up: IaaS → PaaS → SaaS</em></div>
+    </div>
+
+    <div class="rev-block">
+      <div class="rev-block-title" style="color: var(--accent4);">Multi-Tenant Key Facts</div>
+      <div class="rev-def"><strong>Multi-tenant:</strong> ONE system, ONE DB, all customers</div>
+      <div class="rev-def"><strong>Multi-instance:</strong> Separate system + DB per customer</div>
+      <div class="rev-def"><strong>Isolation method:</strong> Tenant identifier tags all records</div>
+      <div class="rev-def"><strong>Schema:</strong> Single, defined by SaaS provider</div>
+      <div class="rev-def"><strong>Pros:</strong> Efficient resources, centralized security, easy updates</div>
+      <div class="rev-def"><strong>Cons:</strong> Inflexible schema, breach affects ALL, more complex</div>
+    </div>
+
+    <div class="rev-block">
+      <div class="rev-block-title" style="color: var(--accent);">SaaS Disadvantages (6)</div>
+      <div class="rev-def">1. <strong>Regulation</strong> – law conflicts between countries</div>
+      <div class="rev-def">2. <strong>Network constraints</strong> – speed limits response time</div>
+      <div class="rev-def">3. <strong>Security</strong> – external data control risks</div>
+      <div class="rev-def">4. <strong>Data exchange</strong> – needs API for interop</div>
+      <div class="rev-def">5. <strong>Loss of control</strong> – over updates timing</div>
+      <div class="rev-def">6. <strong>Service lock-in</strong> – hard to switch providers</div>
+    </div>
+
+    <div class="rev-block">
+      <div class="rev-block-title" style="color: var(--accent2);">SaaS Design Issues (3)</div>
+      <div class="rev-def"><strong>Local/Remote processing:</strong> Balance speed vs. power use</div>
+      <div class="rev-def"><strong>Authentication:</strong> Own system / OAuth / Federated</div>
+      <div class="rev-def"><strong>Information leakage:</strong> Cross-tenant data exposure risk</div>
+      <div class="rev-def" style="margin-top:0.8rem;"><strong>Cloud Benfits:</strong> Cost · Startup time · Server choice · Distributed dev</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1rem;">
+    <div class="card-title">🧠 Final Mnemonics</div>
+    <div class="rev-def"><strong>Docker flow:</strong> <span class="highlight">D-I-C-R-D</span> → Dockerfile → Image → Container → Registry → Daemon</div>
+    <div class="rev-def"><strong>XaaS:</strong> <span class="highlight">"I Put Software"</span> → IaaS, PaaS, SaaS</div>
+    <div class="rev-def"><strong>Cloud benefits:</strong> <span class="highlight">"C S S D"</span> → Cost, Startup, Server choice, Distributed</div>
+    <div class="rev-def"><strong>SaaS disadvantages:</strong> <span class="highlight">"Really Nice Security Doesn't Lock Systems"</span></div>
+  </div>
+</section>
+
+</main>
+
+<script>
+// ─── DATA ───
+
+const mcqs = [
+  { q: "What is a cloud-based server?", opts: ["A physical server owned by the user", "A virtual server implemented in software", "A server located in the user's office", "A server that runs only one application"], ans: 1, diff: "easy", exp: "Cloud servers are virtual servers, meaning they are implemented in software rather than dedicated hardware, allowing flexible creation and scaling." },
+  { q: "Which of the following is NOT a benefit of using cloud for software development?", opts: ["Reduced startup time", "Lower hardware costs", "Guaranteed faster performance than local servers", "Support for distributed development teams"], ans: 2, diff: "medium", exp: "The cloud doesn't guarantee faster performance than well-configured local servers — it offers cost savings, faster startup, and scalability. 'Guaranteed faster performance' is not a listed benefit." },
+  { q: "What is the primary role of a hypervisor?", opts: ["To manage Docker containers", "To create and manage virtual machines on a physical server", "To provide network security", "To store Docker images"], ans: 1, diff: "easy", exp: "A hypervisor is software installed on a physical server that enables creating and managing multiple virtual machines, each with their own OS and resources." },
+  { q: "How do containers differ from virtual machines in terms of size?", opts: ["Containers are gigabytes; VMs are megabytes", "Both are the same size", "Containers are megabytes; VMs are gigabytes", "Container size depends on the host OS"], ans: 2, diff: "easy", exp: "Containers are megabytes in size because they share the host OS kernel, while VMs include a full OS and are typically gigabytes." },
+  { q: "What is a Dockerfile?", opts: ["A running instance of a Docker image", "A text file containing instructions for building a Docker image", "A remote storage location for Docker images", "A type of Docker container"], ans: 1, diff: "easy", exp: "A Dockerfile is a plain text file with instructions that specify the base image, packages, files, and configuration needed to build a Docker image." },
+  { q: "What is the relationship between a Docker image and a Docker container?", opts: ["They are the same thing", "An image is a running instance of a container", "A container is a running instance of an image", "Images are stored inside containers"], ans: 2, diff: "easy", exp: "A Docker container is a running instance of a Docker image. The image is the static template; the container is the live, executing application." },
+  { q: "Which Docker component is responsible for listening to API requests and managing Docker objects?", opts: ["Docker Client", "Docker Registry", "Docker Daemon (dockerd)", "Docker Namespace"], ans: 2, diff: "medium", exp: "The Docker Daemon (dockerd) is the background service that listens for Docker API requests and manages all Docker objects including images, containers, networks, and volumes." },
+  { q: "What command downloads a Docker image from a registry?", opts: ["docker build", "docker push", "docker run", "docker pull"], ans: 3, diff: "easy", exp: "The 'docker pull' command downloads Docker images from a registry (default: Docker Hub)." },
+  { q: "What technology does Docker use to provide isolated workspaces for containers?", opts: ["Hypervisors", "Namespaces", "Virtual Networks", "Partitions"], ans: 1, diff: "medium", exp: "Docker uses namespaces to provide the isolated workspace called a container. Each aspect of a container runs in its own namespace, limiting its access." },
+  { q: "Can you run Windows and Linux containers simultaneously on the same machine natively?", opts: ["Yes, Docker supports this by default", "No, containers share the host OS kernel and kernels cannot be mixed", "Yes, using Docker Desktop", "No, you need two separate machines"], ans: 1, diff: "medium", exp: "Containers share the host OS kernel. Linux containers need a Linux kernel; Windows containers need a Windows kernel. You cannot mix kernels natively — not even simultaneously with Docker Desktop." },
+  { q: "In the XaaS model, which service requires you to manage the OS, middleware, and runtime?", opts: ["SaaS", "PaaS", "IaaS", "All three"], ans: 2, diff: "medium", exp: "With IaaS (Infrastructure as a Service), the vendor manages physical servers, storage, networking, and virtualization — but you manage everything above: OS, middleware, runtime, data, and application." },
+  { q: "Which cloud service model delivers complete software via a web browser, with the vendor managing everything?", opts: ["IaaS", "PaaS", "SaaS", "DaaS"], ans: 2, diff: "easy", exp: "SaaS (Software as a Service) delivers complete software products via a web browser or mobile app, with the vendor managing all infrastructure, platform, and software layers." },
+  { q: "A company in Germany wants to use an American SaaS provider but is concerned about data laws. This is an example of which SaaS disadvantage?", opts: ["Network constraints", "Service lock-in", "Regulation / Privacy compliance", "Data exchange"], ans: 2, diff: "medium", exp: "EU countries like Germany have strict data privacy laws (e.g., GDPR). If a SaaS provider cannot guarantee storage locations comply with those laws, companies may be unable to use their service." },
+  { q: "What is 'federated authentication' in the context of SaaS?", opts: ["Using the same password for all services", "Delegating authentication to the user's employer/organization", "Using Google or Facebook login", "Storing credentials in the cloud"], ans: 1, diff: "hard", exp: "Federated authentication delegates the authentication process to the organization where the user works. This is common in enterprise SaaS where the employer's identity provider (e.g., Active Directory) handles login." },
+  { q: "In a multi-tenant database, how is data from different customers kept separate?", opts: ["Each customer has a separate database", "Data is encrypted per customer", "Records are tagged with a tenant identifier", "Customers access data through different servers"], ans: 2, diff: "medium", exp: "In a multi-tenant database, all customer data is in the same database but each record is tagged with a tenant identifier. The access software uses this ID to provide 'logical isolation.'" },
+  { q: "Which is an advantage of multi-tenant databases?", opts: ["Each customer can customize the database schema", "Updates can be delivered to all customers simultaneously", "It is simpler to build than multi-instance", "Each customer's data is physically isolated"], ans: 1, diff: "medium", exp: "One major advantage of multi-tenant systems is that a single update is deployed once and immediately reaches all customers, eliminating the need to update multiple separate instances." },
+  { q: "What is a key disadvantage of multi-tenant systems compared to multi-instance?", opts: ["Higher cost per customer", "Less resource efficiency", "Inflexible schema — all customers share the same structure", "Slower update delivery"], ans: 2, diff: "medium", exp: "In a multi-tenant system, all customers must use the same database schema defined by the SaaS provider, with limited ability to customize it for individual needs." },
+  { q: "If a startup needs to begin developing software immediately without waiting for hardware, which cloud benefit is most relevant?", opts: ["Cost", "Distributed development", "Server choice", "Startup time"], ans: 3, diff: "medium", exp: "Startup time is the key benefit here — the cloud allows servers to be running in minutes, eliminating the wait time associated with hardware procurement and delivery." },
+  { q: "Which Docker component serves as the primary user interface for managing Docker?", opts: ["Docker Daemon", "Docker Registry", "Docker Client", "Docker Hub"], ans: 2, diff: "easy", exp: "The Docker Client is the primary way users interact with Docker. Commands like 'docker run' are sent via the client, which forwards them to the Docker daemon via the API." },
+  { q: "What is 'information leakage' in the context of SaaS design?", opts: ["Unauthorized access to the admin dashboard", "Data from one organization accidentally becoming accessible to another on the same platform", "Leaking API keys in logs", "Users sharing login credentials"], ans: 1, diff: "hard", exp: "Information leakage in SaaS refers to the security risk where data from one tenant organization inadvertently becomes accessible to another organization using the same multi-tenant platform." },
+  { q: "What does PaaS provide that IaaS does not?", opts: ["Raw virtual machines", "Complete software applications", "Libraries, frameworks, and database services managed by the provider", "Physical server access"], ans: 2, diff: "medium", exp: "PaaS provides an intermediate layer that includes libraries, frameworks, and SQL/NoSQL databases managed by the cloud provider. IaaS only provides raw infrastructure; the developer must set up everything else." },
+  { q: "Which container technology allows running a Linux kernel inside Windows without a full virtual machine?", opts: ["Hyper-V", "WSL 2 (Windows Subsystem for Linux v2)", "VMware", "Docker Hub"], ans: 1, diff: "hard", exp: "WSL 2 (Windows Subsystem for Linux v2) runs a real Linux kernel inside Windows, enabling Docker Desktop to run Linux containers on a Windows host without a full separate VM." },
+  { q: "A cloud deployment has hundreds of microservices all based on the same Linux OS. Should it use VMs or containers?", opts: ["VMs, because they offer stronger isolation", "Containers, because they are lighter, faster, and share the OS", "VMs, because they start faster", "Both are equally appropriate"], ans: 1, diff: "medium", exp: "When many instances share the same OS, containers are the superior choice. They are megabytes vs. gigabytes, start in seconds vs. minutes, and are far more efficient for this exact use case." },
+  { q: "What is the default public Docker registry?", opts: ["AWS ECR", "Azure Container Registry", "Docker Hub", "GitHub Container Registry"], ans: 2, diff: "easy", exp: "Docker Hub is the default public registry where Docker images are stored and retrieved. Docker is configured to look for images on Docker Hub by default." },
+  { q: "In SaaS, why might local processing be preferred over server-side processing?", opts: ["It reduces electrical power consumption", "It eliminates the need for a network connection", "It reduces network traffic and improves response speed", "It allows users to modify the source code"], ans: 2, diff: "medium", exp: "Local processing in the user's browser or mobile app reduces network traffic and improves response speed — especially beneficial for users with slow network connections." },
+  { q: "What happens to a Docker image after it is built?", opts: ["It automatically runs as a container", "It is deleted after one use", "It can be stored in a registry and versioned", "It requires a hypervisor to run"], ans: 2, diff: "medium", exp: "Once built, a Docker image can be shared, distributed, stored in a registry (like Docker Hub), and versioned to track changes over time." },
+  { q: "Which of the following BEST describes logical isolation in a multi-tenant database?", opts: ["Physical separation of data on different hard drives", "Data encrypted with tenant-specific keys", "Using tenant identifiers so each tenant appears to have their own database", "Running a separate database server per customer"], ans: 2, diff: "hard", exp: "Logical isolation means the database access software uses tenant identifiers to filter data such that each tenant appears to interact with their own database, even though they share the same physical database." },
+  { q: "What is a 'virtual server'?", opts: ["A server with no hardware", "A VM used specifically as a server, created by a hypervisor on a physical server", "A server running Docker", "A server in a private data center"], ans: 1, diff: "medium", exp: "A virtual server is a virtual machine (created by a hypervisor on physical hardware) that is specifically used for server purposes. Each VM has its own OS, resources, and server applications." },
+  { q: "Which SaaS design concern relates to a user having to remember yet another username and password?", opts: ["Information leakage", "Multi-tenancy", "Authentication / credential management", "Network latency"], ans: 2, diff: "easy", exp: "Setting up a custom authentication system forces users to manage another set of credentials. Many SaaS systems solve this by offering OAuth login via Google, Facebook, or LinkedIn." },
+  { q: "If a cloud security breach occurs in a multi-tenant database, who is affected?", opts: ["Only the tenant that was targeted", "Only customers who haven't updated their passwords", "All customers sharing that database", "Only the SaaS provider's internal accounts"], ans: 2, diff: "hard", exp: "This is a critical disadvantage of multi-tenant architecture: because all customer data is in the same database, a security breach can potentially expose data from ALL customers, not just one." }
+];
+
+const writtenQs = [
+  { type: "short", q: "What is the difference between a Docker Image and a Docker Container?", answer: `<p><span class="model-tag">Model Answer</span>A <strong>Docker Image</strong> is a read-only, static software package that contains everything needed to run an application (code, runtime, libraries, configuration). It is built from a Dockerfile and serves as a template.</p><p>A <strong>Docker Container</strong> is a running (live) instance of a Docker image. It is the application in action, executing in isolation from other containers. You can create multiple containers from the same image.</p><p><em>Key analogy:</em> The image is the recipe; the container is the meal being served.</p>` },
+  { type: "short", q: "List and briefly explain four benefits of using the cloud for software development instead of private servers.", answer: `<span class="model-tag">Model Answer</span><ul><li><strong>Cost:</strong> Eliminates upfront capital expenditure on hardware procurement.</li><li><strong>Startup time:</strong> Servers can be provisioned and running in minutes, compared to days or weeks for physical hardware delivery.</li><li><strong>Server choice:</strong> Easily upgrade server specifications or add additional servers for short-term needs like load testing.</li><li><strong>Distributed development:</strong> Geographically dispersed teams all access the same environment, enabling seamless collaboration and information sharing.</li></ul>` },
+  { type: "short", q: "Explain what Docker Namespaces are and why they are important.", answer: `<span class="model-tag">Model Answer</span><p>Docker uses a technology called <strong>namespaces</strong> to provide the isolated workspace known as a container. When Docker runs a container, it creates a set of namespaces specifically for that container.</p><p>Each aspect of the container — processes, network interfaces, file system mounts, user IDs — runs in its own separate namespace. Access is limited to that namespace, preventing the container from interfering with other containers or the host system. This namespace-based isolation is fundamental to container security and predictability.</p>` },
+  { type: "long", q: "Compare and contrast Virtual Machines (VMs) and Containers as virtualization technologies. Include: definition, size, startup time, OS model, isolation level, and use cases.", answer: `<span class="model-tag">Model Answer</span><p><strong>Virtual Machines (VMs)</strong> are software simulations of a full computer, created by a hypervisor installed on a physical server. Each VM has its own complete operating system (OS), libraries, and applications. VMs are typically gigabytes in size and take several minutes to start. Their isolation is at the hardware level, providing strong security boundaries. VMs are suitable when you need to run different operating systems on the same hardware.</p><p><strong>Containers</strong> are lightweight, isolated processes that share the host machine's OS kernel. They only contain the application code and its dependencies, not a full OS. Containers are typically megabytes in size and start within seconds. They provide process-level isolation (using namespaces), which is slightly less strong than VMs but sufficient for most cloud deployments.</p><p><strong>Key trade-off:</strong> VMs offer stronger isolation and OS flexibility at the cost of size and speed. Containers offer speed, portability, and efficiency when all instances use the same OS. For cloud systems running many instances of the same service on the same OS, containers (via Docker) are the preferred approach.</p>` },
+  { type: "long", q: "Explain the three cloud service models (IaaS, PaaS, SaaS), specifying what the vendor manages and what the customer manages in each. Give a real-world example for each.", answer: `<span class="model-tag">Model Answer</span><p><strong>1. Infrastructure as a Service (IaaS):</strong> The cloud provider supplies virtualized computing resources — virtual machines, storage, and networking. The customer manages: the operating system, middleware, runtime environment, application data, and the application itself. The vendor manages: physical servers, storage hardware, networking, and the virtualization layer. Example: <em>Amazon EC2 (Elastic Compute Cloud)</em>.</p><p><strong>2. Platform as a Service (PaaS):</strong> The provider offers a complete development and deployment environment including OS, middleware, runtime, and database services (SQL/NoSQL). The customer only manages the application code and its data. The vendor handles everything below the application layer. Example: <em>Google App Engine, Heroku</em>.</p><p><strong>3. Software as a Service (SaaS):</strong> The provider delivers a fully functional software application via a web browser or mobile app. The customer simply uses the software; the vendor manages absolutely everything (infrastructure, platform, application, data storage). Example: <em>Gmail, Dropbox, Salesforce</em>.</p><p>The key progression from IaaS → PaaS → SaaS is increasing vendor responsibility and decreasing customer control.</p>` },
+  { type: "long", q: "Explain multi-tenant vs. multi-instance SaaS architecture. Include the advantages AND disadvantages of multi-tenant systems.", answer: `<span class="model-tag">Model Answer</span><p><strong>Multi-tenant architecture:</strong> All customers (tenants) are served by a single instance of the software running on a single shared database. Data belonging to different customers coexists in the same database, but each record is tagged with a <em>tenant identifier</em>. The database access layer uses this identifier to provide 'logical isolation' — each tenant appears to interact with their own dedicated database, even though the physical database is shared. The database schema is defined by the SaaS provider and is identical for all tenants.</p><p><strong>Multi-instance architecture:</strong> Each customer receives their own separate copy of the software and their own database, providing true physical isolation.</p><p><strong>Advantages of multi-tenant:</strong></p><ul><li><em>Resource utilization:</em> The provider can optimize a single system for all users efficiently.</li><li><em>Security design:</em> Built with security in mind from the start; only one DB copy needs to be patched when vulnerabilities are found.</li><li><em>Update management:</em> A single update is deployed once and immediately reaches all customers.</li></ul><p><strong>Disadvantages of multi-tenant:</strong></p><ul><li><em>Inflexibility:</em> All customers must use the same schema — limited customization.</li><li><em>Security risk:</em> A breach of the shared database can expose data from ALL customers simultaneously.</li><li><em>Complexity:</em> Managing many users in one system increases complexity and the likelihood of bugs.</li></ul>` },
+  { type: "short", q: "What are the three SaaS design issues discussed in the course? Briefly explain each.", answer: `<span class="model-tag">Model Answer</span><ul><li><strong>Local vs. Remote Processing:</strong> Some features can be executed locally in the user's browser/app to reduce network traffic and speed up response, while others run on the server. The trade-off is that local processing increases device power consumption.</li><li><strong>Authentication:</strong> The system must decide how users log in — a custom system (extra credentials to remember), OAuth via Google/Facebook/LinkedIn, or federated authentication (delegating to the user's employer's identity system).</li><li><strong>Information Leakage:</strong> When multiple organizations use the same platform, there is a security risk that data from one organization becomes accessible to another. This must be carefully prevented in the security architecture.</li></ul>` },
+];
+
+// ─── MCQ ENGINE ───
+
+let mcqState = {};
+
+function renderMCQs(filter = 'all') {
+  const container = document.getElementById('mcq-container');
+  container.innerHTML = '';
+  const filtered = mcqs.filter(m => filter === 'all' || m.diff === filter);
+
+  filtered.forEach((m, realIdx) => {
+    const origIdx = mcqs.indexOf(m);
+    const state = mcqState[origIdx] || { answered: false };
+    const card = document.createElement('div');
+    card.className = 'mcq-card' + (state.answered ? ' revealed' : '');
+    card.dataset.idx = origIdx;
+
+    const diffLabel = { easy: '<span class="mcq-diff diff-easy">Easy</span>', medium: '<span class="mcq-diff diff-medium">Medium</span>', hard: '<span class="mcq-diff diff-hard">Hard</span>' }[m.diff];
+
+    let optsHtml = m.opts.map((o, oi) => {
+      let cls = 'mcq-opt';
+      if (state.answered) {
+        cls += ' locked';
+        if (oi === m.ans) cls += ' correct';
+        else if (oi === state.chosen) cls += ' selected-wrong wrong';
+        else cls += ' wrong';
+      }
+      return `<div class="${cls}" onclick="answerMCQ(${origIdx}, ${oi})"><span class="opt-key">${'ABCD'[oi]}</span>${o}</div>`;
+    }).join('');
+
+    card.innerHTML = `
+      <span class="mcq-num">Question ${realIdx + 1} of ${filtered.length} ${diffLabel}</span>
+      <div class="mcq-q">${m.q}</div>
+      <div class="mcq-options">${optsHtml}</div>
+      ${state.answered ? `<div class="mcq-explanation visible">💡 ${m.exp}</div>` : `<button class="mcq-reveal-btn" onclick="revealExp(${origIdx})">Show Explanation</button><div class="mcq-explanation" id="exp-${origIdx}">💡 ${m.exp}</div>`}
+    `;
+    container.appendChild(card);
+  });
+  updateScore();
+}
+
+function answerMCQ(idx, chosen) {
+  if (mcqState[idx]?.answered) return;
+  mcqState[idx] = { answered: true, chosen, correct: chosen === mcqs[idx].ans };
+  const currentFilter = document.querySelector('.filter-btn.active')?.dataset?.filter || 'all';
+  renderMCQs(currentFilter);
+}
+
+function revealExp(idx) {
+  const el = document.getElementById(`exp-${idx}`);
+  if (el) el.classList.toggle('visible');
+}
+
+function updateScore() {
+  const answered = Object.values(mcqState).filter(s => s.answered);
+  const correct = answered.filter(s => s.correct).length;
+  document.getElementById('score-display').textContent = `${correct} / ${answered.length}`;
+}
+
+function resetMCQ() {
+  mcqState = {};
+  const currentFilter = document.querySelector('.filter-btn.active')?.dataset?.filter || 'all';
+  renderMCQs(currentFilter);
+}
+
+function filterMCQ(f, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  btn.dataset.filter = f;
+  renderMCQs(f);
+}
+
+// ─── WRITTEN ENGINE ───
+
+function renderWritten() {
+  const container = document.getElementById('written-container');
+  writtenQs.forEach((wq, i) => {
+    const card = document.createElement('div');
+    card.className = 'wq-card';
+    const badgeClass = wq.type === 'short' ? 'badge-short' : 'badge-long';
+    const badgeLabel = wq.type === 'short' ? 'Short Answer' : 'Long Answer';
+    card.innerHTML = `
+      <div class="wq-header" onclick="toggleWQ(this)">
+        <span class="wq-badge ${badgeClass}">${badgeLabel}</span>
+        <div class="wq-q">Q${i + 1}. ${wq.q}</div>
+        <span class="wq-chevron">▾</span>
+      </div>
+      <div class="wq-body">${wq.answer}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function toggleWQ(header) {
+  const card = header.parentElement;
+  card.classList.toggle('open');
+}
+
+// ─── NAVIGATION ───
+
+function showSection(id, btn) {
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── THEME ───
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.querySelector('.theme-toggle').textContent = isDark ? '🌙 Dark' : '☀ Light';
+}
+
+// ─── INIT ───
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Add filter data attributes
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    const text = btn.textContent.trim();
+    if (text.includes('Easy')) btn.dataset.filter = 'easy';
+    else if (text.includes('Medium')) btn.dataset.filter = 'medium';
+    else if (text.includes('Hard')) btn.dataset.filter = 'hard';
+    else btn.dataset.filter = 'all';
+  });
+  renderMCQs('all');
+  renderWritten();
+});
+</script>
+</body>
+</html>
