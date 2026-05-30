@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AOP Exam Prep — Advanced Software Engineering</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+/* ===== CSS VARIABLES ===== */
+:root[data-theme="dark"] {
+  --bg: #0d0f14;
+  --bg2: #13161e;
+  --bg3: #1a1d28;
+  --border: #2a2d3e;
+  --accent: #6ee7b7;
+  --accent2: #818cf8;
+  --accent3: #fb923c;
+  --accent4: #f472b6;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --card: #161924;
+  --card2: #1e2132;
+  --correct: #065f46;
+  --correct-text: #6ee7b7;
+  --wrong: #7f1d1d;
+  --wrong-text: #fca5a5;
+  --highlight: #2d3748;
+  --tag-bg: #1e2132;
+  --nav-h: 64px;
+}
+:root[data-theme="light"] {
+  --bg: #f8f9fc;
+  --bg2: #ffffff;
+  --bg3: #f1f5f9;
+  --border: #e2e8f0;
+  --accent: #059669;
+  --accent2: #6366f1;
+  --accent3: #ea580c;
+  --accent4: #db2777;
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #94a3b8;
+  --card: #ffffff;
+  --card2: #f8fafc;
+  --correct: #d1fae5;
+  --correct-text: #065f46;
+  --wrong: #fee2e2;
+  --wrong-text: #991b1b;
+  --highlight: #e0f2fe;
+  --tag-bg: #f1f5f9;
+  --nav-h: 64px;
+}
+
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Lora', Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+::selection { background: var(--accent); color: #000; }
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ===== NAVBAR ===== */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: var(--nav-h);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem;
+  backdrop-filter: blur(12px);
+}
+.nav-brand {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.nav-brand span { color: var(--accent); }
+.nav-tabs {
+  display: flex; gap: 0.25rem;
+  list-style: none;
+}
+.nav-tab {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text2);
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.nav-tab:hover { color: var(--text); border-color: var(--border); }
+.nav-tab.active {
+  background: var(--accent);
+  color: #000;
+  font-weight: 500;
+  border-color: var(--accent);
+}
+.nav-right { display: flex; align-items: center; gap: 0.75rem; }
+.theme-btn {
+  width: 38px; height: 38px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  color: var(--text2);
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.theme-btn:hover { color: var(--text); border-color: var(--accent); }
+
+/* ===== MAIN LAYOUT ===== */
+.main {
+  margin-top: var(--nav-h);
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 3rem 1.5rem 6rem;
+}
+.section { display: none; animation: fadeIn 0.4s ease; }
+.section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ===== HERO ===== */
+.hero {
+  text-align: center;
+  padding: 3rem 0 4rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 3rem;
+}
+.hero-tag {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 100px;
+  padding: 0.25rem 0.9rem;
+  margin-bottom: 1.25rem;
+}
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+.hero h1 em { color: var(--accent); font-style: normal; }
+.hero p { color: var(--text2); font-size: 1.05rem; max-width: 520px; margin: 0 auto; }
+.hero-stats {
+  display: flex; justify-content: center; gap: 2rem;
+  margin-top: 2.5rem;
+  flex-wrap: wrap;
+}
+.stat {
+  text-align: center;
+}
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--accent2);
+  display: block;
+}
+.stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ===== TYPOGRAPHY ===== */
+h2.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.35rem;
+  color: var(--text);
+}
+h3.subsection {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 2rem 0 0.75rem;
+  color: var(--text);
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--accent);
+}
+h4.mini-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent3);
+  margin-bottom: 0.5rem;
+}
+p { color: var(--text2); margin-bottom: 1rem; }
+strong { color: var(--text); font-weight: 600; }
+.section-intro { color: var(--text2); margin-bottom: 2rem; font-style: italic; }
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  transition: border-color 0.2s;
+}
+.card:hover { border-color: var(--accent2); }
+.card-accent {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.card-warning {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent3);
+  border-radius: 0 12px 12px 0;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.card-info {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent2);
+  border-radius: 0 12px 12px 0;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+/* ===== TAGS ===== */
+.tag {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  background: var(--tag-bg);
+  color: var(--text2);
+  margin: 0.15rem;
+}
+.tag.green { background: rgba(110,231,183,0.12); color: var(--accent); }
+.tag.purple { background: rgba(129,140,248,0.12); color: var(--accent2); }
+.tag.orange { background: rgba(251,146,60,0.12); color: var(--accent3); }
+.tag.pink { background: rgba(244,114,182,0.12); color: var(--accent4); }
+
+/* ===== CODE BLOCK ===== */
+.code-block {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin: 0.75rem 0 1rem;
+  color: var(--accent);
+  overflow-x: auto;
+  line-height: 1.6;
+}
+.code-block .kw { color: var(--accent4); }
+.code-block .str { color: var(--accent3); }
+.code-block .cm { color: var(--text3); font-style: italic; }
+
+/* ===== COLLAPSIBLE ===== */
+.collapsible {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+}
+.collapsible-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.collapsible-header:hover { background: var(--bg3); }
+.collapsible-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.collapsible-icon {
+  font-size: 0.75rem;
+  color: var(--text3);
+  transition: transform 0.3s;
+  font-family: 'DM Mono', monospace;
+}
+.collapsible.open .collapsible-icon { transform: rotate(180deg); }
+.collapsible-body {
+  padding: 0 1.25rem;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s;
+}
+.collapsible.open .collapsible-body {
+  max-height: 3000px;
+  padding: 0 1.25rem 1.25rem;
+}
+
+/* ===== TABLE ===== */
+.table-wrap { overflow-x: auto; margin: 1rem 0; }
+table {
+  width: 100%; border-collapse: collapse;
+  font-size: 0.9rem;
+}
+th {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.65rem 0.9rem;
+  background: var(--bg3);
+  color: var(--text2);
+  border: 1px solid var(--border);
+  text-align: left;
+}
+td {
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--border);
+  color: var(--text2);
+  vertical-align: top;
+}
+tr:hover td { background: var(--bg3); }
+
+/* ===== MCQ ===== */
+.mcq-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: border-color 0.2s;
+}
+.mcq-meta {
+  display: flex; gap: 0.5rem; margin-bottom: 0.85rem; align-items: center;
+}
+.mcq-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--text3);
+}
+.difficulty {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 100px;
+}
+.diff-easy { background: rgba(110,231,183,0.15); color: var(--accent); }
+.diff-med { background: rgba(251,146,60,0.15); color: var(--accent3); }
+.diff-hard { background: rgba(244,114,182,0.15); color: var(--accent4); }
+.mcq-q {
+  font-size: 1rem;
+  font-family: 'Lora', serif;
+  color: var(--text);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.mcq-options { display: flex; flex-direction: column; gap: 0.5rem; }
+.mcq-opt {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  padding: 0.6rem 1rem;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  color: var(--text2);
+  background: var(--bg2);
+  transition: all 0.2s;
+  display: flex; gap: 0.6rem; align-items: flex-start;
+}
+.mcq-opt:hover { border-color: var(--accent2); color: var(--text); }
+.mcq-opt.correct { background: var(--correct); color: var(--correct-text); border-color: var(--accent); }
+.mcq-opt.wrong { background: var(--wrong); color: var(--wrong-text); border-color: #f87171; }
+.mcq-opt.disabled { cursor: default; }
+.opt-letter {
+  font-weight: 700;
+  min-width: 1.1rem;
+  color: var(--accent2);
+}
+.mcq-explanation {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  background: var(--bg3);
+  border-radius: 7px;
+  font-size: 0.88rem;
+  color: var(--text2);
+  border-left: 3px solid var(--accent);
+  display: none;
+}
+.mcq-explanation.show { display: block; animation: fadeIn 0.3s ease; }
+.mcq-score { text-align: center; padding: 2rem; margin-bottom: 2rem; }
+.mcq-score-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 4rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+.reset-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  color: var(--text2);
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: all 0.2s;
+}
+.reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ===== WRITTEN QUESTIONS ===== */
+.written-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+.written-q {
+  padding: 1.25rem 1.5rem;
+  font-size: 1rem;
+  color: var(--text);
+}
+.written-toggle {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  padding: 0.5rem 1.25rem;
+  background: var(--bg3);
+  border: none;
+  border-top: 1px solid var(--border);
+  color: var(--accent2);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background 0.2s;
+}
+.written-toggle:hover { background: var(--bg2); }
+.written-answer {
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s;
+  font-size: 0.92rem;
+  color: var(--text2);
+  border-top: none;
+}
+.written-answer.show {
+  max-height: 2000px;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.model-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+/* ===== REVISION SHEET ===== */
+.revision-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+@media (max-width: 640px) { .revision-grid { grid-template-columns: 1fr; } }
+.rev-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+}
+.rev-card h4 {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+  color: var(--accent);
+}
+.rev-item {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text2);
+  margin-bottom: 0.35rem;
+  display: flex;
+  gap: 0.4rem;
+}
+.rev-item::before { content: "›"; color: var(--accent3); }
+
+/* ===== PROGRESS BAR ===== */
+.progress-container { margin-bottom: 1.5rem; }
+.progress-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text3);
+  display: flex; justify-content: space-between; margin-bottom: 0.35rem;
+}
+.progress-bar {
+  height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; background: var(--accent); border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+/* ===== SUMMARY BULLETS ===== */
+.bullet-list { list-style: none; padding: 0; margin-bottom: 1rem; }
+.bullet-list li {
+  padding: 0.4rem 0 0.4rem 1.5rem;
+  color: var(--text2);
+  font-size: 0.95rem;
+  position: relative;
+}
+.bullet-list li::before {
+  content: "▸";
+  position: absolute; left: 0;
+  color: var(--accent);
+  font-size: 0.8rem;
+  top: 0.55rem;
+}
+.bullet-list li strong { color: var(--text); }
+
+/* ===== MNEMONIC BOX ===== */
+.mnemonic-box {
+  background: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(110,231,183,0.06));
+  border: 1px dashed var(--accent2);
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+.mnemonic-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent2);
+  margin-bottom: 0.5rem;
+}
+.mnemonic-word {
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+.mnemonic-exp {
+  font-size: 0.85rem;
+  color: var(--text2);
+}
+
+/* ===== SCORE TRACKER ===== */
+.score-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--border);
+  z-index: 99;
+}
+.score-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width 0.5s ease;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+  .nav-tabs { display: none; }
+  .main { padding: 2rem 1rem 5rem; }
+  .revision-grid { grid-template-columns: 1fr; }
+}
+.mobile-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 0.5rem;
+  z-index: 100;
+  gap: 0.25rem;
+  justify-content: space-around;
+}
+@media (max-width: 768px) { .mobile-nav { display: flex; } }
+.mobile-tab {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text2);
+  border: 1px solid transparent;
+  text-align: center;
+  transition: all 0.2s;
+  flex: 1;
+}
+.mobile-tab.active { background: var(--accent); color: #000; }
+
+/* ===== DIVIDER ===== */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2rem 0;
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .navbar, .mobile-nav, .score-bar { display: none !important; }
+  .section { display: block !important; }
+  .main { margin-top: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-brand">AOP <span>ExamPrep</span></div>
+  <ul class="nav-tabs">
+    <li class="nav-tab active" onclick="showSection('explanation')">📖 Explanation</li>
+    <li class="nav-tab" onclick="showSection('summary')">📋 Summary</li>
+    <li class="nav-tab" onclick="showSection('memory')">🧩 Memory</li>
+    <li class="nav-tab" onclick="showSection('mcq')">❓ MCQs</li>
+    <li class="nav-tab" onclick="showSection('written')">✍️ Written</li>
+    <li class="nav-tab" onclick="showSection('revision')">⚡ Revision</li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- ==================== SECTION: EXPLANATION ==================== -->
+<section id="explanation" class="section active">
+  <div class="hero">
+    <div class="hero-tag">Advanced Software Engineering</div>
+    <h1>Aspect-Oriented<br/><em>Programming</em></h1>
+    <p>A complete exam preparation system covering every concept, definition, and example from Dr. Salwa Osama's AOP lecture.</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">6</span><span class="stat-label">Core Concepts</span></div>
+      <div class="stat"><span class="stat-num">35</span><span class="stat-label">MCQ Questions</span></div>
+      <div class="stat"><span class="stat-num">15</span><span class="stat-label">Written Q&amp;A</span></div>
+      <div class="stat"><span class="stat-num">5</span><span class="stat-label">Advice Types</span></div>
+    </div>
+  </div>
+
+  <!-- 1. The Problem with OOP -->
+  <h2 class="section-title">1. The Problem with OOP</h2>
+  <p class="section-intro">Before AOP, understand what OOP failed to solve.</p>
+
+  <div class="card-accent">
+    <h4 class="mini-title">The Core Pain</h4>
+    <p>In OOP, when you have <strong>cross-cutting concerns</strong> (like logging, security, transactions), you're forced to scatter the same code across <em>every</em> class. Imagine writing <code>LogMessage()</code> inside Class A, Class B, and Class C — that's pure code duplication.</p>
+  </div>
+
+  <div class="collapsible open">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span class="collapsible-title">🔴 Code Tangling</span>
+      <span class="collapsible-icon">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p><strong>Code Tangling</strong> happens when a single module tries to handle <em>multiple concerns at once</em> — your core business logic is tangled up with logging, security, and transaction code in the same methods.</p>
+      <p><strong>Analogy:</strong> Imagine a chef who simultaneously cooks, writes the order, cleans the table, and processes payment — all in one motion. That's tangled code.</p>
+      <div class="tag orange">Hard to read</div>
+      <div class="tag orange">Confuses responsibilities</div>
+      <div class="tag orange">Breaks Single Responsibility Principle</div>
+    </div>
+  </div>
+
+  <div class="collapsible open">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span class="collapsible-title">🔴 Code Scattering</span>
+      <span class="collapsible-icon">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p><strong>Code Scattering</strong> is the mirror problem: the <em>same concern</em> (e.g., logging) is duplicated across <em>many different modules</em>. If you need to change how logging works, you must update every class.</p>
+      <p><strong>Analogy:</strong> The fire alarm system in a building — instead of one central panel, imagine every room having its own separate alarm wired differently. Changing the system means going room by room.</p>
+      <div class="tag orange">Violates DRY principle</div>
+      <div class="tag orange">High maintenance cost</div>
+      <div class="tag orange">Bug-prone updates</div>
+    </div>
+  </div>
+
+  <h3 class="subsection">Problems in OOP (4 Key Problems)</h3>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span class="collapsible-title">1. Poor Traceability</span>
+      <span class="collapsible-icon">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p>When multiple concerns live in the same module, it becomes <strong>impossible to trace</strong> which code addresses which requirement. You can't easily answer: "Where exactly is my login security implemented?"</p>
+      <p>This breaks the link between <em>requirements</em> and their <em>implementation</em>.</p>
+    </div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span class="collapsible-title">2. Lower Productivity</span>
+      <span class="collapsible-icon">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p>Developers waste time on <strong>peripheral issues</strong> (security, logging, transactions) instead of the actual <em>problem domain</em>. Every new class needs boilerplate repeated — attention is drained from real work.</p>
+    </div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span class="collapsible-title">3. Less Code Reuse</span>
+      <span class="collapsible-icon">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p>Boilerplate code is <strong>propagated through cut-and-paste</strong> — there is no real code reuse. Every copy is a risk: if the original is buggy, all copies are buggy too.</p>
+    </div>
+  </div>
+
+  <div class="collapsible">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span class="collapsible-title">4. Harder Refactoring</span>
+      <span class="collapsible-icon">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p>Changing a requirement means <strong>touching many modules for a single concern</strong>. Want to add a timestamp to every log? Update 30 classes. This is painful and error-prone.</p>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- 2. Concerns -->
+  <h2 class="section-title">2. Understanding Concerns</h2>
+
+  <div class="card-accent">
+    <h4 class="mini-title">Definition</h4>
+    <p><strong>Concerns</strong> are NOT just program issues — they reflect system requirements and the priorities of stakeholders. A concern is anything the system must address: performance, security, specific functionality, etc.</p>
+    <p>By reflecting <strong>separation of concerns</strong> in code, you get clear traceability from requirements to implementation.</p>
+  </div>
+
+  <h3 class="subsection">Types of Concerns</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Concern Type</th>
+          <th>Description</th>
+          <th>Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Core Concerns</strong></td>
+          <td>Functional concerns related to the <em>primary purpose</em> of the system</td>
+          <td>Processing a bank transaction</td>
+        </tr>
+        <tr>
+          <td><strong>Secondary Concerns</strong></td>
+          <td>Functional concerns reflecting <em>non-functional requirements</em></td>
+          <td>Performance, logging</td>
+        </tr>
+        <tr>
+          <td><strong>Functional Concerns</strong></td>
+          <td>Specific functionality to include in the system</td>
+          <td>User authentication</td>
+        </tr>
+        <tr>
+          <td><strong>Quality of Service</strong></td>
+          <td>Non-functional behavior of the system</td>
+          <td>Response time, availability</td>
+        </tr>
+        <tr>
+          <td><strong>Policy Concerns</strong></td>
+          <td>Overall policies governing system use</td>
+          <td>Access control policies</td>
+        </tr>
+        <tr>
+          <td><strong>System Concerns</strong></td>
+          <td>Attributes of the system as a whole</td>
+          <td>Maintainability, configurability</td>
+        </tr>
+        <tr>
+          <td><strong>Organisational Concerns</strong></td>
+          <td>Organisational goals and priorities</td>
+          <td>Delivering within budget</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- 3. AOP Solution -->
+  <h2 class="section-title">3. AOP — The Solution</h2>
+
+  <div class="card-accent">
+    <h4 class="mini-title">Core Idea</h4>
+    <p><strong>Aspect-Oriented Programming (AOP)</strong> solves code tangling and scattering by centralizing cross-cutting concerns into separate modules called <strong>Aspects</strong>. Instead of every class having <code>LogMessage()</code>, a single Logging Aspect handles it for all classes automatically.</p>
+  </div>
+
+  <h3 class="subsection">Benefits of AOP</h3>
+  <div class="card-info">
+    <ul class="bullet-list">
+      <li><strong>Centralize concern implementation</strong> — one place for each cross-cutting concern</li>
+      <li><strong>Intercept method calls</strong> — execute code before/after methods transparently</li>
+      <li><strong>Inject new behavior</strong> — add functionality without changing existing code</li>
+      <li><strong>More reusable code</strong> — write once, apply everywhere</li>
+      <li><strong>Cleaner code</strong> — each module focuses on its primary responsibility</li>
+      <li><strong>Write less code</strong> — no more copy-paste boilerplate</li>
+      <li><strong>More maintainable</strong> — change one Aspect, affects all join points</li>
+    </ul>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- 4. AOP Terminologies -->
+  <h2 class="section-title">4. AOP Core Terminologies</h2>
+  <p class="section-intro">These are the most exam-critical definitions. Know every one cold.</p>
+
+  <div class="collapsible open">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span class="collapsible-title">🟢 Aspect</span>
+      <span class="collapsible-icon">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p>An <strong>Aspect</strong> is a class that implements enterprise application concerns that <em>cut across multiple classes</em> — such as transaction management, logging, security.</p>
+      <p>In Spring Framework, Aspects can be:</p>
+      <ul class="bullet-list">
+        <li>Configured through <strong>Spring XML configuration</strong></li>
+        <li>Defined using <strong>@Aspect annotation</strong> via Spring AspectJ integration</li>
+      </ul>
+      <p><strong>Analogy:</strong> An Aspect is like a universal plugin you plug into your application — it automatically handles a concern wherever it's needed, without the classes knowing about it.</p>
+      <div class="code-block"><span class="kw">@Aspect</span>
+<span class="kw">public class</span> LoggingAspect {
+  <span class="cm">// Handles logging for all classes</span>
+}</div>
+    </div>
+  </div>
+
+  <div class="collapsible open">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span class="collapsible-title">🟢 Join Point</span>
+      <span class="collapsible-icon">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p>A <strong>Join Point</strong> is a specific point in the application such as:</p>
+      <ul class="bullet-list">
+        <li>Method execution</li>
+        <li>Exception handling</li>
+        <li>Changing object variable values</li>
+      </ul>
+      <div class="card-warning">
+        <p>⚠️ <strong>Exam Trap:</strong> In <em>Spring AOP specifically</em>, a join point is <strong>always the execution of the method</strong>. Spring does NOT support field-level or constructor join points like AspectJ does.</p>
+      </div>
+      <p><strong>Analogy:</strong> A join point is like a bus stop — it's a defined location where something <em>could</em> happen (a bus could stop there).</p>
+    </div>
+  </div>
+
+  <div class="collapsible open">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span class="collapsible-title">🟢 Advice</span>
+      <span class="collapsible-icon">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p><strong>Advice</strong> is the <em>action taken</em> for a particular join point. It is the actual code that runs when the aspect is triggered.</p>
+      <p>Think of it as: "When X happens (join point), do Y (advice)."</p>
+      <p><strong>Analogy:</strong> Continuing the bus analogy — if a join point is a bus stop, Advice is what happens when the bus actually stops there (passengers board, doors open, etc.).</p>
+    </div>
+  </div>
+
+  <div class="collapsible open">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span class="collapsible-title">🟢 Point Cut</span>
+      <span class="collapsible-icon">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p>A <strong>Point Cut</strong> is an expression matched with join points to determine <em>whether advice needs to be executed or not</em>. It identifies the specific events with which advice should be associated.</p>
+      <p><strong>Key insight:</strong> AOP's ability to multicast the same aspects into many places in your code is called Point Cut.</p>
+      <div class="code-block"><span class="cm">// All methods in com.tutorialspoint package</span>
+<span class="kw">@Pointcut</span>(<span class="str">"execution(* com.tutorialspoint.*.*(..))"</span>)
+
+<span class="cm">// Only Student.getName() method</span>
+<span class="kw">@Pointcut</span>(<span class="str">"execution(* com.tutorialspoint.Student.getName(..))"</span>)</div>
+      <p><strong>Analogy:</strong> A Point Cut is like an employee schedule filter — it says "advice applies to ALL methods" or "only to THIS specific method."</p>
+    </div>
+  </div>
+
+  <div class="collapsible open">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span class="collapsible-title">🟢 Weaving</span>
+      <span class="collapsible-icon">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p><strong>Weaving</strong> is the process that <em>combines advice with point cuts</em>. It is the incorporation of advice code at the specified join points by an <strong>aspect weaver</strong>.</p>
+      <p>The weaver is the engine that makes AOP work — it takes your Aspect definitions and "weaves" them into the regular code at the right moments.</p>
+      <p><strong>Analogy:</strong> Weaving is like a tailor (the weaver) who takes a plain shirt (your code) and sews in special patches (aspects) at specific locations (join points), without you having to redesign the shirt.</p>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- 5. Advice Types -->
+  <h2 class="section-title">5. AOP Advice Types (5 Types)</h2>
+  <p class="section-intro">The 5 advice types are extremely high-yield for exams. Know each annotation.</p>
+
+  <div class="collapsible open">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span class="collapsible-title">1. Before Advice — @Before</span>
+      <span class="collapsible-icon">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p>Runs <strong>before</strong> the execution of the join point method. Used for logging before a method call, security checks, parameter validation.</p>
+      <div class="code-block"><span class="kw">@Before</span>(<span class="str">"execution(* com.example.*.*(..))"</span>)
+<span class="kw">public void</span> beforeAdvice(JoinPoint joinPoint) {
+  System.out.println(<span class="str">"Before: "</span> + joinPoint.getSignature());
+}</div>
+    </div>
+  </div>
+
+  <div class="collapsible open">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span class="collapsible-title">2. After (Finally) Advice — @After</span>
+      <span class="collapsible-icon">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p>Executes <strong>after the join point method finishes</strong>, whether it finished <em>normally or by throwing an exception</em>. It's like a <code>finally</code> block in Java — it always runs.</p>
+      <div class="card-warning">
+        <p>⚠️ <strong>Exam Trap:</strong> @After runs regardless of success/failure. Don't confuse with @AfterReturning (only on success) or @AfterThrowing (only on exception).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="collapsible open">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span class="collapsible-title">3. After Returning Advice — @AfterReturning</span>
+      <span class="collapsible-icon">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p>Executes <strong>only if the join point method executes normally</strong> (no exception). Useful for processing the return value, success-only logging.</p>
+      <p>Use when you need to take action only upon successful completion.</p>
+    </div>
+  </div>
+
+  <div class="collapsible open">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span class="collapsible-title">4. After Throwing Advice — @AfterThrowing</span>
+      <span class="collapsible-icon">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p>Executes <strong>only when the join point method throws an exception</strong>. Very useful for declarative rollback of transactions or exception-specific logging.</p>
+      <p>This lets you centralize exception handling logic across all methods.</p>
+    </div>
+  </div>
+
+  <div class="collapsible open">
+    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+      <span class="collapsible-title">5. Around Advice — @Around ⭐ Most Powerful</span>
+      <span class="collapsible-icon">▼</span>
+    </div>
+    <div class="collapsible-body">
+      <p><strong>Around Advice</strong> is the most important and powerful advice type. It <em>surrounds the join point method</em> completely. Key capabilities:</p>
+      <ul class="bullet-list">
+        <li>Runs code <strong>before</strong> the join point</li>
+        <li>Can <strong>choose whether to execute</strong> the join point method at all</li>
+        <li>Runs code <strong>after</strong> the join point</li>
+        <li>Is <strong>responsible for invoking</strong> the join point method</li>
+        <li>Must <strong>return values</strong> if the method returns something</li>
+      </ul>
+      <div class="code-block"><span class="kw">@Around</span>(<span class="str">"execution(* com.example.*.*(..))"</span>)
+<span class="kw">public</span> Object aroundAdvice(ProceedingJoinPoint pjp) <span class="kw">throws</span> Throwable {
+  System.out.println(<span class="str">"Before method"</span>);
+  Object result = pjp.proceed(); <span class="cm">// Execute the method</span>
+  System.out.println(<span class="str">"After method"</span>);
+  <span class="kw">return</span> result;
+}</div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- 6. AOP Configuration -->
+  <h2 class="section-title">6. AOP Configuration Concept</h2>
+  <div class="card-info">
+    <p>When configuring AOP, you answer 4 key questions:</p>
+    <ul class="bullet-list">
+      <li><strong>Which Aspect?</strong> — Which cross-cutting concern to apply (Logging, Security, Transaction)?</li>
+      <li><strong>Which Class?</strong> — Which target class to intercept?</li>
+      <li><strong>Which Method?</strong> — Which specific method(s) within that class?</li>
+      <li><strong>Which Position?</strong> — Before, After, Around, AfterReturning, or AfterThrowing?</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== SECTION: SUMMARY ==================== -->
+<section id="summary" class="section">
+  <h2 class="section-title">Smart Summary</h2>
+  <p class="section-intro">High-impact, hierarchical, exam-optimized summary of every key concept.</p>
+
+  <div class="card">
+    <h4 class="mini-title">🔴 The Problem — Why OOP Isn't Enough</h4>
+    <ul class="bullet-list">
+      <li><strong>Code Tangling</strong> — one module handles multiple unrelated concerns simultaneously</li>
+      <li><strong>Code Scattering</strong> — same concern duplicated across many modules</li>
+      <li><strong>Cross-cutting concerns</strong> — concerns like logging, security, transactions that cut across multiple abstractions</li>
+      <li>Result: Poor traceability, lower productivity, less code reuse, harder refactoring</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h4 class="mini-title">🟡 Concerns — Types</h4>
+    <ul class="bullet-list">
+      <li><strong>Core Concerns</strong> → primary purpose of system</li>
+      <li><strong>Secondary Concerns</strong> → non-functional requirements</li>
+      <li><strong>Functional / Quality / Policy / System / Organisational</strong> concerns all exist</li>
+      <li>Goal: Separate of concerns = clear requirements-to-code traceability</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h4 class="mini-title">🟢 AOP — Core Terminologies (AJPW)</h4>
+    <ul class="bullet-list">
+      <li><strong>Aspect</strong> — class implementing cross-cutting concerns (e.g., @Aspect)</li>
+      <li><strong>Join Point</strong> — specific execution point; in Spring AOP = always method execution</li>
+      <li><strong>Advice</strong> — action taken at a join point (Before, After, Around, etc.)</li>
+      <li><strong>Point Cut</strong> — expression that selects join points for advice; enables multicasting</li>
+      <li><strong>Weaving</strong> — combining advice + point cuts; done by the aspect weaver</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h4 class="mini-title">⚡ 5 Advice Types — Annotations Quick Reference</h4>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Type</th><th>Annotation</th><th>When it Runs</th><th>Special Power</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Before</strong></td><td>@Before</td><td>Before method executes</td><td>Pre-checks</td></tr>
+          <tr><td><strong>After (Finally)</strong></td><td>@After</td><td>After method, always</td><td>Cleanup</td></tr>
+          <tr><td><strong>After Returning</strong></td><td>@AfterReturning</td><td>Only on normal return</td><td>Post-success logic</td></tr>
+          <tr><td><strong>After Throwing</strong></td><td>@AfterThrowing</td><td>Only on exception</td><td>Rollback</td></tr>
+          <tr><td><strong>Around ⭐</strong></td><td>@Around</td><td>Surrounds method</td><td>Full control, can skip method</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 class="mini-title">✅ AOP Benefits Summary</h4>
+    <ul class="bullet-list">
+      <li>Centralize cross-cutting concerns in one place</li>
+      <li>Intercept method calls transparently</li>
+      <li>Inject new behavior without modifying existing code</li>
+      <li>More reusable, cleaner, more maintainable code</li>
+      <li>Write less code, read less code, more concise</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== SECTION: MEMORY ==================== -->
+<section id="memory" class="section">
+  <h2 class="section-title">🧩 Memory Optimization</h2>
+  <p class="section-intro">Mnemonics, comparisons, traps, and chunking to lock in the knowledge.</p>
+
+  <!-- Mnemonic 1 -->
+  <div class="mnemonic-box">
+    <div class="mnemonic-title">🔤 Mnemonic — AOP Core Terms</div>
+    <div class="mnemonic-word">A JAP Weaves</div>
+    <div class="mnemonic-exp">
+      <strong>A</strong>spect &nbsp;·&nbsp; <strong>J</strong>oin Point &nbsp;·&nbsp; <strong>A</strong>dvice &nbsp;·&nbsp; <strong>P</strong>oint Cut &nbsp;·&nbsp; <strong>Weaves</strong> (Weaving)
+    </div>
+  </div>
+
+  <!-- Mnemonic 2 -->
+  <div class="mnemonic-box">
+    <div class="mnemonic-title">🔤 Mnemonic — 5 Advice Types</div>
+    <div class="mnemonic-word">BARAT</div>
+    <div class="mnemonic-exp">
+      <strong>B</strong>efore &nbsp;·&nbsp; <strong>A</strong>fter (finally) &nbsp;·&nbsp; <strong>R</strong>eturning &nbsp;·&nbsp; <strong>A</strong>fterThrowing &nbsp;·&nbsp; <strong>A</strong>round
+    </div>
+  </div>
+
+  <!-- Mnemonic 3 -->
+  <div class="mnemonic-box">
+    <div class="mnemonic-title">🔤 Mnemonic — 4 OOP Problems</div>
+    <div class="mnemonic-word">PLRH</div>
+    <div class="mnemonic-exp">
+      <strong>P</strong>oor Traceability &nbsp;·&nbsp; <strong>L</strong>ower Productivity &nbsp;·&nbsp; <strong>R</strong>euse (less) &nbsp;·&nbsp; <strong>H</strong>arder Refactoring
+    </div>
+  </div>
+
+  <h3 class="subsection">⚠️ Common Exam Traps</h3>
+
+  <div class="card-warning">
+    <h4 class="mini-title">Trap 1 — Join Point in Spring AOP</h4>
+    <p>In Spring AOP, a Join Point is <strong>ALWAYS method execution</strong>. Not field access, not constructor calls. If an exam option says "field change" or "constructor call," it's a trap — that's AspectJ, not Spring AOP.</p>
+  </div>
+
+  <div class="card-warning">
+    <h4 class="mini-title">Trap 2 — @After vs @AfterReturning vs @AfterThrowing</h4>
+    <ul class="bullet-list">
+      <li><strong>@After</strong> = ALWAYS runs (success OR exception) — like finally{}</li>
+      <li><strong>@AfterReturning</strong> = ONLY on success (no exception)</li>
+      <li><strong>@AfterThrowing</strong> = ONLY on exception</li>
+    </ul>
+  </div>
+
+  <div class="card-warning">
+    <h4 class="mini-title">Trap 3 — Around Advice Responsibility</h4>
+    <p>With @Around, <strong>you</strong> are responsible for calling <code>pjp.proceed()</code> to execute the target method. If you forget it, the actual method never runs. It must also return the value.</p>
+  </div>
+
+  <div class="card-warning">
+    <h4 class="mini-title">Trap 4 — Code Tangling vs Code Scattering</h4>
+    <ul class="bullet-list">
+      <li><strong>Tangling</strong> = MULTIPLE concerns in ONE module</li>
+      <li><strong>Scattering</strong> = ONE concern in MULTIPLE modules</li>
+    </ul>
+    <p>These are opposites but both are problems of cross-cutting concerns in OOP.</p>
+  </div>
+
+  <div class="card-warning">
+    <h4 class="mini-title">Trap 5 — Concerns ≠ Code Problems</h4>
+    <p>Concerns reflect <strong>system requirements and stakeholder priorities</strong> — not just code-level issues. An organisational concern like "deliver within budget" IS a valid system concern even if it's not a class.</p>
+  </div>
+
+  <h3 class="subsection">📊 Comparison Tables</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Feature</th><th>OOP</th><th>AOP</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Cross-cutting concerns</td><td>Scattered across classes</td><td>Centralized in Aspects</td></tr>
+        <tr><td>Code reuse</td><td>Copy-paste</td><td>Apply once, run everywhere</td></tr>
+        <tr><td>Refactoring</td><td>Touch many classes</td><td>Change one Aspect</td></tr>
+        <tr><td>Readability</td><td>Tangled concerns</td><td>Clean, focused classes</td></tr>
+        <tr><td>Traceability</td><td>Hard to link req→code</td><td>Clear separation</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="subsection">📦 Chunking — The AOP "Recipe"</h3>
+  <div class="card-info">
+    <p>Think of AOP as a recipe with 3 ingredients:</p>
+    <ul class="bullet-list">
+      <li><strong>What to do?</strong> → Advice (the code to run)</li>
+      <li><strong>Where to do it?</strong> → Point Cut (the selector expression) → targets specific Join Points</li>
+      <li><strong>Who packages it?</strong> → Aspect (the module containing advice + pointcut)</li>
+      <li><strong>Who applies it?</strong> → Weaving (the process of injecting advice into join points)</li>
+    </ul>
+  </div>
+
+  <h3 class="subsection">🔁 Spaced Repetition Hints</h3>
+  <div class="card">
+    <p>For best retention, revisit these topics at these intervals:</p>
+    <ul class="bullet-list">
+      <li><strong>Day 1:</strong> Read all 5 advice types + their annotations. Write them from memory.</li>
+      <li><strong>Day 2:</strong> Draw the AOP flow diagram: Aspect → Pointcut → JoinPoint → Advice → Weaving</li>
+      <li><strong>Day 3:</strong> Explain Code Tangling vs Scattering to a friend (Feynman technique)</li>
+      <li><strong>Day 5:</strong> Do 20 MCQs without looking at notes</li>
+      <li><strong>Day 7 (exam eve):</strong> Read only the Revision Sheet</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ==================== SECTION: MCQ ==================== -->
+<section id="mcq" class="section">
+  <h2 class="section-title">MCQ Exam Training</h2>
+  <p class="section-intro">35 questions — Easy to Hard. Click an option to reveal the answer.</p>
+
+  <div class="progress-container">
+    <div class="progress-label">
+      <span>Progress</span>
+      <span id="mcq-progress-text">0 / 35 answered</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="mcq-progress-bar" style="width:0%"></div></div>
+  </div>
+
+  <div id="mcq-container"></div>
+
+  <button class="reset-btn" onclick="resetMCQ()">↺ Reset All Questions</button>
+</section>
+
+<!-- ==================== SECTION: WRITTEN ==================== -->
+<section id="written" class="section">
+  <h2 class="section-title">Written Questions</h2>
+  <p class="section-intro">Short and long-form questions with model answers. Click "Show Answer" to reveal.</p>
+
+  <h3 class="subsection">Short Answer Questions</h3>
+  <div id="short-container"></div>
+
+  <h3 class="subsection">Long-Form / Essay Questions</h3>
+  <div id="long-container"></div>
+</section>
+
+<!-- ==================== SECTION: REVISION ==================== -->
+<section id="revision" class="section">
+  <h2 class="section-title">⚡ Rapid Revision Sheet</h2>
+  <p class="section-intro">Night-before-exam cheat sheet. Everything critical, compressed.</p>
+
+  <div class="revision-grid">
+    <div class="rev-card">
+      <h4>OOP Problems</h4>
+      <div class="rev-item">Code Tangling = multiple concerns in 1 module</div>
+      <div class="rev-item">Code Scattering = 1 concern in many modules</div>
+      <div class="rev-item">Poor Traceability</div>
+      <div class="rev-item">Lower Productivity</div>
+      <div class="rev-item">Less Code Reuse (cut-paste)</div>
+      <div class="rev-item">Harder Refactoring</div>
+    </div>
+    <div class="rev-card">
+      <h4>Concern Types</h4>
+      <div class="rev-item">Core = primary purpose</div>
+      <div class="rev-item">Secondary = non-functional</div>
+      <div class="rev-item">Functional / Quality / Policy</div>
+      <div class="rev-item">System / Organisational</div>
+      <div class="rev-item">Concerns → requirements → priorities</div>
+    </div>
+    <div class="rev-card">
+      <h4>AOP Terminologies</h4>
+      <div class="rev-item">Aspect = class for cross-cutting concerns</div>
+      <div class="rev-item">Join Point = method execution (Spring)</div>
+      <div class="rev-item">Advice = action at join point</div>
+      <div class="rev-item">Point Cut = expression to select join points</div>
+      <div class="rev-item">Weaving = advice + pointcut injection</div>
+    </div>
+    <div class="rev-card">
+      <h4>5 Advice Types</h4>
+      <div class="rev-item">@Before → before method</div>
+      <div class="rev-item">@After → always (finally)</div>
+      <div class="rev-item">@AfterReturning → only success</div>
+      <div class="rev-item">@AfterThrowing → only exception</div>
+      <div class="rev-item">@Around → full control ⭐ most powerful</div>
+    </div>
+    <div class="rev-card">
+      <h4>Point Cut Syntax</h4>
+      <div class="rev-item">@Pointcut("execution(* package.*.*(..))")</div>
+      <div class="rev-item">* = any return type</div>
+      <div class="rev-item">*.* = any class.any method</div>
+      <div class="rev-item">(..) = any parameters</div>
+    </div>
+    <div class="rev-card">
+      <h4>AOP Benefits</h4>
+      <div class="rev-item">Centralize concerns</div>
+      <div class="rev-item">Intercept method calls</div>
+      <div class="rev-item">Inject new behavior</div>
+      <div class="rev-item">More reusable + cleaner code</div>
+      <div class="rev-item">Less boilerplate</div>
+    </div>
+    <div class="rev-card">
+      <h4>⚠️ Critical Traps</h4>
+      <div class="rev-item">Spring AOP join point = ONLY method exec</div>
+      <div class="rev-item">@After ≠ @AfterReturning</div>
+      <div class="rev-item">@Around must call pjp.proceed()</div>
+      <div class="rev-item">Tangling ≠ Scattering (opposites!)</div>
+    </div>
+    <div class="rev-card">
+      <h4>Mnemonics</h4>
+      <div class="rev-item">Terms: A JAP Weaves</div>
+      <div class="rev-item">Advice: BARAT</div>
+      <div class="rev-item">OOP Problems: PLRH</div>
+      <div class="rev-item">Config: Which Aspect/Class/Method/Position</div>
+    </div>
+  </div>
+
+  <div class="card-accent">
+    <h4 class="mini-title">🌙 Last-Minute Reminders</h4>
+    <ul class="bullet-list">
+      <li>AOP solves <strong>cross-cutting concerns</strong> that OOP scatters/tangles</li>
+      <li><strong>Aspect</strong> = module | <strong>Join Point</strong> = where | <strong>Advice</strong> = what | <strong>Point Cut</strong> = filter | <strong>Weaving</strong> = how it's applied</li>
+      <li>Spring AOP uses <strong>@Aspect, @Before, @After, @AfterReturning, @AfterThrowing, @Around</strong></li>
+      <li>Around advice is the most powerful — it wraps the method entirely and controls execution</li>
+      <li>Point Cut expressions use: <code>execution(* package.Class.method(..))</code></li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav">
+  <div class="mobile-tab active" onclick="showSection('explanation')">📖</div>
+  <div class="mobile-tab" onclick="showSection('summary')">📋</div>
+  <div class="mobile-tab" onclick="showSection('memory')">🧩</div>
+  <div class="mobile-tab" onclick="showSection('mcq')">❓</div>
+  <div class="mobile-tab" onclick="showSection('written')">✍️</div>
+  <div class="mobile-tab" onclick="showSection('revision')">⚡</div>
+</div>
+
+<div class="score-bar"><div class="score-fill" id="score-fill" style="width:0%"></div></div>
+
+<script>
+// ===== DATA =====
+const mcqData = [
+  // EASY
+  { q: "What does AOP stand for?", opts: ["Abstract Object Programming", "Aspect-Oriented Programming", "Application Object Protocol", "Adaptive Object Processing"], ans: 1, diff: "easy", exp: "AOP stands for Aspect-Oriented Programming — a paradigm that modularizes cross-cutting concerns." },
+  { q: "What is the primary problem that AOP solves?", opts: ["Slow execution speed", "Cross-cutting concerns in OOP", "Lack of inheritance", "Memory leaks"], ans: 1, diff: "easy", exp: "AOP solves the problem of cross-cutting concerns (logging, security, transactions) that get scattered and tangled across OOP classes." },
+  { q: "In Spring AOP, what is a Join Point?", opts: ["A database connection", "Any object instantiation", "Always the execution of a method", "An XML configuration file"], ans: 2, diff: "easy", exp: "In Spring AOP specifically, a join point is ALWAYS the execution of a method. Other types exist in AspectJ but not Spring AOP." },
+  { q: "Which annotation is used to define an Aspect in Spring?", opts: ["@Component", "@Service", "@Aspect", "@Bean"], ans: 2, diff: "easy", exp: "@Aspect annotation is used to mark a class as an Aspect in Spring AOP, typically with Spring AspectJ integration." },
+  { q: "What is 'Code Scattering'?", opts: ["Multiple concerns in one module", "One concern duplicated across many modules", "Code that cannot be compiled", "Unused code in the project"], ans: 1, diff: "easy", exp: "Code Scattering is when one concern (e.g., logging) is duplicated/scattered across many different modules." },
+  { q: "What is 'Code Tangling'?", opts: ["One concern in multiple classes", "Multiple concerns mixed in one module", "Code that runs slowly", "Code with no comments"], ans: 1, diff: "easy", exp: "Code Tangling is when a single module handles multiple unrelated concerns simultaneously, mixing core logic with logging, security, etc." },
+  { q: "Which advice runs before the join point method executes?", opts: ["@After", "@Around", "@Before", "@AfterReturning"], ans: 2, diff: "easy", exp: "@Before advice executes before the join point method runs. Used for pre-checks, validation, and logging." },
+  { q: "What does the @After annotation represent?", opts: ["Before advice", "After (finally) advice — runs always", "After returning advice", "Exception advice"], ans: 1, diff: "easy", exp: "@After is the After (Finally) advice — it runs after the join point method finishes, whether normally or with an exception." },
+  { q: "What are 'Concerns' in AOP context?", opts: ["Only code bugs", "Reflection of system requirements and stakeholder priorities", "Database tables", "UI components"], ans: 1, diff: "easy", exp: "Concerns reflect system requirements and stakeholder priorities. They are NOT just program issues — examples include performance, security, and specific functionality." },
+  { q: "What is a 'Core Concern'?", opts: ["A security concern", "A functional concern related to the primary purpose of a system", "An organisational policy", "A logging mechanism"], ans: 1, diff: "easy", exp: "Core concerns are functional concerns that relate to the PRIMARY purpose of the system, as opposed to secondary concerns which address non-functional requirements." },
+
+  // MEDIUM
+  { q: "What is the role of 'Weaving' in AOP?", opts: ["Writing advice code", "Combining advice with point cuts and incorporating advice at join points", "Creating aspect classes", "Defining pointcut expressions"], ans: 1, diff: "med", exp: "Weaving is the process that combines advices with point cuts — it's the incorporation of advice code at specified join points by an aspect weaver." },
+  { q: "What does a Point Cut expression do?", opts: ["Executes the advice directly", "Is matched with join points to determine whether advice should execute", "Creates new join points", "Defines the Aspect class"], ans: 1, diff: "med", exp: "A Point Cut is an expression matched with join points to determine whether advice needs to be executed. It identifies which events should trigger the advice." },
+  { q: "Which advice type is described as 'most important and powerful'?", opts: ["@Before", "@After", "@AfterReturning", "@Around"], ans: 3, diff: "med", exp: "@Around is the most important and powerful advice. It surrounds the join point method, can choose whether to execute it, and must return the value if the method returns something." },
+  { q: "What is one of the 4 problems caused by cross-cutting concerns in OOP?", opts: ["Faster execution", "Poor traceability", "Better code organization", "Enhanced security"], ans: 1, diff: "med", exp: "Poor Traceability is one of the 4 problems — multiple concerns in the same module break the linkage between requirements and implementation." },
+  { q: "Which annotation would you use to execute advice ONLY when no exception is thrown?", opts: ["@After", "@AfterThrowing", "@AfterReturning", "@Before"], ans: 2, diff: "med", exp: "@AfterReturning executes ONLY if the join point method executes normally (no exception is thrown)." },
+  { q: "What is a 'Quality of Service' concern?", opts: ["Security authentication logic", "Non-functional behavior like response time and availability", "A database query", "UI rendering logic"], ans: 1, diff: "med", exp: "Quality of Service concerns relate to the NON-FUNCTIONAL behavior of a system, such as response time, availability, and throughput." },
+  { q: "The ability of AOP to multicast the same aspect into many places in code is called:", opts: ["Weaving", "Point Cut", "Advice", "Join Point"], ans: 1, diff: "med", exp: "The ability to multicast aspects into many places in code is specifically called Point Cut. It's what makes AOP scalable and powerful." },
+  { q: "What is an 'Organisational Concern' according to the slides?", opts: ["Database schema management", "Goals like delivering within budget or maintaining reputation", "Thread management", "API documentation"], ans: 1, diff: "med", exp: "Organisational concerns relate to organisational goals and priorities such as producing a system within budget, using existing assets, or maintaining reputation." },
+  { q: "In @Pointcut('execution(* com.tutorialspoint.*.*(..))'), what does the first * mean?", opts: ["Any class", "Any return type", "Any method", "Any package"], ans: 1, diff: "med", exp: "The first * in the execution expression represents 'any return type'. The pattern is: execution(returnType package.Class.method(params))." },
+  { q: "Which of the following is NOT a benefit of AOP?", opts: ["Centralize concerns", "Intercept method calls", "Increase coupling between classes", "More reusable code"], ans: 2, diff: "med", exp: "Increasing coupling is NOT a benefit of AOP — AOP actually REDUCES coupling by separating concerns. All other options are genuine benefits." },
+  { q: "Which annotation handles transaction rollback declaratively?", opts: ["@Before", "@After", "@AfterThrowing", "@Around"], ans: 2, diff: "med", exp: "@AfterThrowing is used to rollback transactions declaratively since it executes only when a join point method throws an exception." },
+  { q: "What happens if @Around advice does NOT call pjp.proceed()?", opts: ["The advice runs twice", "The target method never executes", "An exception is thrown automatically", "Weaving fails at compile time"], ans: 1, diff: "med", exp: "If @Around advice does not call pjp.proceed(), the actual target (join point) method NEVER executes. It is the responsibility of @Around to invoke the method." },
+
+  // HARD
+  { q: "A developer logs activity in every class, and the log format is buried inside 30 different service classes. Changing the format requires editing 30 classes. This is an example of:", opts: ["Code Tangling only", "Code Scattering only", "Both Code Tangling and Code Scattering", "Proper OOP design"], ans: 1, diff: "hard", exp: "This is Code Scattering — one concern (logging) duplicated across many modules. Each class would have its primary logic mixed with logging (tangling too, arguably), but the key issue here is scattering: changing logging format requires touching all 30 classes." },
+  { q: "In which scenario would you prefer @AfterThrowing over @After?", opts: ["When you always want to close a database connection", "When you want to send email only if the operation fails", "When you want to log before the method runs", "When you need to intercept return values"], ans: 1, diff: "hard", exp: "@AfterThrowing is better when the action should ONLY occur on exceptions (like sending failure alerts). @After runs regardless of success or failure (like finally{} in Java)." },
+  { q: "Which combination correctly describes the relationship: 'A Pointcut selects ____ and applies ____'?", opts: ["Aspects → Weaving", "Join Points → Advice", "Advice → Aspects", "Weaving → Join Points"], ans: 1, diff: "hard", exp: "A Point Cut selects Join Points (via expressions) and applies Advice to those selected join points. This is the core AOP mechanism." },
+  { q: "An Aspect is configured to run on 'execution(* com.app.service.*.*(..))'. A method in com.app.controller.UserController is called. Does the advice run?", opts: ["Yes, it matches all methods", "No, the package doesn't match", "Yes, if the method is public", "Only if @Around is used"], ans: 1, diff: "hard", exp: "The pointcut specifies 'com.app.service.*.*' — only methods in the service package match. com.app.controller is a different package, so the advice does NOT run." },
+  { q: "Which concern type best describes: 'The system should be reconfigurable without code changes'?", opts: ["Functional Concern", "Quality of Service Concern", "System Concern", "Organisational Concern"], ans: 2, diff: "hard", exp: "System Concerns relate to attributes of the system as a whole, such as its maintainability or CONFIGURABILITY. Reconfigurability without code changes is a system concern." },
+  { q: "What is the key difference between an Aspect and a regular OOP class?", opts: ["An Aspect has no methods", "An Aspect implements cross-cutting concerns and is applied transparently across multiple classes", "An Aspect is a singleton", "An Aspect replaces inheritance"], ans: 1, diff: "hard", exp: "An Aspect implements concerns that CUT ACROSS multiple classes — it's applied transparently via weaving without the target classes knowing about it. A regular class only handles its own responsibility." },
+  { q: "In AOP configuration, you must answer 4 questions. Which set is CORRECT?", opts: ["Which module? Which variable? Which line? Which time?", "Which Aspect? Which Class? Which Method? Which Position?", "Which Pattern? Which Loop? Which Object? Which Thread?", "Which Exception? Which Interface? Which Annotation? Which Package?"], ans: 1, diff: "hard", exp: "The 4 AOP configuration questions are: Which Aspect? (concern) → Which Class? (target) → Which Method? (join point) → Which Position? (advice type: Before/After/Around etc.)" },
+  { q: "Why does poor traceability occur in systems with code tangling?", opts: ["Because the code runs too fast to trace", "Because multiple concerns in one module break the link between a requirement and its implementation", "Because there are too many classes", "Because OOP doesn't support interfaces"], ans: 1, diff: "hard", exp: "Poor traceability occurs because when multiple concerns are in the same module, you can't easily answer 'what does this code do for this requirement?' — the requirement-to-code link is broken." },
+  { q: "Which statement about @Around advice is FALSE?", opts: ["It can prevent the target method from executing", "It must use ProceedingJoinPoint as parameter", "It automatically returns the target method's return value", "It can run code both before and after the target method"], ans: 2, diff: "hard", exp: "The FALSE statement is C — @Around does NOT automatically return the target method's value. It is the RESPONSIBILITY of the Around advice to explicitly invoke the method (pjp.proceed()) AND return the result." },
+  { q: "A secondary concern is best described as:", opts: ["A concern related to the primary functionality of the system", "A functional concern reflecting non-functional requirements like performance", "An organisational budget constraint", "A database schema design decision"], ans: 1, diff: "hard", exp: "Secondary concerns are functional concerns that reflect NON-FUNCTIONAL requirements — things like performance, logging, security that support but are not the primary purpose of the system." },
+  { q: "Which of the following correctly contrasts Code Tangling with Code Scattering?", opts: ["Tangling = scattered code; Scattering = mixed code", "Tangling = multiple concerns in one module; Scattering = one concern in multiple modules", "Both refer to the same problem", "Tangling is an AOP problem; Scattering is an OOP solution"], ans: 1, diff: "hard", exp: "Tangling = MULTIPLE concerns in ONE module (mixed together). Scattering = ONE concern across MULTIPLE modules (duplicated everywhere). They are opposite symptoms of the same cross-cutting concern problem." },
+  { q: "What is the function of an 'Aspect Weaver'?", opts: ["It writes the Aspect class for you", "It incorporates advice code at specified join points in the target code", "It optimizes database queries", "It generates Point Cut expressions automatically"], ans: 1, diff: "hard", exp: "An Aspect Weaver is the engine that performs weaving — it incorporates advice code at the specified join points in the target classes, making AOP work transparently." },
+  { q: "If you want to measure execution time of a method (record time before and after), which advice is most appropriate?", opts: ["@Before + @After (two separate advices)", "@AfterReturning", "@Around", "@AfterThrowing"], ans: 2, diff: "hard", exp: "@Around is most appropriate because it wraps the method entirely — you record time before calling pjp.proceed(), execute the method, then record time after. Two separate advices (@Before + @After) would not share state easily." },
+];
+
+const shortAnswers = [
+  { q: "Define 'Aspect' in AOP.", ans: `An Aspect is a class that implements enterprise application concerns that cut across multiple classes, such as transaction management, logging, or security. In Spring, Aspects are configured either via XML or by annotating a class with @Aspect.` },
+  { q: "What is the difference between a Join Point and a Point Cut?", ans: `A Join Point is a specific point in application execution (in Spring AOP, always a method execution). A Point Cut is an expression that SELECTS which join points the advice should apply to. Think: Join Point = where something CAN happen; Point Cut = the filter that decides WHERE advice WILL be applied.` },
+  { q: "List the 4 problems caused by cross-cutting concerns in OOP.", ans: `1. Poor Traceability — multiple concerns in one module break the link between requirements and implementation.\n2. Lower Productivity — developers spend time on peripheral concerns instead of the core problem domain.\n3. Less Code Reuse — boilerplate is propagated through cut-and-paste.\n4. Harder Refactoring — changing requirements means modifying many modules for one concern.` },
+  { q: "What is Weaving in AOP?", ans: `Weaving is the process of combining advice with point cuts — it is the incorporation of advice code at specified join points by an aspect weaver. The weaver is the engine that applies the aspects to the target code transparently, without the target classes needing to know about the aspects.` },
+  { q: "Name the 5 types of advice and their annotations.", ans: `1. Before Advice — @Before: runs before the join point method.\n2. After (Finally) Advice — @After: runs always, after the method (success or exception).\n3. After Returning Advice — @AfterReturning: runs only on normal return.\n4. After Throwing Advice — @AfterThrowing: runs only on exception.\n5. Around Advice — @Around: most powerful; surrounds the method; must call proceed() and return value.` },
+  { q: "Explain Code Tangling vs Code Scattering with examples.", ans: `Code Tangling: A single module handles MULTIPLE concerns — e.g., a UserService class that processes user data AND logs every operation AND checks security. All concerns are tangled together.\n\nCode Scattering: ONE concern is duplicated across MANY modules — e.g., LogMessage() method copied into Class A, Class B, and Class C. If the log format changes, all 3 must be updated.\n\nBoth are caused by cross-cutting concerns that OOP cannot cleanly separate.` },
+  { q: "What are the 5 types of stakeholder concerns listed in the lecture?", ans: `1. Functional Concerns — specific functionality to include.\n2. Quality of Service Concerns — non-functional behavior (response time, availability).\n3. Policy Concerns — overall governance policies.\n4. System Concerns — system-wide attributes (maintainability, configurability).\n5. Organisational Concerns — goals like budget, reputation, reusing existing assets.` },
+  { q: "Why is @Around the most powerful advice type?", ans: `@Around is the most powerful because it has full control over the join point method:\n• It runs code BEFORE the method.\n• It can CHOOSE whether to execute the method at all (by calling or not calling pjp.proceed()).\n• It runs code AFTER the method.\n• It is responsible for RETURNING the value.\nNo other advice type has this level of control.` },
+];
+
+const longAnswers = [
+  { q: "Compare OOP and AOP in handling cross-cutting concerns. Discuss the problems OOP faces and how AOP resolves them. Use examples.", ans: `In Object-Oriented Programming, cross-cutting concerns like logging, security, and transaction management must be implemented inside every class that needs them. This results in two key problems:\n\n1. Code Tangling: A single class handles multiple concerns. For example, a BankTransaction class might contain business logic, security checks, AND logging — all in the same methods. This violates the Single Responsibility Principle.\n\n2. Code Scattering: The same concern appears in many classes. If LogMessage() is needed in Class A, B, and C, the same code must be written three times. Any change in logging format requires modifying all classes.\n\nThese problems cause: poor traceability (can't trace requirements to implementation), lower productivity (boilerplate work), less reuse (copy-paste), and harder refactoring (must touch many files for one change).\n\nAOP resolves this by introducing Aspects — separate modules dedicated entirely to cross-cutting concerns. Instead of LogMessage() in every class, a single LoggingAspect handles all logging. Using Point Cut expressions, the aspect is applied to any matching Join Points (method executions). The Weaver automatically incorporates the advice at the correct places.\n\nResult: Classes are clean (only core logic), concerns are centralized (easy to change), code is reusable, and traceability from requirement to code is restored.` },
+  { q: "Explain the 5 AOP Advice Types in detail. For each: describe when it runs, its annotation, its best use case, and any critical considerations.", ans: `AOP provides 5 advice types, each running at a different point relative to the join point method:\n\n1. Before Advice (@Before):\n   - Runs BEFORE the join point method executes.\n   - Best for: logging entry, security checks, parameter validation.\n   - No access to the method's return value.\n\n2. After (Finally) Advice (@After):\n   - Runs AFTER the join point method, regardless of outcome (success or exception).\n   - Equivalent to a Java finally{} block.\n   - Best for: resource cleanup, releasing connections, always-log patterns.\n   - Critical: Does NOT differentiate between success and failure.\n\n3. After Returning Advice (@AfterReturning):\n   - Runs ONLY when the method completes normally (no exception).\n   - Best for: processing return values, success-only logging, post-processing.\n   - Does NOT run if the method throws an exception.\n\n4. After Throwing Advice (@AfterThrowing):\n   - Runs ONLY when the method throws an exception.\n   - Best for: declarative transaction rollback, error logging, alerting.\n   - Can access the exception object.\n\n5. Around Advice (@Around) — Most Powerful:\n   - Completely surrounds the join point method.\n   - Has full control: can run code before AND after, and can SKIP the method.\n   - MUST call pjp.proceed() to execute the target method.\n   - MUST return the method's return value.\n   - Best for: performance measurement, caching, conditional execution.\n   - Critical consideration: If proceed() is not called, the target method never runs.` },
+  { q: "What is a Point Cut in AOP? Explain with the two examples from the lecture and describe what each expression matches.", ans: `A Point Cut is an expression that is matched against join points to determine whether advice should execute for a given method call. It is the "selector" or "filter" that identifies which join points the advice applies to.\n\nKey role: Point Cut enables AOP's most powerful feature — multicasting aspects to many places in code using a single expression.\n\nExample 1:\n@Pointcut("execution(* com.tutorialspoint.*.*(..))")\n\nBreakdown:\n- execution(...) → match on method execution\n- * (first) → any return type\n- com.tutorialspoint.* → any class in the com.tutorialspoint package\n- .* → any method name\n- (..) → any parameters\n\nMeaning: Apply advice to ANY method in ANY class within the com.tutorialspoint package.\n\nExample 2:\n@Pointcut("execution(* com.tutorialspoint.Student.getName(..))")\n\nBreakdown:\n- Same structure, but now specifically targets:\n- com.tutorialspoint.Student → the Student class specifically\n- .getName → the getName method specifically\n- (..) → any parameters\n\nMeaning: Apply advice ONLY to the getName() method of the Student class.\n\nThe second expression is more specific (targeted), while the first is a broad wildcard. AOP allows combining point cuts and reusing them across multiple advice methods.` },
+  { q: "Explain the concept of 'Concerns' in software engineering. What types of concerns exist and why does separating them matter?", ans: `A Concern in software engineering is not merely a code-level issue — it reflects the requirements and priorities of stakeholders. Every significant aspect of what a system must do or be is a concern.\n\nWhy separation of concerns matters:\nBy clearly separating concerns in code, there is a direct, traceable path from requirements to their implementation. When concerns are mixed, you lose this traceability and the code becomes harder to understand, maintain, and verify.\n\nTypes of Concerns:\n\n1. Functional Concerns: Related to specific functionality in the system (e.g., user login, payment processing).\n\n2. Quality of Service Concerns: Non-functional behavior such as performance, response time, reliability, and availability.\n\n3. Policy Concerns: Governance and rules for how the system is used (e.g., access control policies, compliance rules).\n\n4. System Concerns: Attributes of the system as a whole — its maintainability, scalability, or configurability.\n\n5. Organisational Concerns: Business and organisational goals — delivering within budget, using existing software assets, maintaining brand reputation.\n\nAdditionally, concerns are categorized as:\n- Core Concerns: Primary purpose of the system (e.g., booking a flight in an airline system).\n- Secondary Concerns: Supporting non-functional requirements (e.g., logging all API calls).\n\nAOP directly enables separation of concerns by extracting cross-cutting concerns (typically secondary concerns like logging and security) into dedicated Aspect modules, leaving core business logic clean and focused.` },
+  { q: "Describe the complete AOP workflow from Aspect definition to execution, covering all 5 key terms.", ans: `The AOP workflow can be described in 5 steps corresponding to its 5 key terms:\n\nStep 1 — Define the Aspect:\nCreate a class annotated with @Aspect. This class represents a cross-cutting concern (e.g., LoggingAspect, SecurityAspect, TransactionAspect). It is a centralized module for one concern.\n\nStep 2 — Define Point Cuts:\nInside the Aspect, define @Pointcut expressions that specify WHICH join points the advice should apply to. Example: 'execution(* com.app.service.*.*(..))' targets all methods in the service layer.\n\nStep 3 — Identify Join Points:\nJoin Points are the specific moments in execution — in Spring AOP, always method executions — that match the Point Cut expression. Any method call matching the pointcut pattern is a candidate join point.\n\nStep 4 — Define Advice:\nWrite the actual code (advice) that should execute at the selected join points. Using @Before, @After, @AfterReturning, @AfterThrowing, or @Around, specify WHEN the advice runs relative to the join point method.\n\nStep 5 — Weaving:\nAt application runtime (or compile time, depending on configuration), the Aspect Weaver combines the advice with the point cuts and incorporates the advice code at every matching join point. The target classes execute their methods transparently, with the advice running automatically before/after/around them.\n\nResult: Clean, modular code where every class does one thing, and every concern is managed in one place.` },
+  { q: "A company's codebase has LogMessage(), Security check, and Transaction handling duplicated in 50 classes. How would AOP fix this? Design a solution using all 5 AOP concepts.", ans: `Problem Analysis:\nThe codebase suffers from Code Scattering (3 concerns spread across 50 classes) and Code Tangling (each class mixes business logic with logging, security, and transactions).\n\nAOP Solution Design:\n\n1. Aspect (What modules to create):\nCreate 3 separate Aspect classes:\n- LoggingAspect (@Aspect) — handles all logging\n- SecurityAspect (@Aspect) — handles all security checks\n- TransactionAspect (@Aspect) — handles all transaction management\n\n2. Point Cut (Where to apply):\nDefine point cuts targeting all 50 classes:\n@Pointcut("execution(* com.company.services.*.*(..))")\nThis selects ALL methods in ALL service classes.\n\n3. Join Points (Specific targets):\nEvery method execution in the 50 classes becomes a join point candidate that the point cut expression evaluates.\n\n4. Advice (How and when):\n- LoggingAspect uses @Before to log method entry and @After to log completion.\n- SecurityAspect uses @Before to check user permissions before any method runs.\n- TransactionAspect uses @Around to begin a transaction before the method and commit/rollback after.\n- @AfterThrowing in TransactionAspect handles automatic rollback on exception.\n\n5. Weaving (Application):\nThe Aspect Weaver automatically incorporates all three aspects into every matching method in all 50 classes at runtime.\n\nResult: The 50 classes now contain ONLY their core business logic. Logging, security, and transactions are managed entirely by 3 Aspect classes. Changing the log format now means editing 1 file, not 50.` },
+];
+
+// ===== RENDER MCQ =====
+let mcqAnswered = 0;
+function renderMCQ() {
+  const container = document.getElementById('mcq-container');
+  container.innerHTML = '';
+  mcqData.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'mcq-card';
+    div.id = `mcq-${i}`;
+    const diffClass = q.diff === 'easy' ? 'diff-easy' : q.diff === 'med' ? 'diff-med' : 'diff-hard';
+    const diffLabel = q.diff === 'easy' ? 'Easy' : q.diff === 'med' ? 'Medium' : 'Hard';
+    const letters = ['A','B','C','D'];
+    div.innerHTML = `
+      <div class="mcq-meta">
+        <span class="mcq-num">Q${i+1}</span>
+        <span class="difficulty ${diffClass}">${diffLabel}</span>
+      </div>
+      <div class="mcq-q">${q.q}</div>
+      <div class="mcq-options">
+        ${q.opts.map((o, oi) => `
+          <div class="mcq-opt" id="opt-${i}-${oi}" onclick="selectAnswer(${i}, ${oi})">
+            <span class="opt-letter">${letters[oi]}</span>
+            <span>${o}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="mcq-explanation" id="exp-${i}">
+        <strong>Explanation:</strong> ${q.exp}
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function selectAnswer(qIdx, optIdx) {
+  const q = mcqData[qIdx];
+  const opts = document.querySelectorAll(`[id^="opt-${qIdx}-"]`);
+  if (opts[0].classList.contains('disabled')) return;
+  opts.forEach((o, i) => {
+    o.classList.add('disabled');
+    if (i === q.ans) o.classList.add('correct');
+    else if (i === optIdx && i !== q.ans) o.classList.add('wrong');
+  });
+  document.getElementById(`exp-${qIdx}`).classList.add('show');
+  mcqAnswered++;
+  updateMCQProgress();
+}
+
+function updateMCQProgress() {
+  const pct = Math.round((mcqAnswered / mcqData.length) * 100);
+  document.getElementById('mcq-progress-bar').style.width = pct + '%';
+  document.getElementById('mcq-progress-text').textContent = `${mcqAnswered} / ${mcqData.length} answered`;
+  document.getElementById('score-fill').style.width = pct + '%';
+}
+
+function resetMCQ() {
+  mcqAnswered = 0;
+  updateMCQProgress();
+  renderMCQ();
+}
+
+// ===== RENDER WRITTEN =====
+function renderWritten() {
+  const shortCont = document.getElementById('short-container');
+  const longCont = document.getElementById('long-container');
+  shortAnswers.forEach((q, i) => {
+    shortCont.innerHTML += `
+      <div class="written-card">
+        <div class="written-q"><strong>Q${i+1}:</strong> ${q.q}</div>
+        <button class="written-toggle" onclick="toggleWritten(this)">▶ Show Model Answer</button>
+        <div class="written-answer">
+          <div class="model-label">✦ Model Answer</div>
+          <p style="white-space: pre-line;">${q.ans}</p>
+        </div>
+      </div>
+    `;
+  });
+  longAnswers.forEach((q, i) => {
+    longCont.innerHTML += `
+      <div class="written-card">
+        <div class="written-q"><strong>Q${i+1}:</strong> ${q.q}</div>
+        <button class="written-toggle" onclick="toggleWritten(this)">▶ Show Model Answer</button>
+        <div class="written-answer">
+          <div class="model-label">✦ Model Answer</div>
+          <p style="white-space: pre-line;">${q.ans}</p>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function toggleWritten(btn) {
+  const answer = btn.nextElementSibling;
+  const isShowing = answer.classList.contains('show');
+  answer.classList.toggle('show');
+  btn.textContent = isShowing ? '▶ Show Model Answer' : '▼ Hide Answer';
+}
+
+// ===== NAVIGATION =====
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.mobile-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const tabs = document.querySelectorAll('.nav-tab');
+  const mobTabs = document.querySelectorAll('.mobile-tab');
+  const sectionOrder = ['explanation','summary','memory','mcq','written','revision'];
+  const idx = sectionOrder.indexOf(id);
+  if (tabs[idx]) tabs[idx].classList.add('active');
+  if (mobTabs[idx]) mobTabs[idx].classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== COLLAPSIBLE =====
+function toggleCollapsible(header) {
+  const parent = header.parentElement;
+  parent.classList.toggle('open');
+}
+
+// ===== THEME =====
+function toggleTheme() {
+  const html = document.documentElement;
+  const isLight = html.getAttribute('data-theme') === 'light';
+  html.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  document.querySelector('.theme-btn').textContent = isLight ? '🌙' : '☀️';
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  renderMCQ();
+  renderWritten();
+});
+</script>
+</body>
+</html>
