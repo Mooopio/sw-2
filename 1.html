@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Clean Code — Exam Prep System</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0d0f14;
+  --surface: #13161e;
+  --surface2: #1a1f2c;
+  --border: #252b3b;
+  --accent: #4f8ef7;
+  --accent2: #a78bfa;
+  --accent3: #34d399;
+  --accent4: #f59e0b;
+  --danger: #f87171;
+  --text: #e8eaf0;
+  --text2: #9aa3b8;
+  --text3: #5c6580;
+  --code: #1e2533;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+.light {
+  --bg: #f4f5f9;
+  --surface: #ffffff;
+  --surface2: #eef0f7;
+  --border: #d8dce8;
+  --accent: #2563eb;
+  --accent2: #7c3aed;
+  --accent3: #059669;
+  --accent4: #d97706;
+  --danger: #dc2626;
+  --text: #111827;
+  --text2: #4b5563;
+  --text3: #9ca3af;
+  --code: #e8edf7;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.7;transition:background .3s,color .3s}
+/* LAYOUT */
+.shell{display:flex;min-height:100vh}
+.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100;transition:transform .3s}
+.sidebar-logo{padding:22px 18px 14px;border-bottom:1px solid var(--border)}
+.sidebar-logo .tag{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--accent);text-transform:uppercase}
+.sidebar-logo h2{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;line-height:1.2;margin-top:4px}
+.nav-group{padding:14px 0 6px}
+.nav-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:0 18px 6px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;color:var(--text2);font-size:13.5px;font-weight:500;border-left:3px solid transparent;transition:all .18s}
+.nav-item:hover{color:var(--text);background:var(--surface2)}
+.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:var(--surface2)}
+.nav-item .icon{font-size:15px;width:18px;text-align:center}
+.main{margin-left:220px;flex:1;min-height:100vh}
+.topbar{position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(--border);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;z-index:50;backdrop-filter:blur(8px)}
+.topbar-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--text2)}
+.topbar-right{display:flex;gap:10px;align-items:center}
+.btn-mode{background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:6px 14px;border-radius:20px;cursor:pointer;font-size:12.5px;font-weight:600;transition:all .2s}
+.btn-mode:hover{border-color:var(--accent);color:var(--accent)}
+.progress-bar{height:3px;background:var(--border);position:relative;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s}
+.content{padding:36px 32px;max-width:900px}
+/* SECTIONS */
+.section{display:none}
+.section.active{display:block;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;transition:border-color .2s}
+.card:hover{border-color:var(--border)}
+.card-accent{border-left:4px solid var(--accent)}
+.card-green{border-left:4px solid var(--accent3)}
+.card-purple{border-left:4px solid var(--accent2)}
+.card-yellow{border-left:4px solid var(--accent4)}
+.card-red{border-left:4px solid var(--danger)}
+/* TYPOGRAPHY */
+h1{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:8px;line-height:1.2}
+h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text)}
+h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:10px;color:var(--accent)}
+h4{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:8px;color:var(--text2)}
+p{margin-bottom:12px;color:var(--text)}
+.lead{font-size:16px;color:var(--text2);margin-bottom:24px}
+/* BADGES */
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.badge-blue{background:#1e3a5f;color:var(--accent)}
+.badge-green{background:#0d3326;color:var(--accent3)}
+.badge-purple{background:#2d1b5e;color:var(--accent2)}
+.badge-yellow{background:#3d2a00;color:var(--accent4)}
+.badge-red{background:#3d1212;color:var(--danger)}
+.light .badge-blue{background:#dbeafe;color:#1d4ed8}
+.light .badge-green{background:#d1fae5;color:#065f46}
+.light .badge-purple{background:#ede9fe;color:#5b21b6}
+.light .badge-yellow{background:#fef3c7;color:#92400e}
+.light .badge-red{background:#fee2e2;color:#991b1b}
+/* CODE */
+code{background:var(--code);font-family:'DM Mono',monospace;font-size:12.5px;padding:2px 7px;border-radius:5px;color:var(--accent3)}
+pre{background:var(--code);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px;font-family:'DM Mono',monospace;font-size:12px;overflow-x:auto;margin:12px 0;line-height:1.6;color:#c9d1e0}
+pre .kw{color:#a78bfa}
+pre .fn{color:#60a5fa}
+pre .str{color:#34d399}
+pre .cm{color:#4a5568;font-style:italic}
+pre .num{color:#f59e0b}
+/* LISTS */
+ul.styled,ol.styled{padding-left:0;margin:12px 0;list-style:none}
+ul.styled li{position:relative;padding:4px 0 4px 22px;color:var(--text)}
+ul.styled li::before{content:"▸";position:absolute;left:0;color:var(--accent);font-size:12px;top:5px}
+ol.styled{counter-reset:item}
+ol.styled li{counter-increment:item}
+ol.styled li::before{content:counter(item)".";position:absolute;left:0;color:var(--accent);font-size:12px;font-weight:700;font-family:'Syne',sans-serif}
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px}
+.tbl th{background:var(--surface2);color:var(--text);font-family:'Syne',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:2px solid var(--border)}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--surface2);color:var(--text)}
+/* HIGHLIGHT BOXES */
+.box{padding:14px 18px;border-radius:var(--radius-sm);margin:14px 0;font-size:14px}
+.box-blue{background:#0f1e38;border:1px solid #1e3a6e}
+.box-green{background:#0a2018;border:1px solid #14532d}
+.box-yellow{background:#1f1500;border:1px solid #4d3000}
+.box-red{background:#200a0a;border:1px solid #7f1d1d}
+.box-purple{background:#1a0f2e;border:1px solid #4c1d95}
+.light .box-blue{background:#eff6ff;border-color:#bfdbfe}
+.light .box-green{background:#ecfdf5;border-color:#a7f3d0}
+.light .box-yellow{background:#fffbeb;border-color:#fde68a}
+.light .box-red{background:#fef2f2;border-color:#fecaca}
+.light .box-purple{background:#f5f3ff;border-color:#ddd6fe}
+.box-title{font-family:'Syne',sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.box-blue .box-title{color:var(--accent)}
+.box-green .box-title{color:var(--accent3)}
+.box-yellow .box-title{color:var(--accent4)}
+.box-red .box-title{color:var(--danger)}
+.box-purple .box-title{color:var(--accent2)}
+/* COLLAPSIBLE */
+.collapsible{margin-bottom:10px;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.collapsible-header{padding:13px 18px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--surface);transition:background .2s;font-weight:600;font-size:14px}
+.collapsible-header:hover{background:var(--surface2)}
+.collapsible-arrow{transition:transform .25s;font-size:12px;color:var(--text3)}
+.collapsible-body{padding:16px 18px;background:var(--surface2);display:none;border-top:1px solid var(--border)}
+.collapsible.open .collapsible-body{display:block}
+.collapsible.open .collapsible-arrow{transform:rotate(180deg)}
+/* MCQ */
+.mcq-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:16px;transition:all .2s}
+.mcq-num{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.mcq-q{font-size:14.5px;font-weight:500;margin-bottom:14px;line-height:1.5}
+.mcq-options{display:grid;gap:8px}
+.mcq-opt{padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:13.5px;transition:all .18s;display:flex;gap:10px;align-items:flex-start}
+.mcq-opt:hover{border-color:var(--accent);background:var(--surface2)}
+.mcq-opt .opt-letter{font-family:'DM Mono',monospace;font-weight:700;font-size:12px;color:var(--accent);min-width:16px}
+.mcq-opt.correct{border-color:var(--accent3);background:#0a2018}
+.mcq-opt.wrong{border-color:var(--danger);background:#200a0a}
+.mcq-opt.revealed{cursor:default}
+.light .mcq-opt.correct{background:#ecfdf5}
+.light .mcq-opt.wrong{background:#fef2f2}
+.mcq-explanation{margin-top:12px;padding:12px 14px;background:var(--surface2);border-radius:var(--radius-sm);font-size:13px;color:var(--text2);display:none;border-left:3px solid var(--accent3)}
+.mcq-explanation.show{display:block;animation:fadeIn .3s}
+.mcq-diff{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:20px}
+.diff-easy{background:#0a2018;color:var(--accent3)}
+.diff-med{background:#1f1500;color:var(--accent4)}
+.diff-hard{background:#200a0a;color:var(--danger)}
+.light .diff-easy{background:#d1fae5;color:#065f46}
+.light .diff-med{background:#fef3c7;color:#92400e}
+.light .diff-hard{background:#fee2e2;color:#991b1b}
+.mcq-header-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+/* WRITTEN */
+.wq-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:14px}
+.wq-q{font-size:14.5px;font-weight:500;margin-bottom:12px}
+.wq-answer{background:var(--surface2);border-radius:var(--radius-sm);padding:14px 16px;font-size:13.5px;color:var(--text2);display:none;border-left:3px solid var(--accent2)}
+.wq-answer.show{display:block;animation:fadeIn .3s}
+.wq-answer h4{color:var(--accent2);margin-bottom:8px}
+.btn{padding:8px 16px;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer;font-size:12.5px;font-weight:600;transition:all .2s;font-family:'DM Sans',sans-serif}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{opacity:.85}
+.btn-outline{background:transparent;color:var(--text2)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+/* REVISION */
+.revision-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:700px){.revision-grid{grid-template-columns:1fr}}
+.rev-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.rev-card h3{font-size:14px;margin-bottom:10px;color:var(--accent)}
+.rev-card ul{list-style:none;padding:0}
+.rev-card ul li{padding:3px 0 3px 16px;position:relative;font-size:13px;color:var(--text2);line-height:1.5}
+.rev-card ul li::before{content:"•";position:absolute;left:0;color:var(--accent);font-weight:700}
+.mnemonic{background:linear-gradient(135deg,#0f1e38,#1a0f2e);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.mnemonic-title{font-family:'DM Mono',monospace;font-size:13px;color:var(--accent4);margin-bottom:8px}
+.mnemonic-content{font-size:15px;font-weight:700;color:var(--text);letter-spacing:.04em}
+.mnemonic-sub{font-size:12.5px;color:var(--text2);margin-top:6px}
+.light .mnemonic{background:linear-gradient(135deg,#eff6ff,#f5f3ff)}
+/* SCORE BAR */
+.score-bar{background:var(--surface2);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;display:flex;gap:20px;align-items:center}
+.score-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--accent)}
+.score-label{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+/* HERO */
+.hero{padding:10px 0 32px}
+.hero-tag{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:.1em;margin-bottom:10px}
+.hero-sub{font-size:15px;color:var(--text2);max-width:600px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chip{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;background:var(--surface2);border:1px solid var(--border);color:var(--text2)}
+/* DIVIDER */
+.divider{border:none;border-top:1px solid var(--border);margin:24px 0}
+/* RULE CARD */
+.rule-row{display:flex;gap:14px;margin-bottom:14px;align-items:flex-start}
+.rule-num{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--border);min-width:42px;line-height:1}
+.rule-body h3{margin-bottom:4px}
+/* MOBILE */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .content{padding:20px 16px}
+  .topbar{padding:12px 16px}
+  .revision-grid{grid-template-columns:1fr}
+  .hamburger{display:flex!important}
+}
+.hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:4px}
+.hamburger span{width:20px;height:2px;background:var(--text2);border-radius:2px}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:90}
+.overlay.show{display:block}
+/* QUIZ CONTROLS */
+.quiz-controls{display:flex;gap:10px;margin-bottom:20px;align-items:center;flex-wrap:wrap}
+.filter-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;font-size:12.5px;font-weight:600;transition:all .2s}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.section-banner{padding:18px 22px;border-radius:var(--radius);margin-bottom:24px;background:linear-gradient(135deg,#0f1e38 0%,#1a0f2e 100%);border:1px solid var(--border)}
+.light .section-banner{background:linear-gradient(135deg,#eff6ff 0%,#f5f3ff 100%)}
+.section-banner h1{font-size:22px}
+.section-banner p{color:var(--text2);font-size:13.5px;margin:0}
+.tick{color:var(--accent3)}
+.cross{color:var(--danger)}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="tag">ASE · Clean Code</div>
+    <h2>Exam Prep<br/>System</h2>
+  </div>
+  <nav>
+    <div class="nav-group">
+      <div class="nav-label">Study</div>
+      <div class="nav-item active" onclick="showSection('explanation')"><span class="icon">📖</span>Deep Explanation</div>
+      <div class="nav-item" onclick="showSection('summary')"><span class="icon">⚡</span>Smart Summary</div>
+      <div class="nav-item" onclick="showSection('memory')"><span class="icon">🧠</span>Memory Tricks</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Practice</div>
+      <div class="nav-item" onclick="showSection('mcq')"><span class="icon">🎯</span>MCQ Bank</div>
+      <div class="nav-item" onclick="showSection('written')"><span class="icon">✍️</span>Written Q&amp;A</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Final</div>
+      <div class="nav-item" onclick="showSection('revision')"><span class="icon">🌙</span>Night Cheat Sheet</div>
+    </div>
+  </nav>
+</aside>
+
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="hamburger" id="hamburger" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </div>
+      <span class="topbar-title">Advanced Software Engineering · Clean Code</span>
+    </div>
+    <div class="topbar-right">
+      <span id="score-display" style="font-size:12px;color:var(--text3);font-family:'DM Mono',monospace"></span>
+      <button class="btn-mode" onclick="toggleMode()">☀️ / 🌙</button>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress" style="width:16%"></div></div>
+
+  <div class="content">
+
+  <!-- ═══════════════════════════════════════ EXPLANATION ═══════════════════════════════════════ -->
+  <div class="section active" id="explanation">
+    <div class="hero">
+      <div class="hero-tag">// PHASE 1 · DEEP UNDERSTANDING</div>
+      <h1>Clean Code</h1>
+      <p class="hero-sub">A thorough, exam-optimized breakdown of every concept — Meaningful Names, Functions, Objects & Structures.</p>
+      <div class="chips">
+        <span class="chip">13 Naming Rules</span>
+        <span class="chip">Functions</span>
+        <span class="chip">Objects vs Data</span>
+        <span class="chip">Law of Demeter</span>
+        <span class="chip">Abstraction</span>
+      </div>
+    </div>
+
+    <!-- WHAT IS CLEAN CODE -->
+    <div class="card card-accent">
+      <h2>What is Clean Code?</h2>
+      <p>Think of code like a book. Working code means the book exists and has all its pages. Clean code means any developer can pick it up, read it fluently, and modify it without confusion. <strong>Good code = Working + Clean.</strong></p>
+      <div class="box box-blue">
+        <div class="box-title">📌 Core Definition</div>
+        <ul class="styled">
+          <li><strong>Clean Code</strong> — Readable, maintainable, extendable</li>
+          <li><strong>Working Code</strong> — Does what it is supposed to do</li>
+          <li><strong>Good Code</strong> — The combination of both</li>
+        </ul>
+      </div>
+      <p>Martin Fowler's famous quote: <em>"Any fool can write code that a computer can understand. Good programmers write code that humans can understand."</em></p>
+      <div class="box box-yellow">
+        <div class="box-title">⚠️ The WTF/Minute Rule</div>
+        <p style="margin:0;font-size:13.5px">A good measure of code quality is how many "WTF" moments a reviewer has per minute. Your goal: reduce WTFs to nearly zero. Strategies: peer review, consistent standards, continuous practice.</p>
+      </div>
+    </div>
+
+    <!-- SECTION: MEANINGFUL NAMES -->
+    <hr class="divider"/>
+    <h2 style="font-family:'Syne',sans-serif;font-size:22px;margin-bottom:20px">🏷️ PART 1 — Meaningful Names (13 Rules)</h2>
+
+    <!-- Rule 1 -->
+    <div class="card card-accent">
+      <div class="rule-row">
+        <div class="rule-num">01</div>
+        <div class="rule-body">
+          <h3>Use Intention-Revealing Names</h3>
+          <p>The name of a variable, function, or class must answer three questions: <strong>Why does it exist? What does it do? How is it used?</strong> If you need a comment to explain the name, the name is wrong.</p>
+          <div class="box box-red">
+            <div class="box-title">❌ Bad</div>
+            <pre><span class="kw">public</span> List&lt;int[]&gt; <span class="fn">getThem</span>() {
+  List&lt;int[]&gt; list1 = <span class="kw">new</span> ArrayList&lt;&gt;();
+  <span class="kw">for</span> (int[] x : theList)
+    <span class="kw">if</span> (x[<span class="num">0</span>] == <span class="num">4</span>) list1.add(x);
+  <span class="kw">return</span> list1;
+}</pre>
+            <p style="font-size:13px;color:var(--text2);margin:0">❓ What is theList? What is x[0]? Why 4? What is returned?</p>
+          </div>
+          <div class="box box-green">
+            <div class="box-title">✅ Good (Step 1)</div>
+            <pre><span class="kw">public</span> List&lt;int[]&gt; <span class="fn">getFlaggedCells</span>() {
+  List&lt;int[]&gt; flaggedCells = <span class="kw">new</span> ArrayList&lt;&gt;();
+  <span class="kw">for</span> (int[] cell : gameBoard)
+    <span class="kw">if</span> (cell[STATUS_VALUE] == FLAGGED)
+      flaggedCells.add(cell);
+  <span class="kw">return</span> flaggedCells;
+}</pre>
+          </div>
+          <div class="box box-green">
+            <div class="box-title">✅✅ Better (Step 2 — with Cell class)</div>
+            <pre><span class="kw">public</span> List&lt;Cell&gt; <span class="fn">getFlaggedCells</span>() {
+  List&lt;Cell&gt; flaggedCells = <span class="kw">new</span> ArrayList&lt;&gt;();
+  <span class="kw">for</span> (Cell cell : gameBoard)
+    <span class="kw">if</span> (cell.<span class="fn">isFlagged</span>()) flaggedCells.add(cell);
+  <span class="kw">return</span> flaggedCells;
+}</pre>
+            <p style="font-size:13px;color:var(--text2);margin:0">Same operators, same logic — but now it reads like English!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rule 2 -->
+    <div class="card card-purple">
+      <div class="rule-row">
+        <div class="rule-num">02</div>
+        <div class="rule-body">
+          <h3>Avoid Disinformation</h3>
+          <p>Don't leave false clues. Avoid reserved keywords in names, ambiguous words, and names that differ only slightly.</p>
+          <ul class="styled">
+            <li>Never use <code>l</code> (lowercase L) or <code>O</code> (uppercase O) as variable names — they look like numbers <code>1</code> and <code>0</code></li>
+            <li>Avoid nearly-identical names: <code>XYZControllerForEfficientHandlingOfStrings</code> vs <code>XYZControllerForEfficientStorageOfStrings</code></li>
+          </ul>
+          <div class="box box-red"><div class="box-title">❌ Classic Trap</div><pre>int a = l; <span class="cm">// is l a 1 or the letter l?</span>
+<span class="kw">if</span> (O == l) { a = O1; } <span class="cm">// O is zero or letter O?</span></pre></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rule 3 -->
+    <div class="card card-green">
+      <div class="rule-row">
+        <div class="rule-num">03</div>
+        <div class="rule-body">
+          <h3>Use Meaningful Distinctions</h3>
+          <p>If two names must differ, they must also <em>mean</em> something different. Number-series names like <code>a1, a2, a3</code> carry zero information.</p>
+          <div class="box box-red"><div class="box-title">❌ Bad</div><pre><span class="kw">public static void</span> <span class="fn">copyChars</span>(char a1[], char a2[]) { ... }</pre></div>
+          <div class="box box-green"><div class="box-title">✅ Good</div><pre><span class="kw">public static void</span> <span class="fn">copyChars</span>(char source[], char destination[]) { ... }</pre></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rule 4 -->
+    <div class="card card-yellow">
+      <div class="rule-row">
+        <div class="rule-num">04</div>
+        <div class="rule-body">
+          <h3>Eliminate Noise Words</h3>
+          <p>Noise words add nothing. Examples: <code>NameString</code> — why not just <code>Name</code>? <code>theAccount</code> vs <code>account</code>? <code>ProductData</code> vs <code>Product</code>?</p>
+          <ul class="styled">
+            <li>Never use "variable" in a variable name</li>
+            <li>Never use "table" in a table name</li>
+            <li>Never use "String", "Data", "Info", "Object" as suffixes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rule 5 -->
+    <div class="card card-accent">
+      <div class="rule-row">
+        <div class="rule-num">05</div>
+        <div class="rule-body">
+          <h3>Use Searchable Names</h3>
+          <p>Magic numbers are unfindable. If you search for <code>7</code>, you'll get thousands of hits. If you search for <code>NUMBER_OF_SUBJECTS</code>, you find exactly what you need.</p>
+          <div class="box box-red"><div class="box-title">❌ Bad</div><pre><span class="kw">for</span> (int j=<span class="num">0</span>; j&lt;<span class="num">7</span>; j++) { s += t[j]; }</pre></div>
+          <div class="box box-green"><div class="box-title">✅ Good</div><pre>int NUMBER_OF_SUBJECTS = <span class="num">7</span>;
+int TotalGrade = <span class="num">0</span>;
+<span class="kw">for</span> (int j=<span class="num">0</span>; j&lt;NUMBER_OF_SUBJECTS; j++)
+  TotalGrade += Student_grade[j];</pre></div>
+          <div class="box box-blue"><div class="box-title">📌 Rule</div><p style="margin:0;font-size:13.5px">Single-letter names ONLY inside short methods. The length of a name ∝ the size of its scope.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rule 6 & 7 -->
+    <div class="card card-purple">
+      <div class="rule-row">
+        <div class="rule-num">06</div>
+        <div class="rule-body">
+          <h3>Class Names — Answer "WHO?"</h3>
+          <p>Classes and objects should be <strong>nouns or noun phrases</strong>: <code>Customer</code>, <code>WikiPage</code>, <code>Account</code>, <code>AddressParser</code>.</p>
+          <ul class="styled">
+            <li>Avoid words like: Manager, Processor, Data, Info</li>
+            <li>A class name should <strong>never</strong> be a verb</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="card card-accent">
+      <div class="rule-row">
+        <div class="rule-num">07</div>
+        <div class="rule-body">
+          <h3>Method Names — Answer "WHAT does it do?"</h3>
+          <p>Methods should be <strong>verbs or verb phrases</strong>: <code>postPayment()</code>, <code>deletePage()</code>, <code>save()</code>.</p>
+          <div class="box box-blue"><div class="box-title">📌 Static Factory Methods</div>
+          <p style="margin:0;font-size:13.5px">When constructors are overloaded, use static factory methods with descriptive names:</p>
+          <pre>Address.createShortAddress(1, "tahrir", "helwan");
+Address.createFullAddress(1, 4, 4, "tahrir", "helwan", "cairo", "Egypt");</pre>
+          <p style="margin:4px 0 0;font-size:13px;color:var(--text2)">Better than: <code>new Address(1, "tahrir", "helwan")</code> — you have no idea what the args mean!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rule 8 -->
+    <div class="card card-red">
+      <div class="rule-row">
+        <div class="rule-num">08</div>
+        <div class="rule-body">
+          <h3>Avoid Encodings (Hungarian Notation)</h3>
+          <p>Hungarian Notation adds type prefixes to names: <code>iAge</code>, <code>strName</code>, <code>lCount</code>. Microsoft <strong>banned it in 2008</strong>.</p>
+          <ul class="styled">
+            <li>Modern IDEs already show types — prefixes are redundant</li>
+            <li>When you change the type, you must rename — fragile!</li>
+            <li>Makes code noisier and harder to read the meaningful part</li>
+            <li>Interfaces: prefer <code>ShapeFactory</code> over <code>IShapeFactory</code>. If you must encode, name the <em>implementation</em>: <code>ShapeFactoryImp</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rule 9 -->
+    <div class="card card-green">
+      <div class="rule-row">
+        <div class="rule-num">09</div>
+        <div class="rule-body">
+          <h3>Use Pronounceable Names</h3>
+          <p>If you can't say it out loud, you can't discuss it in a team meeting without sounding foolish. Programming is a <strong>social activity</strong>.</p>
+          <div class="box box-red"><div class="box-title">❌ Bad</div><pre><span class="kw">class</span> DtaRcrd102 {
+  <span class="kw">private</span> Date genymdhms;
+  <span class="kw">private</span> Date modymdhms;
+  <span class="kw">private final</span> String pszqint = <span class="str">"102"</span>;
+}</pre></div>
+          <div class="box box-green"><div class="box-title">✅ Good</div><pre><span class="kw">class</span> Customer {
+  <span class="kw">private</span> Date generationTimestamp;
+  <span class="kw">private</span> Date modificationTimestamp;
+  <span class="kw">private final</span> String recordId = <span class="str">"102"</span>;
+}</pre></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rule 10 -->
+    <div class="card card-yellow">
+      <div class="rule-row">
+        <div class="rule-num">10</div>
+        <div class="rule-body">
+          <h3>Avoid Mental Mapping</h3>
+          <p>Don't force readers to mentally translate <code>r</code> → "full URL of Dacia server from Romania." Clarity beats cleverness.</p>
+          <p>Exception: well-known conventions like <code>i</code>, <code>j</code> for loop iterators are fine because every programmer already knows them.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rule 11 -->
+    <div class="card card-accent">
+      <div class="rule-row">
+        <div class="rule-num">11</div>
+        <div class="rule-body">
+          <h3>Don't Be Cute</h3>
+          <p>Clever names are only funny to those who share the author's humor — and only while they remember the joke.</p>
+          <ul class="styled">
+            <li>Don't use <code>whack()</code> to mean <code>kill()</code></li>
+            <li>Don't use <code>eatMyShorts()</code> to mean <code>abort()</code></li>
+            <li><strong>Say what you mean. Mean what you say.</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rule 12 -->
+    <div class="card card-purple">
+      <div class="rule-row">
+        <div class="rule-num">12</div>
+        <div class="rule-body">
+          <h3>Pick One Word Per Concept</h3>
+          <p>Choose one word for one abstract concept and <em>stick with it</em> across the entire codebase.</p>
+          <table class="tbl">
+            <tr><th>❌ Inconsistent</th><th>✅ Consistent</th></tr>
+            <tr><td><code>getArticles()</code><br/><code>fetchUsers()</code><br/><code>retrievePages()</code></td><td><code>getArticles()</code><br/><code>getUsers()</code><br/><code>getPages()</code></td></tr>
+          </table>
+          <p>Having <code>controller</code>, <code>manager</code>, and <code>driver</code> in the same codebase is also confusing — they all mean the same thing.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rule 13 -->
+    <div class="card card-green">
+      <div class="rule-row">
+        <div class="rule-num">13</div>
+        <div class="rule-body">
+          <h3>Add Meaningful Context</h3>
+          <p>Seeing <code>state</code> alone is ambiguous — is it a boolean state? A US state? But <code>addrState</code> next to <code>addrFirstName</code>, <code>addrCity</code>, <code>addrCountry</code> clearly forms an address.</p>
+          <p>Use <strong>prefix context</strong>: <code>addr</code>, <code>user</code>, <code>order</code>, etc. Or better yet, wrap variables in a well-named class.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION: FUNCTIONS -->
+    <hr class="divider"/>
+    <h2 style="font-family:'Syne',sans-serif;font-size:22px;margin-bottom:20px">⚙️ PART 2 — Clean Functions</h2>
+
+    <div class="card card-accent">
+      <h3>Rule 1: Keep Functions Small</h3>
+      <p>"<em>The first rule of functions is that they should be small. The second rule of functions is that they should be smaller than that.</em>" — Robert C. Martin</p>
+      <ul class="styled">
+        <li>Any method longer than <strong>~10 lines</strong> should raise questions</li>
+        <li>Use <strong>Extract Method</strong> refactoring to split long methods</li>
+      </ul>
+    </div>
+
+    <div class="card card-purple">
+      <h3>Rule 2: Do One Thing (SRP for Functions)</h3>
+      <ul class="styled">
+        <li>Functions Should Do One Thing</li>
+        <li>Functions Should Do It Well</li>
+        <li>Functions Should Do It Only</li>
+      </ul>
+      <div class="box box-blue"><div class="box-title">💡 How to check</div><p style="margin:0;font-size:13.5px">Try to extract another function with a different name from inside your function. If you can, the original function is doing more than one thing.</p></div>
+      <p style="margin-top:10px">The refactoring example: <code>addDataToFile()</code> was doing reading, adding, writing, AND printing. After refactoring:</p>
+      <pre><span class="cm">// Each function does exactly ONE thing:</span>
+<span class="fn">readDataFromFile</span>(path)
+<span class="fn">addDataToList</span>(person, people)
+<span class="fn">addDataToFile</span>(path, people)     <span class="cm">// only writes!</span>
+<span class="fn">PrintPersonDataFile</span>(people)    <span class="cm">// only prints!</span></pre>
+    </div>
+
+    <div class="card card-green">
+      <h3>Rule 3: One Level of Abstraction Per Function (SLAP)</h3>
+      <p>All statements inside a function must be at the <strong>same level of abstraction</strong>. Don't mix high-level calls with low-level implementation details.</p>
+      <div class="box box-red"><div class="box-title">❌ Mixed Levels — Confusing</div>
+      <pre><span class="fn">printNumbersOneToThirtyFive</span>() {
+  <span class="fn">printNumbersOneToTen</span>(); <span class="cm">// high-level</span>
+  <span class="kw">for</span>(int i=<span class="num">11</span>; i&lt;<span class="num">21</span>; i++) System.out.println(i); <span class="cm">// low-level!</span>
+  System.out.println(<span class="num">21</span>); <span class="cm">// micro-detail!</span>
+  <span class="cm">// ...deep nested ifs and loops...</span>
+}</pre></div>
+      <div class="box box-green"><div class="box-title">✅ Same Level — Clean</div>
+      <pre><span class="fn">printNumbersOneToThirtyFive</span>() {
+  <span class="fn">printNumbersOneToTen</span>();
+  <span class="fn">printNumbersElevenToTwenty</span>();
+  <span class="fn">printNumberTwentyOne</span>();
+  <span class="fn">printNumbersTwentyTwoToThirtyFive</span>();
+}</pre></div>
+    </div>
+
+    <div class="card card-yellow">
+      <h3>Rule 4: Fewer Arguments</h3>
+      <p>Arguments increase cognitive load. Preference order: <strong>0 &gt; 1 &gt; 2 &gt; 3+</strong></p>
+      <ul class="styled">
+        <li>Try to avoid 3-argument functions</li>
+        <li>Never use 3+ arguments — use a Request/Parameter object instead</li>
+        <li>You can eliminate arguments by making them class fields</li>
+      </ul>
+      <pre><span class="cm">// Bad — too many args:</span>
+<span class="fn">sendRequest</span>(String ip, int port, String user, String password, String body);
+<span class="cm">// Good — encapsulate into object:</span>
+<span class="fn">sendRequest</span>(Request request);</pre>
+    </div>
+
+    <div class="card card-red">
+      <h3>Rule 5: No Flag Arguments</h3>
+      <p>Passing a boolean to a function is terrible practice. It means the function is doing <strong>two things</strong> depending on the flag.</p>
+      <div class="box box-red"><div class="box-title">❌ Bad</div><pre><span class="kw">void</span> <span class="fn">printAddress</span>(Boolean isLong) {
+  <span class="kw">if</span>(isLong) { <span class="cm">/* long address */</span> }
+  <span class="kw">else</span> { <span class="cm">/* short address */</span> }
+}</pre></div>
+      <div class="box box-green"><div class="box-title">✅ Good — Split it</div><pre><span class="kw">void</span> <span class="fn">printShortAddress</span>() { ... }
+<span class="kw">void</span> <span class="fn">printLongAddress</span>() { ... }</pre></div>
+    </div>
+
+    <div class="card card-accent">
+      <h3>Rule 6: Keep Blocks Small (1 line each)</h3>
+      <p>The body of <code>if</code>, <code>else</code>, <code>while</code> should ideally be <strong>one line</strong> — a function call. This prevents deep nesting (max 1–2 indent levels) and adds self-documenting names.</p>
+    </div>
+
+    <div class="card card-purple">
+      <h3>Rule 7: Replace Conditional with Polymorphism</h3>
+      <p>Repeated <code>switch</code> or <code>if-else</code> chains based on a type violate the <strong>Open/Closed Principle</strong> (open for extension, closed for modification).</p>
+      <div class="box box-red"><div class="box-title">❌ Bad — Adding a new vehicle type requires modifying ALL switch statements</div><pre><span class="kw">switch</span>(type) {
+  <span class="kw">case</span> BICYCLE: <span class="kw">return</span> ParkingSpotSize.SMALL;
+  <span class="kw">case</span> BIKE: <span class="kw">return</span> ParkingSpotSize.MEDIUM;
+  <span class="cm">// ...repeated in every method!</span>
+}</pre></div>
+      <div class="box box-green"><div class="box-title">✅ Good — Interface + polymorphism</div><pre><span class="kw">public interface</span> Vehicle {
+  ParkingSpotSize <span class="fn">spaceRequiredForParking</span>();
+  BigDecimal <span class="fn">parkingCharges</span>();
+}
+<span class="kw">public class</span> Car <span class="kw">implements</span> Vehicle {
+  <span class="kw">public</span> ParkingSpotSize <span class="fn">spaceRequiredForParking</span>() { <span class="kw">return</span> LARGE; }
+  <span class="kw">public</span> BigDecimal <span class="fn">parkingCharges</span>() { <span class="kw">return</span> BigDecimal.valueOf(<span class="num">50.00</span>); }
+}</pre>
+      <p style="margin:6px 0 0;font-size:13px;color:var(--text2)">New vehicle? Just add a new class — nothing else changes.</p></div>
+    </div>
+
+    <!-- SECTION: OBJECTS & DATA -->
+    <hr class="divider"/>
+    <h2 style="font-family:'Syne',sans-serif;font-size:22px;margin-bottom:20px">🏗️ PART 3 — Objects & Data Structures</h2>
+
+    <div class="card card-accent">
+      <h3>Data Abstraction</h3>
+      <p>Abstraction is NOT just making variables private and adding getters/setters. That's just <em>accessors</em> — it exposes the internal structure through thin methods.</p>
+      <p>True abstraction provides <strong>abstract interfaces</strong> that let users manipulate data without knowing its implementation.</p>
+      <table class="tbl">
+        <tr><th>❌ Concrete (NOT abstraction)</th><th>✅ Abstract (True abstraction)</th></tr>
+        <tr><td><code>getGallonsOfGasoline()</code><br/><code>getGallonsNeeded()</code></td><td><code>getPercentFuelRemaining()</code></td></tr>
+      </table>
+      <p>The abstract version hides whether fuel is measured in gallons, liters, or kilowatt-hours.</p>
+    </div>
+
+    <div class="card card-purple">
+      <h3>Data/Object Anti-Symmetry</h3>
+      <ul class="styled">
+        <li><strong>Objects</strong>: hide data (private), expose behavior (methods)</li>
+        <li><strong>Data Structures</strong>: expose data (public), have no behavior</li>
+      </ul>
+      <table class="tbl">
+        <tr><th></th><th>Add New Function</th><th>Add New Type</th></tr>
+        <tr><td><strong>Procedural (Data Structs)</strong></td><td><span class="tick">✅ Easy</span></td><td><span class="cross">❌ Hard (all functions change)</span></td></tr>
+        <tr><td><strong>OOP (Objects)</strong></td><td><span class="cross">❌ Hard (all classes change)</span></td><td><span class="tick">✅ Easy</span></td></tr>
+      </table>
+      <div class="box box-blue"><div class="box-title">📌 When to use which?</div>
+      <ul class="styled">
+        <li>Use <strong>OOP</strong> in complex systems — you'll add more data types than functions</li>
+        <li>Use <strong>Procedural</strong> when you need to add new functions more often than new types</li>
+      </ul></div>
+    </div>
+
+    <div class="card card-green">
+      <h3>Law of Demeter (LoD) — "Don't Talk to Strangers"</h3>
+      <p>A module should not know about the inner workings of the objects it manipulates. Method <code>M</code> of class <code>C</code> should only call methods of:</p>
+      <ol class="styled">
+        <li><code>C</code> itself</li>
+        <li>Parameters passed to <code>M</code></li>
+        <li>Objects created inside <code>M</code></li>
+        <li>Direct component objects of <code>C</code> (fields)</li>
+        <li>Global/static variables accessible in <code>M</code></li>
+      </ol>
+      <div class="box box-red"><div class="box-title">❌ Violation — Train Wreck / Chained Call</div>
+      <pre>employee.<span class="fn">getDepartment</span>().<span class="fn">getManager</span>().<span class="fn">approveExpense</span>(expenses);</pre>
+      <p style="font-size:13px;color:var(--text2);margin:6px 0 0">employee knows about Department; Department knows about Manager. Employee is talking to a stranger (Manager).</p></div>
+      <div class="box box-green"><div class="box-title">✅ Fix — Employee talks only to its own friend (Manager injected via constructor)</div>
+      <pre><span class="kw">class</span> Employee {
+  <span class="kw">private</span> Manager manager;
+  Employee(Manager manager) { <span class="kw">this</span>.manager = manager; }
+  <span class="kw">void</span> <span class="fn">submitExpense</span>(Expenses expenses) {
+    manager.<span class="fn">approveExpense</span>(expenses); <span class="cm">// manager is a direct field</span>
+  }
+}
+<span class="cm">// Usage:</span>
+emp.<span class="fn">submitExpense</span>(expenses); <span class="cm">// clean, loosely coupled</span></pre></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ SUMMARY ═══════════════════════════════════════ -->
+  <div class="section" id="summary">
+    <div class="section-banner">
+      <div class="hero-tag" style="margin-bottom:6px">// PHASE 2 · SMART SUMMARY</div>
+      <h1>High-Yield Summary</h1>
+      <p>Everything you need, nothing you don't. Structured for rapid learning.</p>
+    </div>
+
+    <div class="collapsible open">
+      <div class="collapsible-header" onclick="toggleCollapse(this)">
+        <span>🏷️ MEANINGFUL NAMES — All 13 Rules</span>
+        <span class="collapsible-arrow">▼</span>
+      </div>
+      <div class="collapsible-body">
+        <table class="tbl">
+          <tr><th>#</th><th>Rule</th><th>Key Point</th></tr>
+          <tr><td><span class="badge badge-blue">01</span></td><td><strong>Intention-Revealing Names</strong></td><td>Name = why it exists + what it does + how it's used. No comment should be needed.</td></tr>
+          <tr><td><span class="badge badge-red">02</span></td><td><strong>Avoid Disinformation</strong></td><td>No misleading names. Never use lowercase <code>l</code>, uppercase <code>O</code> as variables.</td></tr>
+          <tr><td><span class="badge badge-yellow">03</span></td><td><strong>Meaningful Distinctions</strong></td><td>No a1,a2,aN series. No noise suffixes. Use source/destination not a1/a2.</td></tr>
+          <tr><td><span class="badge badge-green">04</span></td><td><strong>Eliminate Noise</strong></td><td>Never: NameString, ProductData, accountObject, theList.</td></tr>
+          <tr><td><span class="badge badge-blue">05</span></td><td><strong>Searchable Names</strong></td><td>Constants over magic numbers. Single letters only in short methods. Name length ∝ scope.</td></tr>
+          <tr><td><span class="badge badge-purple">06</span></td><td><strong>Class Names = Nouns</strong></td><td>Customer, Account, WikiPage. Avoid Manager, Processor, Data, Info. Never a verb.</td></tr>
+          <tr><td><span class="badge badge-yellow">07</span></td><td><strong>Method Names = Verbs</strong></td><td>postPayment(), deletePage(), save(). Overloaded constructors → static factory methods.</td></tr>
+          <tr><td><span class="badge badge-red">08</span></td><td><strong>Avoid Encodings</strong></td><td>No Hungarian Notation (iAge, strName). Microsoft banned it 2008. Interfaces: ShapeFactory not IShapeFactory.</td></tr>
+          <tr><td><span class="badge badge-green">09</span></td><td><strong>Pronounceable Names</strong></td><td>If you can't say it in a meeting → rename it. DtaRcrd102 → Customer.</td></tr>
+          <tr><td><span class="badge badge-blue">10</span></td><td><strong>No Mental Mapping</strong></td><td>Don't make readers mentally translate. Use problem/solution domain terms.</td></tr>
+          <tr><td><span class="badge badge-yellow">11</span></td><td><strong>Don't Be Cute</strong></td><td>No humor-based names. No whack() for kill(). Say what you mean.</td></tr>
+          <tr><td><span class="badge badge-purple">12</span></td><td><strong>One Word Per Concept</strong></td><td>Choose fetch OR get OR retrieve — pick one and use it everywhere.</td></tr>
+          <tr><td><span class="badge badge-green">13</span></td><td><strong>Meaningful Context</strong></td><td>Use prefixes (addrState) or class encapsulation for context. state alone is ambiguous.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="collapsible open">
+      <div class="collapsible-header" onclick="toggleCollapse(this)">
+        <span>⚙️ FUNCTIONS — 7 Key Rules</span>
+        <span class="collapsible-arrow">▼</span>
+      </div>
+      <div class="collapsible-body">
+        <table class="tbl">
+          <tr><th>#</th><th>Rule</th><th>Key Point</th></tr>
+          <tr><td><span class="badge badge-blue">F1</span></td><td><strong>Keep Functions Small</strong></td><td>&gt;10 lines → ask questions. Use Extract Method refactoring.</td></tr>
+          <tr><td><span class="badge badge-green">F2</span></td><td><strong>Do One Thing</strong></td><td>If you can extract another differently-named function → it's doing 2 things.</td></tr>
+          <tr><td><span class="badge badge-purple">F3</span></td><td><strong>One Level of Abstraction (SLAP)</strong></td><td>All statements at same level. Don't mix high-level calls with loops/conditions.</td></tr>
+          <tr><td><span class="badge badge-yellow">F4</span></td><td><strong>Fewer Arguments</strong></td><td>0 > 1 > 2 > 3+. Avoid 3+. Use parameter objects. Make args class fields.</td></tr>
+          <tr><td><span class="badge badge-red">F5</span></td><td><strong>No Flag Arguments</strong></td><td>Boolean param = function does 2 things. Split into 2 functions.</td></tr>
+          <tr><td><span class="badge badge-blue">F6</span></td><td><strong>Small Blocks</strong></td><td>if/else/while bodies = 1 line (a function call). Max 1-2 indent levels.</td></tr>
+          <tr><td><span class="badge badge-green">F7</span></td><td><strong>Polymorphism over Switch</strong></td><td>Repeated switch/if on type violates OCP. Use interface + implementations.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="collapsible open">
+      <div class="collapsible-header" onclick="toggleCollapse(this)">
+        <span>🏗️ OBJECTS & DATA STRUCTURES</span>
+        <span class="collapsible-arrow">▼</span>
+      </div>
+      <div class="collapsible-body">
+        <table class="tbl">
+          <tr><th>Concept</th><th>Key Points</th></tr>
+          <tr><td><strong>Data Abstraction</strong></td><td>Hide implementation, not just variables. <code>getPercentFuelRemaining()</code> is abstract. <code>getGallons()</code> is just an accessor. True abstraction = users don't know internal representation.</td></tr>
+          <tr><td><strong>Data/Object Anti-Symmetry</strong></td><td>Objects: hide data, expose behavior. Data Structs: expose data, no behavior. Procedural: easy to add functions, hard to add types. OOP: easy to add types, hard to add functions.</td></tr>
+          <tr><td><strong>Law of Demeter</strong></td><td>"Only talk to immediate friends." M() can call: C itself, M's params, objects made in M, C's direct fields, global statics. Chained calls like a.b().c().d() are violations = train wrecks.</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ MEMORY ═══════════════════════════════════════ -->
+  <div class="section" id="memory">
+    <div class="section-banner">
+      <div class="hero-tag" style="margin-bottom:6px">// PHASE 3 · MEMORY OPTIMIZATION</div>
+      <h1>Memory Tricks & Traps</h1>
+      <p>Mnemonics, comparisons, common mistakes, and spaced repetition hints.</p>
+    </div>
+
+    <!-- MNEMONICS -->
+    <h3 style="margin-bottom:12px">🔤 Mnemonics</h3>
+
+    <div class="mnemonic">
+      <div class="mnemonic-title">MNEMONIC — 13 Naming Rules</div>
+      <div class="mnemonic-content">I A M S — C M E P A D C C A</div>
+      <div class="mnemonic-sub"><strong>I</strong>ntention · <strong>A</strong>void disinformation · <strong>M</strong>eaningful distinctions · <strong>S</strong>earchable ·<br/><strong>C</strong>lass=noun · <strong>M</strong>ethod=verb · <strong>E</strong>ncodings(avoid) · <strong>P</strong>ronounceable · <strong>A</strong>void mental mapping · <strong>D</strong>on't be cute · <strong>C</strong>onsistent(1 word/concept) · <strong>C</strong>ontext</div>
+    </div>
+
+    <div class="mnemonic">
+      <div class="mnemonic-title">MNEMONIC — Functions Rules</div>
+      <div class="mnemonic-content">S · D · A · F · P · B · C</div>
+      <div class="mnemonic-sub"><strong>S</strong>mall · <strong>D</strong>o one thing · <strong>A</strong>bstraction (one level) · <strong>F</strong>ewer args · <strong>P</strong>olymorphism not switch · <strong>B</strong>locks small · <strong>C</strong>lean names</div>
+    </div>
+
+    <div class="mnemonic">
+      <div class="mnemonic-title">MNEMONIC — Law of Demeter (what M can call)</div>
+      <div class="mnemonic-content">C · P · I · F · G</div>
+      <div class="mnemonic-sub"><strong>C</strong>lass itself · <strong>P</strong>arameters of M · <strong>I</strong>nternally created objects · <strong>F</strong>ields of C · <strong>G</strong>lobal variables</div>
+    </div>
+
+    <!-- COMPARISON TABLES -->
+    <h3 style="margin:24px 0 12px">⚖️ Easy-to-Confuse Comparisons</h3>
+
+    <div class="card">
+      <h4>Getters/Setters vs True Abstraction</h4>
+      <table class="tbl">
+        <tr><th>Getters/Setters (NOT abstraction)</th><th>True Abstraction</th></tr>
+        <tr><td>Directly expose internal fields through thin methods</td><td>Provide operations meaningful to the user</td></tr>
+        <tr><td><code>getGallons()</code>, <code>setGallons()</code></td><td><code>getPercentFuelRemaining()</code></td></tr>
+        <tr><td>User knows fuel is in gallons</td><td>User doesn't know internal representation</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h4>Procedural vs OOP — When to use each</h4>
+      <table class="tbl">
+        <tr><th></th><th>Procedural</th><th>OOP</th></tr>
+        <tr><td>Structure</td><td>Functions + public data structs</td><td>Classes with private data + public methods</td></tr>
+        <tr><td>Easy to add</td><td>New functions</td><td>New types/classes</td></tr>
+        <tr><td>Hard to add</td><td>New data types (all functions change)</td><td>New functions (all classes change)</td></tr>
+        <tr><td>Best for</td><td>Fixed data types, many operations</td><td>Fixed operations, many data types</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h4>Class Names vs Method Names</h4>
+      <table class="tbl">
+        <tr><th></th><th>Class Names</th><th>Method Names</th></tr>
+        <tr><td>Type</td><td>Noun / Noun phrase</td><td>Verb / Verb phrase</td></tr>
+        <tr><td>Question answered</td><td>WHO?</td><td>WHAT does it do?</td></tr>
+        <tr><td>Good examples</td><td>Customer, Account, AddressParser</td><td>postPayment(), deletePage(), save()</td></tr>
+        <tr><td>Avoid</td><td>Manager, Processor, Data, Info (as names) — never a verb</td><td>Cute names, vague names</td></tr>
+      </table>
+    </div>
+
+    <!-- COMMON MISTAKES -->
+    <h3 style="margin:24px 0 12px">⚠️ Common Exam Traps & Mistakes</h3>
+    <div class="card card-red">
+      <ul class="styled">
+        <li><strong>Trap 1:</strong> "Private variables + getters/setters = abstraction" — ❌ WRONG! That's just accessors.</li>
+        <li><strong>Trap 2:</strong> "Hungarian Notation is good because it shows the type" — ❌ WRONG! Microsoft banned it. Modern IDEs show types.</li>
+        <li><strong>Trap 3:</strong> "A single-letter variable is always bad" — ❌ Not quite! <code>i</code>, <code>j</code> are fine as loop counters in short methods.</li>
+        <li><strong>Trap 4:</strong> "Procedural code is always worse than OOP" — ❌ WRONG! It's better when adding new functions frequently.</li>
+        <li><strong>Trap 5:</strong> "The Law of Demeter just means avoid chained calls" — Partially right. The rule is specifically about what methods you're allowed to call.</li>
+        <li><strong>Trap 6:</strong> "Flag arguments are OK if the boolean is well-named" — ❌ WRONG! It still means the function does two things.</li>
+        <li><strong>Trap 7:</strong> "Adding number series (a1, a2) is at least better than nothing" — ❌ WRONG! It's non-informative, not just uninformative.</li>
+      </ul>
+    </div>
+
+    <!-- SPACED REPETITION -->
+    <h3 style="margin:24px 0 12px">🔁 Spaced Repetition Plan</h3>
+    <div class="card card-blue" style="border-left:4px solid var(--accent)">
+      <table class="tbl">
+        <tr><th>When</th><th>What to Review</th></tr>
+        <tr><td><strong>Today</strong></td><td>All 13 naming rules + 7 function rules — read once</td></tr>
+        <tr><td><strong>Tomorrow</strong></td><td>Do all MCQs without looking at answers</td></tr>
+        <tr><td><strong>Day 3</strong></td><td>Re-read rules you got wrong + LoD + Abstraction</td></tr>
+        <tr><td><strong>Day 5</strong></td><td>Written questions — answer without notes</td></tr>
+        <tr><td><strong>Night before exam</strong></td><td>Cheat sheet only — 20 minutes max</td></tr>
+      </table>
+    </div>
+
+    <!-- CHUNKING -->
+    <h3 style="margin:24px 0 12px">🧩 Information Chunks</h3>
+    <div class="revision-grid">
+      <div class="rev-card">
+        <h3>Chunk A — "Clarity" Rules</h3>
+        <ul><li>Intention-Revealing Names</li><li>Avoid Disinformation</li><li>Avoid Mental Mapping</li><li>Pronounceable Names</li><li>Don't Be Cute</li></ul>
+      </div>
+      <div class="rev-card">
+        <h3>Chunk B — "Noise" Rules</h3>
+        <ul><li>Eliminate Noise Words</li><li>Meaningful Distinctions</li><li>Avoid Encodings</li><li>One Word Per Concept</li></ul>
+      </div>
+      <div class="rev-card">
+        <h3>Chunk C — "Scope" Rules</h3>
+        <ul><li>Searchable Names</li><li>Meaningful Context</li><li>Class Names (noun)</li><li>Method Names (verb)</li></ul>
+      </div>
+      <div class="rev-card">
+        <h3>Chunk D — Function Hygiene</h3>
+        <ul><li>Small + One Thing</li><li>SLAP (one abstraction level)</li><li>Fewer args / No flags</li><li>Polymorphism over switch</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ MCQ ═══════════════════════════════════════ -->
+  <div class="section" id="mcq">
+    <div class="section-banner">
+      <div class="hero-tag" style="margin-bottom:6px">// PHASE 4 · EXAM TRAINING</div>
+      <h1>MCQ Bank</h1>
+      <p>30 questions · Easy → Hard · Click an option to reveal the answer.</p>
+    </div>
+
+    <div class="quiz-controls">
+      <span style="font-size:13px;color:var(--text2)">Filter:</span>
+      <button class="filter-btn active" onclick="filterMCQ('all',this)">All (30)</button>
+      <button class="filter-btn" onclick="filterMCQ('easy',this)">Easy</button>
+      <button class="filter-btn" onclick="filterMCQ('medium',this)">Medium</button>
+      <button class="filter-btn" onclick="filterMCQ('hard',this)">Hard</button>
+      <button class="btn btn-outline" onclick="resetAll()" style="margin-left:auto">Reset All</button>
+      <div id="score-counter" style="font-family:'DM Mono',monospace;font-size:13px;color:var(--accent3)"></div>
+    </div>
+
+    <div id="mcq-container"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ WRITTEN ═══════════════════════════════════════ -->
+  <div class="section" id="written">
+    <div class="section-banner">
+      <div class="hero-tag" style="margin-bottom:6px">// PHASE 4 · WRITTEN QUESTIONS</div>
+      <h1>Written Q&amp;A</h1>
+      <p>Short-answer and long-form questions with model answers.</p>
+    </div>
+    <div id="written-container"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ REVISION ═══════════════════════════════════════ -->
+  <div class="section" id="revision">
+    <div class="section-banner">
+      <div class="hero-tag" style="margin-bottom:6px">// PHASE 5 · RAPID REVISION</div>
+      <h1>Night Before Cheat Sheet</h1>
+      <p>Everything you must remember, in the smallest possible space.</p>
+    </div>
+
+    <div class="mnemonic">
+      <div class="mnemonic-title">🔑 THE GOLDEN RULE OF CLEAN CODE</div>
+      <div class="mnemonic-content">"Any fool can write code a computer understands.<br/>Good programmers write code humans understand."</div>
+      <div class="mnemonic-sub">Good Code = Clean Code + Working Code</div>
+    </div>
+
+    <div class="revision-grid">
+      <div class="rev-card">
+        <h3>13 Naming Rules</h3>
+        <ul>
+          <li>✅ Intention-revealing (no comments needed)</li>
+          <li>❌ No disinformation (not l, O, misleading)</li>
+          <li>✅ Meaningful distinctions (source, dest)</li>
+          <li>❌ No noise (NameString → Name)</li>
+          <li>✅ Searchable (constants, not 7)</li>
+          <li>✅ Class = Noun (Customer, Account)</li>
+          <li>✅ Method = Verb (save, deletePage)</li>
+          <li>❌ No encodings (no iAge, strName)</li>
+          <li>✅ Pronounceable (generationTimestamp)</li>
+          <li>❌ No mental mapping</li>
+          <li>❌ Don't be cute (kill() not whack())</li>
+          <li>✅ 1 word/concept (get OR fetch, never both)</li>
+          <li>✅ Context (addrState, addrCity)</li>
+        </ul>
+      </div>
+      <div class="rev-card">
+        <h3>Function Rules</h3>
+        <ul>
+          <li>Small (&lt;10 lines ideal)</li>
+          <li>Do ONE thing only</li>
+          <li>SLAP — one abstraction level</li>
+          <li>Fewer args (0&gt;1&gt;2&gt;3+)</li>
+          <li>No flag (boolean) arguments</li>
+          <li>Blocks = 1 line (function call)</li>
+          <li>Polymorphism over switch/if</li>
+        </ul>
+      </div>
+      <div class="rev-card">
+        <h3>Objects vs Data Structures</h3>
+        <ul>
+          <li>Objects: hide data, expose behavior</li>
+          <li>Data Structs: expose data, no behavior</li>
+          <li>OOP → easy to add types</li>
+          <li>Procedural → easy to add functions</li>
+          <li>Abstraction ≠ getters/setters</li>
+          <li>Abstract = hide implementation details</li>
+        </ul>
+      </div>
+      <div class="rev-card">
+        <h3>Law of Demeter</h3>
+        <ul>
+          <li>"Don't talk to strangers"</li>
+          <li>M() can call: C, params, created-in-M, C's fields, globals</li>
+          <li>Chained calls = violation</li>
+          <li>a.b().c().d() = train wreck</li>
+          <li>Fix: inject dependency via constructor</li>
+          <li>Goal: loose coupling</li>
+        </ul>
+      </div>
+      <div class="rev-card">
+        <h3>Key Definitions</h3>
+        <ul>
+          <li><strong>SLAP</strong> = Single Level of Abstraction Principle</li>
+          <li><strong>LoD</strong> = Law of Demeter = Principle of Least Knowledge</li>
+          <li><strong>OCP</strong> = Open/Closed Principle (switch violates it)</li>
+          <li><strong>Hungarian</strong> = Notation with type prefixes (banned)</li>
+          <li><strong>Noise word</strong> = redundant word in a name</li>
+          <li><strong>Train wreck</strong> = chained method calls violating LoD</li>
+        </ul>
+      </div>
+      <div class="rev-card">
+        <h3>Common Traps in Exam</h3>
+        <ul>
+          <li>getters/setters ≠ abstraction</li>
+          <li>Hungarian Notation is BAD (banned 2008)</li>
+          <li>i, j are OK as loop counters</li>
+          <li>Procedural ≠ always bad</li>
+          <li>Boolean arg = 2 functions, not 1</li>
+          <li>LoD = 5 allowed call types</li>
+          <li>Interface name: ShapeFactory not IShapeFactory</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- end content -->
+</div><!-- end main -->
+
+<script>
+// ═══════════════════════════ DATA ═══════════════════════════
+const mcqs = [
+  // EASY
+  {diff:'easy',q:'What does "Clean Code" mean according to the lecture?',opts:['Code that runs without errors','Code that is readable, maintainable, and extendable','Code that compiles without warnings','Code written in a single file'],ans:1,exp:'Clean code is defined as readable, maintainable, and extendable. Working code (does what it should) + clean code = good code.'},
+  {diff:'easy',q:'Which of the following is a good class name according to clean code principles?',opts:['ProcessData','ManagerHelper','Customer','doSomething'],ans:2,exp:'Classes should be nouns or noun phrases like Customer, Account, WikiPage. "ProcessData" and "ManagerHelper" use avoided words; "doSomething" is a verb.'},
+  {diff:'easy',q:'What type of names should methods have?',opts:['Nouns','Noun phrases','Verbs or verb phrases','Abbreviations'],ans:2,exp:'Methods should have verb or verb phrase names like postPayment(), deletePage(), or save() — they answer the question "What does it do?"'},
+  {diff:'easy',q:'What is Hungarian Notation?',opts:['A naming convention using type prefixes like iAge','A way to write code in Hungarian language','A design pattern from Hungary','An encoding technique for strings'],ans:0,exp:'Hungarian Notation prefixes variable names with type information (e.g., iAge, strName, lCount). It was invented by Charles Simonyi at Microsoft but was officially abandoned.'},
+  {diff:'easy',q:'What is the "WTF/minute" metric used to measure?',opts:['Code compilation speed','Code quality (fewer WTFs = better code)','Number of lines per file','Test coverage'],ans:1,exp:'WTF/minute measures how many "WTF" moments a reviewer has while reading code per minute. Fewer WTFs means cleaner, more readable code.'},
+  {diff:'easy',q:'Which rule says function bodies in if/while should be one line?',opts:['Do One Thing','Keep Blocks Small','SLAP','Fewer Arguments'],ans:1,exp:'The "Keep Blocks Small" rule states that bodies of if, else, while etc. should be one line long (preferably a function call), preventing deep nesting (max 1-2 indent levels).'},
+  {diff:'easy',q:'What does SLAP stand for?',opts:['Simple Logic Application Pattern','Single Level of Abstraction Principle','Structured Logic and Programming','Short Lines and Plain code'],ans:1,exp:'SLAP stands for Single Level of Abstraction Principle. All statements within a function should be at the same level of abstraction.'},
+  {diff:'easy',q:'What is a "noise word" in naming?',opts:['A word that sounds noisy when spoken','A redundant word that adds no information to a name','A word in a foreign language','A word longer than 10 characters'],ans:1,exp:'Noise words are redundant additions to names like "NameString" instead of "Name", "ProductData" instead of "Product", or "accountObject" instead of "account".'},
+  // MEDIUM
+  {diff:'medium',q:'Why is passing a Boolean (flag) argument to a function considered a bad practice?',opts:['It slows down execution','It means the function does more than one thing','Booleans are not supported in all languages','It makes the function name too long'],ans:1,exp:'A flag argument means the function does one thing if true and another if false — effectively doing TWO things. The solution is to split it into two separate functions.'},
+  {diff:'medium',q:'According to the Law of Demeter, which of the following is allowed inside method M of class C?',opts:['Calling a method on the return value of getDepartment()','Calling a method on C itself','Calling a method on an unrelated global object','Calling a method 3 levels deep in a chain'],ans:1,exp:'LoD allows M to call methods on: C itself, M\'s parameters, objects created within M, C\'s direct component fields, and accessible global variables. Chained calls on return values are violations.'},
+  {diff:'medium',q:'What does "Data/Object Anti-Symmetry" mean in Clean Code?',opts:['Data and objects are always incompatible','Procedural code is always better than OOP','What is easy for OOP (new types) is hard for Procedural, and vice versa','Objects should never expose any data'],ans:2,exp:'Anti-symmetry means they are opposites: Procedural code makes it easy to add functions but hard to add data types. OOP makes it easy to add types but hard to add functions.'},
+  {diff:'medium',q:'Which naming approach is preferred for overloaded constructors according to Clean Code?',opts:['Using different argument counts only','Static factory methods with descriptive names','Hungarian Notation to indicate argument types','Numbered constructors (Constructor1, Constructor2)'],ans:1,exp:'Static factory methods with descriptive names are preferred, e.g., Address.createShortAddress(1,"tahrir") vs Address.createFullAddress(1,4,4,"tahrir","helwan","cairo"). Much clearer about what arguments mean.'},
+  {diff:'medium',q:'If a codebase uses both "fetch", "get", and "retrieve" as equivalent operations on different classes, which rule is violated?',opts:['Intention-Revealing Names','Use Searchable Names','Pick One Word Per Concept','Avoid Disinformation'],ans:2,exp:'The "Pick One Word Per Concept" rule requires choosing one word for one abstract concept and sticking with it. Having fetch, get, and retrieve as equivalent operations is confusing.'},
+  {diff:'medium',q:'In the minesweeper example, what is the MAIN improvement when moving from x[0]==4 to cell.isFlagged()?',opts:['The code runs faster','The code complexity decreases','The code reveals intent without requiring comments','The code uses fewer variables'],ans:2,exp:'The key improvement is intention-revealing: isFlagged() clearly communicates meaning without needing comments, even though the complexity and number of operations remain exactly the same.'},
+  {diff:'medium',q:'When should you use Procedural code over OOP according to the anti-symmetry principle?',opts:['Always — procedural is simpler','When you need to add more data types frequently','When you need to add new functions more than new data types','When the team prefers procedural'],ans:2,exp:'Use procedural code when you anticipate adding new functions more than new data types. Use OOP in complex systems where you\'ll be adding more data types (classes) than functions.'},
+  {diff:'medium',q:'Which of the following correctly describes TRUE data abstraction?',opts:['Making all variables private','Adding getters and setters to private variables','Providing abstract interfaces that hide implementation details','Using abstract classes in Java'],ans:2,exp:'True abstraction means providing abstract interfaces that let users manipulate data without knowing its implementation. Getters/setters for private variables just expose the internal structure through thin methods — that\'s not abstraction.'},
+  {diff:'medium',q:'What violation is present in: employee.getDepartment().getManager().approveExpense(e)?',opts:['Rule 02 — Avoid Disinformation','Law of Demeter — talking to strangers','Rule 04 — Noise Words','SLAP — mixed abstraction levels'],ans:1,exp:'This is a "train wreck" — a chained method call violating the Law of Demeter. employee.getDepartment() is allowed, but calling .getManager() on the returned Department, and then .approveExpense() on the returned Manager, is not — Manager is a stranger to employee.'},
+  {diff:'medium',q:'What is the correct fix for "Replace Conditional with Polymorphism"?',opts:['Use a longer switch with more cases','Create an interface and separate implementation classes per type','Use an enum with values for each case','Replace if-else with ternary operators'],ans:1,exp:'The fix is to create a Vehicle interface with the methods, then separate implementation classes (Car, Bike, Bus, Bicycle). Adding a new type = adding a new class, no modification of existing code (satisfies OCP).'},
+  // HARD
+  {diff:'hard',q:'A developer argues: "I give all my variables single-letter names like r, t, p but they\'re documented in comments, so it\'s fine." Which TWO rules does this violate?',opts:['Rules 1 and 10','Rules 2 and 8','Rules 4 and 9','Rules 5 and 12'],ans:0,exp:'Rule 1 (Intention-Revealing Names): a name requiring a comment fails the test. Rule 10 (Avoid Mental Mapping): readers must mentally map r→URL, t→URL-without-protocol, p→params. Both are violated.'},
+  {diff:'hard',q:'Consider: class ShapeFactory (interface) and class ShapeFactoryImp (implementation). According to Clean Code, why is this preferred over IShapeFactory (interface) and ShapeFactory (implementation)?',opts:['Because "Imp" is shorter','Because users should not know they\'re using an interface; encode the implementation not the interface','Because IShapeFactory violates Hungarian Notation strictly','Because implementations should always end in "Imp"'],ans:1,exp:'The author prefers plain interface names. Users shouldn\'t need to know they\'re dealing with an interface. If you must encode, encode the implementation (ShapeFactoryImp or CShapeFactory). The interface name stays clean: ShapeFactory.'},
+  {diff:'hard',q:'Which scenario demonstrates a violation of SLAP (Single Level of Abstraction Principle)?',opts:['printAll() calls printHeader(), printBody(), printFooter()','renderPage() calls renderHeader(), then directly writes HTML tags, then calls renderFooter()','sendEmail() calls validateEmail(), createMessage(), transmit()','calculateTotal() calls sumItems(), applyTax(), applyDiscount()'],ans:1,exp:'renderPage() mixes high-level calls (renderHeader, renderFooter) with low-level detail (directly writing HTML tags). This is the SLAP violation — all statements in a function must be at the SAME level of abstraction.'},
+  {diff:'hard',q:'A class has method M. Inside M, a new object X is created, and X.doSomething() is called. Another method on Y (a field of the class) is also called. Y.getZ().process() is also called. Which call(s) violate the Law of Demeter?',opts:['X.doSomething() only','Y.getZ().process() only','Both X.doSomething() and Y.getZ().process()','None — all are allowed'],ans:1,exp:'X was created inside M → allowed. Y is a direct field of C → allowed to call Y.method(). BUT Y.getZ() returns a stranger object Z, and calling .process() on that stranger violates LoD. The chained call Y.getZ().process() is the violation.'},
+  {diff:'hard',q:'Which of the following is the MOST complete and accurate definition of the Law of Demeter?',opts:['A method should not call more than 3 methods','A method M of class C should only call methods of: C itself, M\'s parameters, objects created in M, C\'s direct fields, and accessible global variables','A class should not have more than 5 dependencies','Methods should not return objects'],ans:1,exp:'The complete LoD definition: M of C can call methods on (1) C itself, (2) M\'s parameters, (3) objects created within M, (4) C\'s direct component objects (fields), (5) global variables accessible in scope of M. This is specific and complete.'},
+  {diff:'hard',q:'Developer A uses OOP with polymorphism for a Vehicle system. Developer B uses procedural with a Geometry class containing area() for all shapes. A new shape "Hexagon" needs to be added AND a new function perimeter() needs to be added. Who has LESS work?',opts:['Developer A for both tasks','Developer B for both tasks','Developer A for adding Hexagon; Developer B for adding perimeter()','Developer B for adding Hexagon; Developer A for adding perimeter()'],ans:2,exp:'OOP (Developer A): adding Hexagon = new class only (easy). Adding perimeter() = must add to ALL shape classes (hard). Procedural (Developer B): adding Hexagon = must add to ALL functions in Geometry (hard). Adding perimeter() = just one new method in Geometry (easy). This is the anti-symmetry.'},
+  {diff:'hard',q:'A function readCustomerOrder() reads a file, parses the data, validates the customer, calculates the total, applies discounts, and saves the result. How many violations of "Do One Thing" can you identify?',opts:['1 violation','2 violations','At least 5 violations (5+ distinct responsibilities)','None — it has one overall goal'],ans:2,exp:'This function has at least 5-6 distinct responsibilities: reading file, parsing data, validating customer, calculating total, applying discounts, saving. Each is a separate "thing." The function should be split into: readFile(), parseData(), validateCustomer(), calculateTotal(), applyDiscounts(), save(). "Do One Thing" means each function has exactly one responsibility.'},
+  {diff:'hard',q:'What is the key difference between "Avoid Disinformation" (Rule 2) and "Avoid Mental Mapping" (Rule 10)?',opts:['They are identical rules stated differently','Rule 2 is about false clues/misleading names; Rule 10 is about requiring mental translation to understand meaning','Rule 2 is about comments; Rule 10 is about variable names','Rule 2 applies to classes; Rule 10 applies to methods'],ans:1,exp:'Rule 2 (Avoid Disinformation) is about names that actively mislead — naming a collection "accountList" when it\'s not a List type, or using l/O as variables. Rule 10 (Avoid Mental Mapping) is about names where the reader must translate from the name to the actual concept — like knowing r = Dacia server URL. Different problems.'},
+  {diff:'hard',q:'Why does passing multiple boolean flags violate clean code principles more severely than passing a single boolean?',opts:['It takes more memory','Each boolean multiplies the number of paths: 2 booleans = 4 paths, indicating the function does at least 4 different things','Booleans are slow to compare','It violates Hungarian Notation'],ans:1,exp:'With n boolean flags, the function has 2^n possible behavior paths. 1 boolean = 2 behaviors (bad). 2 booleans = 4 behaviors (worse). 3 booleans = 8 behaviors. This exponentially violates "Do One Thing" — the function isn\'t even doing two things; it\'s doing many things.'},
+  {diff:'hard',q:'A senior developer says: "For internal/private API, Hungarian Notation is acceptable since external users won\'t see it." According to Clean Code principles, is this valid?',opts:['Yes — Hungarian is fine for private code','No — the same rules apply internally; developers working on internal code still need to understand it','Yes — only public APIs need clean naming','Yes — Hungarian helps with type checking in legacy Java'],ans:1,exp:'Clean Code principles apply universally. The argument in the lecture is about developer experience and maintainability — internal developers also need readable code. Encoding type into names makes code noisier and harder to read/refactor regardless of visibility.'},
+  {diff:'hard',q:'In the procedural Geometry class example, all shape classes (Square, Rectangle, Circle) have no methods. If we add a perimeter() function to Geometry, what happens to the shape classes?',opts:['They must all be updated with perimeter() methods','They remain completely unaffected','Only Square needs updating','The compiler forces all shapes to implement perimeter()'],ans:1,exp:'This is the key advantage of procedural code: data structures (shapes) have no behavior, so adding a new function to Geometry leaves all shape classes untouched. The shapes are simple data containers. This is why procedural is easy for adding functions but hard for adding types.'},
+  {diff:'hard',q:'Which combination of clean code rules would BEST fix this code: void process(boolean isNew, boolean isActive, String d, String n, int v)?',opts:['Rules: Avoid Encodings + Searchable Names + Class Names','Rules: No Flag Arguments + Fewer Arguments + Intention-Revealing Names','Rules: Do One Thing + SLAP + Meaningful Context','Rules: Avoid Noise + One Word Per Concept + Pronounceable'],ans:1,exp:'Three rules directly address this: (1) No Flag Arguments — eliminate isNew and isActive booleans by splitting the function. (2) Fewer Arguments — encapsulate d, n, v into a Request/Data object. (3) Intention-Revealing Names — rename d, n, v to descriptive names. Together they transform this into 2-4 clean, single-purpose functions.'},
+];
+
+const writtenQs = [
+  {type:'short',q:'What is the difference between "Clean Code," "Working Code," and "Good Code"? Give a brief definition of each.',
+   ans:`<h4>Model Answer</h4>
+   <ul class="styled">
+     <li><strong>Working Code:</strong> Code that does what it is supposed to do — it produces correct output. It may be unreadable, unmaintainable spaghetti code, but it functions.</li>
+     <li><strong>Clean Code:</strong> Code that is readable, maintainable, and extendable. Other developers can understand, modify, and build upon it easily.</li>
+     <li><strong>Good Code:</strong> The combination of both — it works correctly AND it is clean and readable. Good code = Working code + Clean code.</li>
+   </ul>
+   <p style="font-size:13px;color:var(--text2)">Key quote: "Any fool can write code a computer understands. Good programmers write code humans understand." — Martin Fowler</p>`},
+  {type:'short',q:'Explain why Hungarian Notation is considered bad practice today. What does it involve and what are its problems?',
+   ans:`<h4>Model Answer</h4>
+   <p>Hungarian Notation is a naming convention that prefixes variable names with type information (e.g., <code>iAge</code> for integer age, <code>strName</code> for string name, <code>lCount</code> for long count).</p>
+   <ul class="styled">
+     <li><strong>Redundancy:</strong> Modern IDEs already show types — the prefix is redundant at the point of declaration</li>
+     <li><strong>Fragility:</strong> When you change the type, you must also rename the variable — violating DRY</li>
+     <li><strong>Noisier code:</strong> Type prefixes make code harder to read; readers must ignore the prefix to get to the meaningful part</li>
+     <li><strong>Officially banned:</strong> Microsoft, where it originated, banned it in their General Naming Conventions since 2008</li>
+   </ul>`},
+  {type:'short',q:'Describe the "Law of Demeter." List the 5 types of method calls that are allowed, and give one example of a violation with its fix.',
+   ans:`<h4>Model Answer</h4>
+   <p>The Law of Demeter (LoD), also called the "Principle of Least Knowledge," states that a module should not know about the inner workings of the objects it manipulates. Method M of class C may ONLY call methods of:</p>
+   <ol class="styled">
+     <li>C itself</li><li>M's parameters</li><li>Objects created within M</li><li>C's direct component objects (fields)</li><li>Global/static variables accessible in scope of M</li>
+   </ol>
+   <p><strong>Violation:</strong> <code>employee.getDepartment().getManager().approveExpense(e);</code></p>
+   <p><strong>Fix:</strong> Inject Manager as a constructor dependency in Employee, then call <code>emp.submitExpense(e)</code> which internally calls <code>manager.approveExpense(e)</code>.</p>`},
+  {type:'long',q:'Explain the "Data/Object Anti-Symmetry" principle. Use a concrete example (such as the Shape/Geometry example) to illustrate when to use OOP vs Procedural code.',
+   ans:`<h4>Model Answer (Full Marks)</h4>
+   <p><strong>Core Principle:</strong> Objects and data structures are fundamentally opposite in how they respond to change:</p>
+   <table class="tbl">
+     <tr><th>Aspect</th><th>Procedural (Data Structures)</th><th>OOP (Objects)</th></tr>
+     <tr><td>Data</td><td>Exposed (public)</td><td>Hidden (private)</td></tr>
+     <tr><td>Behavior</td><td>In separate functions</td><td>In methods of each class</td></tr>
+     <tr><td>Add new function</td><td>✅ Easy — add to Geometry, shapes unchanged</td><td>❌ Hard — add to ALL classes</td></tr>
+     <tr><td>Add new type</td><td>❌ Hard — all functions in Geometry need updating</td><td>✅ Easy — just create new class</td></tr>
+   </table>
+   <p><strong>Shape Example:</strong> The Geometry class holds area() for Square, Rectangle, Circle as data structures with no behavior. Adding perimeter() to Geometry = shapes unchanged. But adding Hexagon = must update area(), perimeter(), and every other function. In the OOP version, each shape has its own area() method. Adding Hexagon = new class only. But adding perimeter() = must add to every shape class.</p>
+   <p><strong>Decision Rule:</strong></p>
+   <ul class="styled">
+     <li>Use <strong>OOP</strong> in complex systems where new data types are frequently added</li>
+     <li>Use <strong>Procedural</strong> when new functions are needed more often than new data types</li>
+   </ul>`},
+  {type:'long',q:'Walk through the minesweeper refactoring example. Explain each step of improvement and which Clean Code rules each step addresses.',
+   ans:`<h4>Model Answer</h4>
+   <p><strong>Original code:</strong> <code>getThem()</code> with <code>theList</code>, <code>x[0]==4</code>. Four problems: What is theList? What is x[0]? Why 4? What does the result mean?</p>
+   <p><strong>Step 1 — Rename List and function (Rule 1 + 13):</strong> <code>theList</code>→<code>gameBoard</code>, function→<code>getFlaggedCells()</code>, variable→<code>flaggedCells</code>. Now we know context (it's a game board), what we're looking for (flagged cells), and what we return.</p>
+   <p><strong>Step 2 — Replace magic numbers (Rule 1 + 5):</strong> <code>x[0]</code>→<code>cell[STATUS_VALUE]</code>, <code>4</code>→<code>FLAGGED</code>. Constants are searchable and self-documenting.</p>
+   <p><strong>Step 3 — Create Cell class with isFlagged() (Rule 1 + 6 + 7):</strong> Replace <code>int[]</code> with a <code>Cell</code> class. The <code>isFlagged()</code> method (verb phrase!) hides the magic number completely. Code now reads like English: "for each cell in the gameBoard, if the cell is flagged, add it to flaggedCells."</p>
+   <p><strong>Key insight:</strong> The number of operations, nesting levels, and constants remained the same. Only the names changed. Yet the code became dramatically more readable — proving naming is the most powerful tool in Clean Code.</p>`},
+  {type:'long',q:'Explain the "Replace Conditional with Polymorphism" principle. Use the Vehicle parking example. Why does the switch statement violate the Open/Closed Principle, and how does polymorphism fix it?',
+   ans:`<h4>Model Answer</h4>
+   <p><strong>The Problem:</strong> A Vehicle class has both <code>spaceRequiredForParking()</code> and <code>parkingCharges()</code> methods, each containing a switch statement over vehicle types (BICYCLE, BIKE, CAR, BUS).</p>
+   <p><strong>OCP Violation:</strong> The Open/Closed Principle says software should be open for extension but closed for modification. When a new vehicle type "TRUCK" is added, BOTH switch statements must be modified — the class is not closed for modification. This pattern is likely duplicated in other methods too.</p>
+   <p><strong>Other violations:</strong> "Do One Thing" (Vehicle handles all types), long methods, hard readability.</p>
+   <p><strong>Solution — Polymorphism:</strong></p>
+   <ol class="styled">
+     <li>Create a <code>Vehicle</code> interface with <code>spaceRequiredForParking()</code> and <code>parkingCharges()</code></li>
+     <li>Create separate implementation classes: <code>Car</code>, <code>Bike</code>, <code>Bus</code>, <code>Bicycle</code></li>
+     <li>Each class implements only its own behavior</li>
+   </ol>
+   <p><strong>Adding TRUCK now:</strong> Create a new <code>Truck</code> class implementing Vehicle. No existing code is modified. This satisfies OCP, "Do One Thing," and makes the code far more readable and maintainable.</p>`},
+];
+
+// ═══════════════════════════ RENDER MCQ ═══════════════════════════
+let correctCount = 0, totalAnswered = 0;
+
+function renderMCQ() {
+  const container = document.getElementById('mcq-container');
+  container.innerHTML = '';
+  mcqs.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'mcq-card';
+    card.dataset.diff = q.diff;
+    card.dataset.answered = 'false';
+    card.innerHTML = `
+      <div class="mcq-header-row">
+        <div class="mcq-num">Question ${i+1} of ${mcqs.length}</div>
+        <span class="mcq-diff diff-${q.diff}">${q.diff}</span>
+      </div>
+      <div class="mcq-q">${q.q}</div>
+      <div class="mcq-options">
+        ${q.opts.map((o,j)=>`<div class="mcq-opt" data-idx="${j}" onclick="answerMCQ(this,${i},${j})">
+          <span class="opt-letter">${String.fromCharCode(65+j)}</span>
+          <span>${o}</span>
+        </div>`).join('')}
+      </div>
+      <div class="mcq-explanation" id="exp-${i}">💡 ${q.exp}</div>
+    `;
+    container.appendChild(card);
+  });
+  updateScore();
+}
+
+function answerMCQ(el, qIdx, optIdx) {
+  const card = el.closest('.mcq-card');
+  if (card.dataset.answered === 'true') return;
+  card.dataset.answered = 'true';
+  const q = mcqs[qIdx];
+  const opts = card.querySelectorAll('.mcq-opt');
+  opts.forEach(o => { o.classList.add('revealed'); o.onclick = null; });
+  if (optIdx === q.ans) {
+    el.classList.add('correct');
+    correctCount++;
+  } else {
+    el.classList.add('wrong');
+    opts[q.ans].classList.add('correct');
+  }
+  totalAnswered++;
+  document.getElementById('exp-'+qIdx).classList.add('show');
+  updateScore();
+}
+
+function updateScore() {
+  const el = document.getElementById('score-counter');
+  const disp = document.getElementById('score-display');
+  if (totalAnswered > 0) {
+    const txt = `Score: ${correctCount}/${totalAnswered}`;
+    if(el) el.textContent = txt;
+    if(disp) disp.textContent = txt;
+  }
+}
+
+function resetAll() {
+  correctCount = 0; totalAnswered = 0;
+  renderMCQ();
+  document.getElementById('score-display').textContent = '';
+}
+
+function filterMCQ(diff, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.mcq-card').forEach(c=>{
+    c.style.display = (diff==='all'||c.dataset.diff===diff)?'block':'none';
+  });
+}
+
+// ═══════════════════════════ RENDER WRITTEN ═══════════════════════════
+function renderWritten() {
+  const container = document.getElementById('written-container');
+  container.innerHTML = '';
+  writtenQs.forEach((q,i) => {
+    const card = document.createElement('div');
+    card.className = 'wq-card';
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:12px">
+        <div class="wq-q">${q.q}</div>
+        <span class="badge ${q.type==='short'?'badge-blue':'badge-purple'}">${q.type==='short'?'Short Answer':'Long Answer'}</span>
+      </div>
+      <button class="btn btn-outline" onclick="toggleAnswer(this)" style="font-size:12px;padding:6px 12px">Show Model Answer</button>
+      <div class="wq-answer" id="wans-${i}">${q.ans}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function toggleAnswer(btn) {
+  const ans = btn.nextElementSibling;
+  const showing = ans.classList.toggle('show');
+  btn.textContent = showing ? 'Hide Answer' : 'Show Model Answer';
+}
+
+// ═══════════════════════════ NAVIGATION ═══════════════════════════
+const sectionProgress = {explanation:16,summary:33,memory:50,mcq:67,written:83,revision:100};
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes(id)) n.classList.add('active');
+  });
+  document.getElementById('progress').style.width = sectionProgress[id]+'%';
+  const titles = {explanation:'Deep Explanation',summary:'Smart Summary',memory:'Memory Tricks',mcq:'MCQ Bank',written:'Written Q&A',revision:'Cheat Sheet'};
+  document.querySelector('.topbar-title').textContent = 'Clean Code · '+titles[id];
+  window.scrollTo({top:0,behavior:'smooth'});
+  closeSidebar();
+}
+
+function toggleCollapse(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+function toggleMode() {
+  document.body.classList.toggle('light');
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// Init
+renderMCQ();
+renderWritten();
+</script>
+</body>
+</html>
