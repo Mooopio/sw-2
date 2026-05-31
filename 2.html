@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SOLID Principles — Exam Prep System</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#0d0f14;--surface:#13161d;--surface2:#1a1e28;--surface3:#21263a;
+    --border:#2a2f42;--border2:#3a4055;
+    --text:#e8ecf4;--text2:#9aa0b8;--text3:#616882;
+    --accent:#6c8bff;--accent2:#4fccb0;--accent3:#ff7b5c;--accent4:#f5c842;
+    --success:#4fccb0;--warn:#f5c842;--danger:#ff7b5c;--info:#6c8bff;
+    --rad:10px;--rad-lg:16px;--rad-xl:24px;
+    --font:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;--serif:'Lora',serif;
+    --shadow:0 4px 24px rgba(0,0,0,.45);
+    --glow-blue:0 0 24px rgba(108,139,255,.18);
+    --glow-teal:0 0 24px rgba(79,204,176,.18);
+  }
+  .light{
+    --bg:#f3f4f8;--surface:#ffffff;--surface2:#eef0f7;--surface3:#e3e6f0;
+    --border:#d0d4e4;--border2:#b0b6cc;
+    --text:#111827;--text2:#4b5268;--text3:#8892aa;
+    --shadow:0 4px 24px rgba(0,0,0,.09);
+    --glow-blue:0 0 24px rgba(108,139,255,.10);
+    --glow-teal:0 0 24px rgba(79,204,176,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.7;min-height:100vh;transition:background .3s,color .3s}
+
+  /* ─── NAV ─── */
+  #topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0;padding:0 1.5rem;height:56px;box-shadow:var(--shadow)}
+  #topbar .logo{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);white-space:nowrap;margin-right:1.5rem;display:flex;align-items:center;gap:6px}
+  #topbar .logo span{background:var(--accent);color:#fff;padding:2px 7px;border-radius:6px;font-size:11px}
+  #nav-tabs{display:flex;gap:2px;overflow-x:auto;flex:1;scrollbar-width:none}
+  #nav-tabs::-webkit-scrollbar{display:none}
+  .nav-btn{background:none;border:none;cursor:pointer;color:var(--text2);font-family:var(--font);font-size:12.5px;font-weight:500;padding:6px 13px;border-radius:7px;white-space:nowrap;transition:all .2s}
+  .nav-btn:hover{background:var(--surface2);color:var(--text)}
+  .nav-btn.active{background:var(--accent);color:#fff}
+  #mode-toggle{background:none;border:1.5px solid var(--border2);color:var(--text2);cursor:pointer;width:36px;height:36px;border-radius:50%;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-left:1rem;flex-shrink:0}
+  #mode-toggle:hover{border-color:var(--accent);color:var(--accent)}
+
+  /* ─── LAYOUT ─── */
+  main{max-width:900px;margin:0 auto;padding:80px 1.5rem 3rem}
+  .section{display:none;animation:fadeUp .35s ease}
+  .section.active{display:block}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ─── TYPOGRAPHY ─── */
+  h1{font-size:2rem;font-weight:700;line-height:1.25;margin-bottom:.5rem;color:var(--text)}
+  h2{font-size:1.35rem;font-weight:600;color:var(--text);margin:2rem 0 .75rem}
+  h3{font-size:1.1rem;font-weight:600;color:var(--accent);margin:1.5rem 0 .5rem}
+  h4{font-size:.95rem;font-weight:600;color:var(--text2);margin:.75rem 0 .25rem}
+  p{margin-bottom:.85rem;color:var(--text2)}
+  strong{color:var(--text);font-weight:600}
+  em{font-style:italic;color:var(--accent4)}
+  code{font-family:var(--mono);font-size:.82em;background:var(--surface3);color:var(--accent2);padding:2px 6px;border-radius:5px;border:1px solid var(--border)}
+  pre{font-family:var(--mono);font-size:.82em;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rad);padding:1rem 1.25rem;overflow-x:auto;margin:.75rem 0;line-height:1.6;color:var(--text2)}
+  pre code{background:none;border:none;padding:0;color:inherit}
+  ul,ol{padding-left:1.5rem;margin-bottom:.85rem;color:var(--text2)}
+  li{margin-bottom:.35rem}
+
+  /* ─── CARDS ─── */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rad-lg);padding:1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow)}
+  .card-sm{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rad);padding:1rem 1.25rem;margin-bottom:.75rem}
+  .highlight{border-left:3px solid var(--accent);background:linear-gradient(90deg,rgba(108,139,255,.07),transparent);padding:.85rem 1rem;border-radius:0 var(--rad) var(--rad) 0;margin:.75rem 0}
+  .highlight.teal{border-color:var(--accent2);background:linear-gradient(90deg,rgba(79,204,176,.07),transparent)}
+  .highlight.amber{border-color:var(--accent4);background:linear-gradient(90deg,rgba(245,200,66,.07),transparent)}
+  .highlight.danger{border-color:var(--danger);background:linear-gradient(90deg,rgba(255,123,92,.07),transparent)}
+
+  /* ─── BADGES ─── */
+  .badge{display:inline-block;font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em}
+  .badge-blue{background:rgba(108,139,255,.18);color:var(--info)}
+  .badge-teal{background:rgba(79,204,176,.18);color:var(--success)}
+  .badge-amber{background:rgba(245,200,66,.18);color:var(--warn)}
+  .badge-red{background:rgba(255,123,92,.18);color:var(--danger)}
+
+  /* ─── PRINCIPLE HEADER ─── */
+  .principle-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+  .principle-badge{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;flex-shrink:0;color:#fff}
+  .pb-s{background:linear-gradient(135deg,#6c8bff,#4a6de0)}
+  .pb-o{background:linear-gradient(135deg,#4fccb0,#2aaa8e)}
+  .pb-l{background:linear-gradient(135deg,#f5c842,#d4a020)}
+  .pb-i{background:linear-gradient(135deg,#ff7b5c,#e05038)}
+  .pb-d{background:linear-gradient(135deg,#b06aff,#8040cc)}
+  .principle-title{font-size:1.3rem;font-weight:700}
+  .principle-subtitle{font-size:.85rem;color:var(--text3);font-style:italic}
+
+  /* ─── TABLE ─── */
+  .tbl-wrap{overflow-x:auto;margin:.75rem 0}
+  table{width:100%;border-collapse:collapse;font-size:.88rem}
+  th{background:var(--surface2);color:var(--text);font-weight:600;padding:.6rem .9rem;border:1px solid var(--border);text-align:left}
+  td{padding:.55rem .9rem;border:1px solid var(--border);color:var(--text2);vertical-align:top}
+  tr:nth-child(even) td{background:rgba(255,255,255,.025)}
+  .light tr:nth-child(even) td{background:rgba(0,0,0,.025)}
+
+  /* ─── COLLAPSIBLE ─── */
+  .collapsible{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rad);margin-bottom:.6rem;overflow:hidden}
+  .coll-head{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.1rem;cursor:pointer;user-select:none;gap:.5rem;transition:background .2s}
+  .coll-head:hover{background:var(--surface3)}
+  .coll-title{font-weight:600;font-size:.93rem;color:var(--text)}
+  .coll-arrow{font-size:.75rem;color:var(--text3);transition:transform .3s;flex-shrink:0}
+  .coll-body{display:none;padding:0 1.1rem 1.1rem;color:var(--text2);font-size:.9rem;line-height:1.7}
+  .coll-body.open{display:block}
+  .coll-arrow.open{transform:rotate(180deg)}
+
+  /* ─── MCQ ─── */
+  .mcq-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rad-lg);padding:1.4rem 1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow)}
+  .mcq-num{font-size:.78rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem}
+  .mcq-q{font-weight:600;color:var(--text);margin-bottom:1rem;line-height:1.5;font-size:.96rem}
+  .mcq-options{display:grid;gap:.45rem}
+  .mcq-opt{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rad);padding:.65rem 1rem;cursor:pointer;font-size:.875rem;color:var(--text2);transition:all .22s;text-align:left;font-family:var(--font);display:flex;align-items:flex-start;gap:.6rem}
+  .mcq-opt .opt-letter{font-weight:700;color:var(--accent);min-width:18px;flex-shrink:0}
+  .mcq-opt:hover{border-color:var(--accent);color:var(--text);background:var(--surface3)}
+  .mcq-opt.correct{border-color:var(--success);background:rgba(79,204,176,.13);color:var(--text)}
+  .mcq-opt.correct .opt-letter{color:var(--success)}
+  .mcq-opt.wrong{border-color:var(--danger);background:rgba(255,123,92,.1);color:var(--text)}
+  .mcq-opt.wrong .opt-letter{color:var(--danger)}
+  .mcq-opt.disabled{cursor:not-allowed;opacity:.65}
+  .mcq-explain{margin-top:.85rem;padding:.75rem 1rem;background:rgba(108,139,255,.09);border-left:3px solid var(--accent);border-radius:0 var(--rad) var(--rad) 0;font-size:.875rem;color:var(--text2);display:none;animation:fadeUp .3s ease}
+  .mcq-explain.show{display:block}
+  .mcq-meta{display:flex;gap:.5rem;margin-bottom:.75rem}
+  .diff-easy{background:rgba(79,204,176,.15);color:var(--success);font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase}
+  .diff-med{background:rgba(245,200,66,.15);color:var(--warn);font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase}
+  .diff-hard{background:rgba(255,123,92,.15);color:var(--danger);font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase}
+
+  /* ─── MCQ CONTROLS ─── */
+  .mcq-controls{display:flex;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap}
+  .btn{border:1.5px solid var(--border2);background:var(--surface2);color:var(--text);padding:.5rem 1.1rem;border-radius:var(--rad);font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .btn-primary:hover{background:#5a78ee;border-color:#5a78ee;color:#fff}
+  .mcq-score{font-size:.9rem;color:var(--text2);padding:.5rem 1rem;background:var(--surface2);border-radius:var(--rad);border:1px solid var(--border)}
+
+  /* ─── WRITTEN ─── */
+  .written-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rad-lg);padding:1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow)}
+  .wq-label{font-size:.78rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem}
+  .wq-q{font-weight:600;color:var(--text);margin-bottom:1rem;font-size:.96rem;line-height:1.5}
+  .model-toggle{background:none;border:1.5px solid var(--border2);color:var(--text2);font-family:var(--font);font-size:.82rem;font-weight:600;padding:.4rem .9rem;border-radius:var(--rad);cursor:pointer;transition:all .2s}
+  .model-toggle:hover{border-color:var(--accent2);color:var(--accent2)}
+  .model-answer{display:none;margin-top:1rem;background:var(--surface2);border-left:3px solid var(--accent2);padding:1rem 1.1rem;border-radius:0 var(--rad) var(--rad) 0;font-size:.9rem;color:var(--text2);line-height:1.75;animation:fadeUp .3s}
+  .model-answer.show{display:block}
+  .model-answer ul,
+  .model-answer ol{color:var(--text2);margin-bottom:.5rem}
+
+  /* ─── REVISION SHEET ─── */
+  .rev-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-bottom:1.25rem}
+  .rev-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rad-lg);padding:1.25rem;box-shadow:var(--shadow)}
+  .rev-card h3{font-size:.92rem;margin:0 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+  .rev-row{display:flex;justify-content:space-between;align-items:flex-start;padding:.3rem 0;border-bottom:1px solid var(--border);font-size:.82rem;gap:.5rem}
+  .rev-row:last-child{border-bottom:none}
+  .rev-key{font-weight:600;color:var(--text);flex-shrink:0;min-width:40px}
+  .rev-val{color:var(--text2);text-align:right;font-size:.8rem}
+  .mnemonic{background:linear-gradient(135deg,rgba(108,139,255,.15),rgba(79,204,176,.08));border:1px solid var(--border2);border-radius:var(--rad-lg);padding:1.25rem;margin-bottom:1rem;text-align:center}
+  .mnemonic-word{font-size:2rem;font-weight:700;letter-spacing:.15em;color:var(--accent)}
+  .mnemonic-expand{display:flex;gap:1.5rem;justify-content:center;margin-top:.75rem;flex-wrap:wrap}
+  .mne-item{text-align:center}
+  .mne-letter{font-size:1.3rem;font-weight:700;color:var(--accent)}
+  .mne-label{font-size:.75rem;color:var(--text3);display:block}
+
+  /* ─── PROGRESS BAR ─── */
+  .progress-wrap{margin-bottom:1.5rem}
+  .progress-label{font-size:.82rem;color:var(--text2);margin-bottom:.35rem;display:flex;justify-content:space-between}
+  .progress-bar{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width .5s ease}
+
+  /* ─── SUMMARY BULLETS ─── */
+  .sum-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--rad-lg);padding:1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow)}
+  .sum-block ul{list-style:none;padding:0}
+  .sum-block ul li{padding:.4rem 0 .4rem 1.5rem;position:relative;border-bottom:1px solid var(--border);font-size:.9rem;color:var(--text2)}
+  .sum-block ul li:last-child{border-bottom:none}
+  .sum-block ul li::before{content:"›";position:absolute;left:0;color:var(--accent);font-weight:700;font-size:1.1rem;line-height:1.4}
+
+  /* ─── HERO ─── */
+  .hero{text-align:center;padding:2rem 0 3rem}
+  .hero-badge{display:inline-block;background:rgba(108,139,255,.15);border:1px solid rgba(108,139,255,.35);border-radius:20px;padding:4px 14px;font-size:.75rem;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1rem}
+  .hero h1{font-size:2.5rem;margin-bottom:.75rem}
+  .hero p{color:var(--text2);max-width:560px;margin:0 auto 1.5rem;font-size:.95rem}
+  .hero-chips{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center}
+  .chip{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:.8rem;color:var(--text2);font-weight:500}
+
+  /* ─── COMPARISON TABLE HEADER ─── */
+  .section-intro{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}
+  .section-intro-text h2{margin-top:0}
+  .section-num{font-size:3rem;font-weight:700;color:var(--border2);line-height:1;flex-shrink:0;font-variant-numeric:tabular-nums}
+
+  /* ─── TRAP BOX ─── */
+  .trap-box{background:rgba(255,123,92,.08);border:1px solid rgba(255,123,92,.3);border-radius:var(--rad);padding:.85rem 1rem;margin:.75rem 0;font-size:.88rem}
+  .trap-box strong{color:var(--danger)}
+
+  /* SCROLL top btn */
+  #scroll-top{position:fixed;bottom:1.5rem;right:1.5rem;width:40px;height:40px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 16px rgba(108,139,255,.4);display:none;align-items:center;justify-content:center;z-index:99;transition:all .2s}
+  #scroll-top.show{display:flex}
+  #scroll-top:hover{background:#5a78ee;transform:scale(1.08)}
+
+  @media(max-width:600px){
+    h1{font-size:1.5rem}.hero h1{font-size:1.8rem}
+    #topbar{gap:0}.logo{display:none}
+    .mcq-controls{flex-direction:column}
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<nav id="topbar">
+  <div class="logo"><span>SE2</span> SOLID Principles</div>
+  <div id="nav-tabs">
+    <button class="nav-btn active" onclick="showSection('home')">Home</button>
+    <button class="nav-btn" onclick="showSection('explain')">📖 Explanation</button>
+    <button class="nav-btn" onclick="showSection('summary')">📋 Summary</button>
+    <button class="nav-btn" onclick="showSection('memory')">🧠 Memory</button>
+    <button class="nav-btn" onclick="showSection('mcq')">❓ MCQs</button>
+    <button class="nav-btn" onclick="showSection('written')">✍️ Written</button>
+    <button class="nav-btn" onclick="showSection('revision')">⚡ Revision</button>
+  </div>
+  <button id="mode-toggle" onclick="toggleMode()" title="Toggle light/dark">🌙</button>
+</nav>
+
+<main>
+
+<!-- ══════════ HOME ══════════ -->
+<div id="home" class="section active">
+  <div class="hero">
+    <div class="hero-badge">Software Engineering 2</div>
+    <h1>SOLID Principles<br>Exam Prep System</h1>
+    <p>Complete exam preparation covering all 5 SOLID principles — from deep understanding to MCQs, written questions, and rapid revision.</p>
+    <div class="hero-chips">
+      <span class="chip">SRP — Single Responsibility</span>
+      <span class="chip">OCP — Open/Closed</span>
+      <span class="chip">LSP — Liskov Substitution</span>
+      <span class="chip">ISP — Interface Segregation</span>
+      <span class="chip">DIP — Dependency Inversion</span>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:1rem">
+    <div class="card" onclick="showSection('explain')" style="cursor:pointer;text-align:center;transition:border-color .2s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+      <div style="font-size:2rem;margin-bottom:.5rem">📖</div>
+      <strong>Deep Explanation</strong>
+      <p style="font-size:.83rem;margin-top:.35rem">Every concept clearly explained with analogies & examples</p>
+    </div>
+    <div class="card" onclick="showSection('summary')" style="cursor:pointer;text-align:center;transition:border-color .2s" onmouseenter="this.style.borderColor='var(--accent2)'" onmouseleave="this.style.borderColor='var(--border)'">
+      <div style="font-size:2rem;margin-bottom:.5rem">📋</div>
+      <strong>Smart Summary</strong>
+      <p style="font-size:.83rem;margin-top:.35rem">High-yield bullet points for quick review</p>
+    </div>
+    <div class="card" onclick="showSection('memory')" style="cursor:pointer;text-align:center;transition:border-color .2s" onmouseenter="this.style.borderColor='var(--accent4)'" onmouseleave="this.style.borderColor='var(--border)'">
+      <div style="font-size:2rem;margin-bottom:.5rem">🧠</div>
+      <strong>Memory Tools</strong>
+      <p style="font-size:.83rem;margin-top:.35rem">Mnemonics, tables, traps & chunking</p>
+    </div>
+    <div class="card" onclick="showSection('mcq')" style="cursor:pointer;text-align:center;transition:border-color .2s" onmouseenter="this.style.borderColor='var(--info)'" onmouseleave="this.style.borderColor='var(--border)'">
+      <div style="font-size:2rem;margin-bottom:.5rem">❓</div>
+      <strong>30 MCQs</strong>
+      <p style="font-size:.83rem;margin-top:.35rem">Interactive quiz with instant feedback & explanations</p>
+    </div>
+    <div class="card" onclick="showSection('written')" style="cursor:pointer;text-align:center;transition:border-color .2s" onmouseenter="this.style.borderColor='var(--danger)'" onmouseleave="this.style.borderColor='var(--border)'">
+      <div style="font-size:2rem;margin-bottom:.5rem">✍️</div>
+      <strong>Written Questions</strong>
+      <p style="font-size:.83rem;margin-top:.35rem">Short & long answers with model responses</p>
+    </div>
+    <div class="card" onclick="showSection('revision')" style="cursor:pointer;text-align:center;transition:border-color .2s" onmouseenter="this.style.borderColor='var(--success)'" onmouseleave="this.style.borderColor='var(--border)'">
+      <div style="font-size:2rem;margin-bottom:.5rem">⚡</div>
+      <strong>Rapid Revision</strong>
+      <p style="font-size:.83rem;margin-top:.35rem">Night-before cheat sheet & ultra-fast review</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ EXPLANATION ══════════ -->
+<div id="explain" class="section">
+  <div style="margin-bottom:2rem">
+    <div class="hero-badge">Phase 1</div>
+    <h1>Deep Understanding</h1>
+    <p>Every principle explained from first principles — with analogies, code examples, and exam-critical details.</p>
+  </div>
+
+  <!-- SRP -->
+  <div class="card">
+    <div class="principle-header">
+      <div class="principle-badge pb-s">S</div>
+      <div><div class="principle-title">Single Responsibility Principle</div><div class="principle-subtitle">SRP — One reason to change</div></div>
+    </div>
+    <div class="highlight">
+      <strong>Definition:</strong> "Every software component should have one and only one responsibility — or one and only one reason to change."
+    </div>
+    <h3>What is a "component"?</h3>
+    <p>A component can be a <strong>class</strong>, a <strong>method</strong>, or a <strong>module</strong>. SRP applies at all levels.</p>
+
+    <h3>The Two Core Concepts of SRP</h3>
+    <h4>1. Cohesion</h4>
+    <p><strong>Cohesion</strong> is the degree to which the various parts of a software component are <em>related</em>. Think of it like a recycling bin system:</p>
+    <div class="highlight teal">
+      <strong>Analogy:</strong> An unsegregated waste bin (everything mixed together) = <strong>low cohesion</strong>. Separate bins for paper, plastic, glass = <strong>high cohesion</strong>. Each bin has one clear purpose.
+    </div>
+    <p><strong>SRP demands high cohesion.</strong> Methods inside a class should all be related to the same responsibility.</p>
+    <p><strong>Example — Square class violation:</strong> A class with <code>calculateArea()</code>, <code>calculatePerimeter()</code>, <code>draw()</code>, and <code>rotate()</code> mixes two concerns: <em>math/measurements</em> and <em>rendering</em>. This is <strong>low cohesion</strong>.</p>
+    <p><strong>Fix:</strong> Split into <code>Square</code> (measurements) and <code>SquareUI</code> (rendering). Now each class has <strong>high cohesion</strong>.</p>
+
+    <h4>2. Coupling</h4>
+    <p><strong>Coupling</strong> is the degree of interdependency between software components. Changing one should not force changes in others.</p>
+    <div class="highlight danger">
+      <strong>Analogy:</strong> Different train tracks have different widths — each train is tightly coupled to its specific track. In software, tight coupling is <strong>undesirable</strong>.
+    </div>
+    <p><strong>Example — Student class violation:</strong> A <code>Student</code> class that contains MySQL database code is <em>tightly coupled</em> to the database. If you switch to MongoDB, the entire Student class must change.</p>
+    <p><strong>Fix:</strong> Move database logic to a <code>StudentRepository</code> class. <code>Student</code> calls <code>new StudentRepository().save(this)</code>. Now the Student class has only <strong>one reason to change</strong> (student profile data), and the Repository has <strong>one reason to change</strong> (database operations).</p>
+
+    <div class="highlight amber">
+      <strong>Key Rule:</strong> If two "reasons to change" are closely related (e.g., student ID format and student name format → both are "student profile"), they can be combined into one responsibility.
+    </div>
+  </div>
+
+  <!-- OCP -->
+  <div class="card">
+    <div class="principle-header">
+      <div class="principle-badge pb-o">O</div>
+      <div><div class="principle-title">Open/Closed Principle</div><div class="principle-subtitle">OCP — Open for extension, closed for modification</div></div>
+    </div>
+    <div class="highlight">
+      <strong>Definition:</strong> "Software entities should be open to extension but closed to modification."
+    </div>
+    <p><strong>"Open for extension"</strong> means you can add new functionality as requirements grow.</p>
+    <p><strong>"Closed for modification"</strong> means once a class is developed, you should not modify it (except to fix bugs).</p>
+    <div class="highlight teal">
+      <strong>Goal:</strong> Code should be both <em>flexible</em> (new features are easy to add) and <em>stable</em> (existing code doesn't break).
+    </div>
+    <h3>How to Achieve OCP</h3>
+    <p>Use <strong>abstractions</strong> (interfaces or abstract classes) instead of concrete classes. New behavior is added by creating new classes that implement the interface — without touching existing code.</p>
+    <h3>Football Match Example</h3>
+    <p>A <code>Match</code> class that contains <code>if (Team is Ahly)... else if (Team is Zamalk)...</code> violates OCP. Every new team requires modifying the Match class.</p>
+    <p><strong>Fix (Strategy Design Pattern):</strong></p>
+    <ul>
+      <li>Create an <strong>abstract class / interface</strong> <code>Strategy</code> with methods <code>play()</code> and <code>setScorePoint()</code></li>
+      <li>Create concrete classes: <code>Attack extends Strategy</code>, <code>Defend extends Strategy</code></li>
+      <li><code>Match</code> and <code>Team</code> work through the <code>Strategy</code> abstraction — no if/else needed</li>
+      <li>Adding a new team's strategy = creating a new class, <strong>not modifying</strong> Match</li>
+    </ul>
+    <div class="highlight">
+      <strong>Strategy Pattern Key Roles:</strong>
+      <ul style="margin-top:.35rem">
+        <li><strong>Context</strong> (Team/Match): holds a reference to a Strategy; communicates via the interface only</li>
+        <li><strong>Strategy Interface</strong>: declares the common method all strategies implement</li>
+        <li><strong>Concrete Strategies</strong> (Attack, Defend): implement the actual behavior</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- LSP -->
+  <div class="card">
+    <div class="principle-header">
+      <div class="principle-badge pb-l">L</div>
+      <div><div class="principle-title">Liskov Substitution Principle</div><div class="principle-subtitle">LSP — Subclasses must be substitutable for their superclasses</div></div>
+    </div>
+    <div class="highlight">
+      <strong>Definition:</strong> "Objects of a superclass should be replaceable with objects of its subclasses without breaking the system."
+    </div>
+    <p>Introduced by <strong>Barbara Liskov in 1987</strong>. If class B extends class A, you should be able to use B anywhere A is expected — and the program still works correctly.</p>
+    <p><strong>In simple terms:</strong> A subclass should not be <em>more restrictive</em> than the behavior defined by the superclass.</p>
+    <div class="trap-box"><strong>⚠️ Warning sign:</strong> If an overridden method <code>throws an Exception</code> or does nothing (empty body), you are almost certainly violating LSP.</div>
+
+    <h3>The Four Conditions for LSP</h3>
+    <div class="card-sm">
+      <strong>Condition 1 — Contravariance (Method signatures):</strong>
+      <p style="margin-top:.35rem;font-size:.88rem">Method parameters in the subclass must be the same as or more generic than the parent's method parameters. (Note: Java does not allow making parameters more generic — it treats this as overloading, not overriding.)</p>
+    </div>
+    <div class="card-sm">
+      <strong>Condition 2 — Preconditions cannot be strengthened:</strong>
+      <p style="margin-top:.35rem;font-size:.88rem">A subclass method cannot add more conditions/constraints than the parent. Example: if the parent accepts any integer, the child cannot restrict to positive integers only.</p>
+    </div>
+    <div class="card-sm">
+      <strong>Condition 3 — Postconditions cannot be weakened:</strong>
+      <p style="margin-top:.35rem;font-size:.88rem">The subclass must deliver at least what the parent promises. Example: if the parent closes a DB connection at the end of a method, the child must also close it. Leaving it open weakens the postcondition.</p>
+    </div>
+    <div class="card-sm">
+      <strong>Condition 4 — Exception types must match:</strong>
+      <p style="margin-top:.35rem;font-size:.88rem">If the parent throws <code>FileNotFoundException</code>, the overriding method must also throw (only) <code>FileNotFoundException</code> — not a different exception type.</p>
+    </div>
+
+    <h3>Vehicle Example — Violation</h3>
+    <p><code>Bicycle extends Vehicle</code> but overrides <code>startEngine()</code> by throwing an exception. A bicycle has no engine! When you substitute a <code>Bicycle</code> for a <code>Vehicle</code> in a list and call <code>startEngine()</code>, it crashes.</p>
+    <h3>Vehicle Example — Fixed</h3>
+    <p>Restructure the hierarchy: <code>Vehicle → VehicleWithEngines → Car</code> and <code>Vehicle → VehicleWithoutEngines → Bicycle</code>. Now <code>Bicycle</code> never has a <code>startEngine()</code> method to violate.</p>
+
+    <h3>Covariant Return Types in Java</h3>
+    <p>Since Java 5, an overriding method can return a <em>subtype</em> of the parent's return type. Example: parent returns <code>Circle</code>, child can return <code>Square</code> if <code>Square extends Circle</code>. This is called <strong>covariance</strong>.</p>
+  </div>
+
+  <!-- ISP -->
+  <div class="card">
+    <div class="principle-header">
+      <div class="principle-badge pb-i">I</div>
+      <div><div class="principle-title">Interface Segregation Principle</div><div class="principle-subtitle">ISP — No class should implement methods it doesn't need</div></div>
+    </div>
+    <div class="highlight">
+      <strong>Definition (Robert C. Martin):</strong> "Clients should not be forced to depend upon interfaces that they do not use."
+    </div>
+    <div class="highlight teal">
+      <strong>Analogy:</strong> ISP is like SRP applied to interfaces. Just as SRP says a class should have one responsibility, ISP says an interface should be as small as needed — no fat interfaces.
+    </div>
+    <p><strong>Two rules of ISP:</strong></p>
+    <ul>
+      <li>No class should be forced to implement any method of an interface they don't use.</li>
+      <li>Instead of one large "fat" interface, create multiple smaller, focused interfaces.</li>
+    </ul>
+    <h3>Printer Example — Violation</h3>
+    <p><code>PrinterTasks</code> interface has: <code>Print()</code>, <code>Scan()</code>, <code>Fax()</code>, <code>PrintDuplex()</code>.</p>
+    <p><code>LiquidInkjetPrinter</code> doesn't support Fax or PrintDuplex, but is <em>forced</em> to implement them — and throws <code>UnsupportedOperationException</code>. This also violates LSP!</p>
+    <h3>Printer Example — Fixed</h3>
+    <p>Split into 4 interfaces: <code>PrintingTasks</code>, <code>ScanTasks</code>, <code>FaxTasks</code>, <code>DuplexTasks</code>.</p>
+    <ul>
+      <li><code>HPLaserJetPrinter implements PrintingTasks, ScanTasks, FaxTasks, DuplexTasks</code></li>
+      <li><code>LiquidInkjetPrinter implements PrintingTasks, ScanTasks</code> — clean, no unused methods</li>
+    </ul>
+  </div>
+
+  <!-- DIP -->
+  <div class="card">
+    <div class="principle-header">
+      <div class="principle-badge pb-d">D</div>
+      <div><div class="principle-title">Dependency Inversion Principle</div><div class="principle-subtitle">DIP — Depend on abstractions, not concretions</div></div>
+    </div>
+    <div class="highlight">
+      <strong>Definition:</strong> High-level modules should not depend on low-level modules. Both should depend on <strong>abstractions</strong>. Abstractions should not depend on details. Details should depend on abstractions.
+    </div>
+    <h3>Store / Payment Example — Violation</h3>
+    <p><code>Store</code> class directly instantiates <code>Stripe</code> (<code>this.stripe = new Stripe()</code>). The high-level module (Store) is tightly coupled to the low-level module (Stripe). If Stripe goes down and you need PayPal, you must modify the Store class everywhere.</p>
+    <h3>Store / Payment Example — Fixed</h3>
+    <p>Introduce a <code>PaymentGateway</code> <strong>interface</strong>. Both <code>Stripe</code> and <code>Paypal</code> implement it. <code>Store</code> depends on the interface, not the concrete class. Now switching providers requires <strong>zero changes</strong> to <code>Store</code>.</p>
+
+    <h3>Dependency Injection (DI) — The Technique</h3>
+    <p>DI is the mechanism used to <em>implement</em> DIP. Instead of a class creating its own dependencies, they are <em>injected</em> from outside.</p>
+    <div class="highlight amber"><strong>DI is a technique; DIP is a principle. DI implements DIP.</strong></div>
+    <h4>Three Types of Dependency Injection</h4>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Type</th><th>How it works</th><th>When to use</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Constructor Injection</strong></td><td>Dependency passed via constructor parameter</td><td>Required dependency, same for lifetime of object</td></tr>
+          <tr><td><strong>Setter Injection</strong></td><td>Dependency passed via a public setter method</td><td>Optional dependency, can change at runtime</td></tr>
+          <tr><td><strong>Interface Injection</strong></td><td>Class implements an injector interface with a setter method</td><td>When the framework/injector contract must be enforced</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Inversion of Control (IoC)</h3>
+    <p><strong>IoC</strong> is the general principle of inverting extra responsibilities of a class. <strong>DI</strong> is one specific way to implement IoC. IoC resolves dependencies at <em>runtime</em> rather than compile time.</p>
+
+    <h3>Key Relationships — The Big Picture</h3>
+    <div class="highlight">
+      <strong>DI (technique) → implements → DIP (principle) → enables → OCP (principle)</strong><br>
+      By injecting abstractions, you can add new concrete classes without modifying existing high-level classes — satisfying both DIP and OCP simultaneously.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SUMMARY ══════════ -->
+<div id="summary" class="section">
+  <div class="hero-badge">Phase 2</div>
+  <h1>Smart Summary</h1>
+  <p style="color:var(--text2);margin-bottom:2rem">High-yield information only. Bullet-structured. Hierarchical. Exam-ready.</p>
+
+  <div class="sum-block">
+    <div class="principle-header">
+      <div class="principle-badge pb-s">S</div>
+      <div><div class="principle-title">SRP — Single Responsibility Principle</div></div>
+    </div>
+    <ul>
+      <li><strong>Core rule:</strong> One component = one responsibility = one reason to change</li>
+      <li><strong>Component</strong> = class, method, or module</li>
+      <li><strong>Cohesion</strong> = degree of relatedness within a component → aim for HIGH cohesion</li>
+      <li><strong>Coupling</strong> = degree of interdependency between components → aim for LOOSE coupling</li>
+      <li><strong>Square example:</strong> Split into <code>Square</code> (math) + <code>SquareUI</code> (rendering)</li>
+      <li><strong>Student example:</strong> Split into <code>Student</code> (profile data) + <code>StudentRepository</code> (DB operations)</li>
+      <li>Closely related reasons to change can be combined into one responsibility</li>
+    </ul>
+  </div>
+
+  <div class="sum-block">
+    <div class="principle-header">
+      <div class="principle-badge pb-o">O</div>
+      <div><div class="principle-title">OCP — Open/Closed Principle</div></div>
+    </div>
+    <ul>
+      <li>Open for <strong>extension</strong> (add new features) + Closed for <strong>modification</strong> (don't change existing code)</li>
+      <li>Achieve via <strong>interfaces / abstract classes</strong> instead of concrete dependencies</li>
+      <li>New behavior → create a <strong>new class</strong>, don't edit existing ones</li>
+      <li>Reduces risk of introducing bugs to working code</li>
+      <li><strong>Football example:</strong> Abstract <code>Strategy</code> class + <code>Attack</code> and <code>Defend</code> subclasses</li>
+      <li><strong>Strategy Pattern:</strong> Context → Strategy Interface → Concrete Strategies</li>
+    </ul>
+  </div>
+
+  <div class="sum-block">
+    <div class="principle-header">
+      <div class="principle-badge pb-l">L</div>
+      <div><div class="principle-title">LSP — Liskov Substitution Principle</div></div>
+    </div>
+    <ul>
+      <li>Subclass objects must be usable wherever superclass objects are expected</li>
+      <li>Introduced by <strong>Barbara Liskov (1987)</strong></li>
+      <li><strong>Warning signs:</strong> override throws exception OR override does nothing</li>
+      <li><strong>Condition 1 — Contravariance:</strong> parameters same or more generic than parent</li>
+      <li><strong>Condition 2 — Preconditions:</strong> cannot be strengthened in subtype</li>
+      <li><strong>Condition 3 — Postconditions:</strong> cannot be weakened in subtype</li>
+      <li><strong>Condition 4 — Exceptions:</strong> same exception type as parent</li>
+      <li><strong>Vehicle fix:</strong> <code>VehicleWithEngines</code> + <code>VehicleWithoutEngines</code> hierarchy</li>
+      <li><strong>Covariant return:</strong> Java 5+ allows subtype return in overriding method</li>
+    </ul>
+  </div>
+
+  <div class="sum-block">
+    <div class="principle-header">
+      <div class="principle-badge pb-i">I</div>
+      <div><div class="principle-title">ISP — Interface Segregation Principle</div></div>
+    </div>
+    <ul>
+      <li>Defined by <strong>Robert C. Martin</strong> while consulting for <strong>Xerox</strong></li>
+      <li>Clients should not be forced to depend on interfaces they don't use</li>
+      <li>Fat interfaces → multiple smaller focused interfaces</li>
+      <li>ISP violation often co-occurs with LSP violation (throw UnsupportedOperationException)</li>
+      <li><strong>Printer example:</strong> Split <code>PrinterTasks</code> into <code>PrintingTasks</code>, <code>ScanTasks</code>, <code>FaxTasks</code>, <code>DuplexTasks</code></li>
+      <li>A class implements only the interfaces it actually needs</li>
+    </ul>
+  </div>
+
+  <div class="sum-block">
+    <div class="principle-header">
+      <div class="principle-badge pb-d">D</div>
+      <div><div class="principle-title">DIP — Dependency Inversion Principle</div></div>
+    </div>
+    <ul>
+      <li>High-level modules should NOT depend on low-level modules — both depend on <strong>abstractions</strong></li>
+      <li>Details depend on abstractions, NOT the other way around</li>
+      <li><strong>Implementation technique:</strong> Dependency Injection (DI)</li>
+      <li><strong>Three DI types:</strong> Constructor, Setter, Interface injection</li>
+      <li><strong>IoC</strong> = general concept; DI = one specific IoC implementation</li>
+      <li><strong>Store example:</strong> <code>Store → PaymentGateway interface ← Stripe / PayPal</code></li>
+      <li>DI resolves dependencies at <strong>runtime</strong>, not compile time</li>
+      <li><strong>Benefits:</strong> easier testing, less coupling, easier maintenance and reuse</li>
+      <li><strong>The chain:</strong> DI implements DIP, which enables OCP</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════ MEMORY ══════════ -->
+<div id="memory" class="section">
+  <div class="hero-badge">Phase 3</div>
+  <h1>Memory Optimization</h1>
+  <p style="color:var(--text2);margin-bottom:2rem">Mnemonics, comparison tables, common traps, and chunking strategies.</p>
+
+  <div class="mnemonic">
+    <div class="mnemonic-word">S&nbsp;O&nbsp;L&nbsp;I&nbsp;D</div>
+    <div class="mnemonic-expand">
+      <div class="mne-item"><span class="mne-letter">S</span><span class="mne-label">Single<br>Responsibility</span></div>
+      <div class="mne-item"><span class="mne-letter">O</span><span class="mne-label">Open/<br>Closed</span></div>
+      <div class="mne-item"><span class="mne-letter">L</span><span class="mne-label">Liskov<br>Substitution</span></div>
+      <div class="mne-item"><span class="mne-letter">I</span><span class="mne-label">Interface<br>Segregation</span></div>
+      <div class="mne-item"><span class="mne-letter">D</span><span class="mne-label">Dependency<br>Inversion</span></div>
+    </div>
+  </div>
+
+  <h2>Memory Phrase</h2>
+  <div class="card" style="text-align:center;padding:1.25rem">
+    <em style="font-family:var(--serif);font-size:1.1rem;color:var(--text)">"<strong>S</strong>tudents <strong>O</strong>ften <strong>L</strong>earn by <strong>I</strong>nteresting <strong>D</strong>esign"</em>
+    <p style="font-size:.82rem;margin:.5rem 0 0;color:var(--text3)">SOLID → Students Often Learn by Interesting Design</p>
+  </div>
+
+  <h2>Chunked Quick-Reference</h2>
+  <div class="card-sm" style="margin-bottom:.5rem"><strong style="color:var(--accent)">SRP relates to:</strong> Cohesion (high) + Coupling (loose) → "one reason to change"</div>
+  <div class="card-sm" style="margin-bottom:.5rem"><strong style="color:var(--accent2)">OCP relates to:</strong> Abstractions + Strategy Pattern → "extend don't modify"</div>
+  <div class="card-sm" style="margin-bottom:.5rem"><strong style="color:var(--accent4)">LSP relates to:</strong> Inheritance correctness + 4 conditions → "substitutable subclasses"</div>
+  <div class="card-sm" style="margin-bottom:.5rem"><strong style="color:var(--danger)">ISP relates to:</strong> Fat interfaces → many small ones → "no forced implementation"</div>
+  <div class="card-sm" style="margin-bottom:1.5rem"><strong style="color:#b06aff">DIP relates to:</strong> Abstractions + DI (Constructor/Setter/Interface) + IoC → "depend on interfaces"</div>
+
+  <h2>Comparison Table: SRP vs ISP</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Aspect</th><th>SRP</th><th>ISP</th></tr></thead>
+      <tbody>
+        <tr><td>Applies to</td><td>Classes / methods / modules</td><td>Interfaces</td></tr>
+        <tr><td>Core rule</td><td>One responsibility per component</td><td>No forced implementation of unused methods</td></tr>
+        <tr><td>Solution</td><td>Split class into smaller classes</td><td>Split fat interface into focused interfaces</td></tr>
+        <tr><td>Similarity</td><td colspan="2">Both promote small, focused units — "do one thing well"</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Comparison Table: DIP vs DI</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Aspect</th><th>DIP (Principle)</th><th>DI (Technique)</th></tr></thead>
+      <tbody>
+        <tr><td>Type</td><td>Design Principle</td><td>Design Pattern / Technique</td></tr>
+        <tr><td>What it says</td><td>Depend on abstractions, not concretions</td><td>Inject dependencies from outside the class</td></tr>
+        <tr><td>Level</td><td>Conceptual / architectural</td><td>Practical / implementation</td></tr>
+        <tr><td>Relationship</td><td colspan="2">DI is the primary way to implement DIP</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Comparison Table: Coupling vs Cohesion</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Aspect</th><th>Cohesion</th><th>Coupling</th></tr></thead>
+      <tbody>
+        <tr><td>Definition</td><td>Relatedness of parts within a component</td><td>Interdependency between components</td></tr>
+        <tr><td>Goal</td><td>HIGH cohesion</td><td>LOOSE (low) coupling</td></tr>
+        <tr><td>Analogy</td><td>Segregated recycling bins</td><td>Train track widths</td></tr>
+        <tr><td>Principle</td><td>SRP</td><td>SRP / DIP</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>⚠️ Common Exam Traps</h2>
+  <div class="trap-box"><strong>Trap 1:</strong> "OCP means you can never change existing code." — Wrong! OCP says don't modify for new features, but <em>bug fixes are allowed</em>.</div>
+  <div class="trap-box"><strong>Trap 2:</strong> "LSP only applies to inheritance." — Wrong! It also applies to <em>interface</em> implementations.</div>
+  <div class="trap-box"><strong>Trap 3:</strong> "DI and DIP are the same thing." — Wrong! DIP is the principle; DI is the technique used to implement it.</div>
+  <div class="trap-box"><strong>Trap 4:</strong> "An overriding method that does nothing is fine." — Wrong! This is a classic LSP violation.</div>
+  <div class="trap-box"><strong>Trap 5:</strong> "ISP is just about making interfaces small." — Partially true, but the real reason is: <em>clients should not be forced to depend on things they don't use</em>.</div>
+  <div class="trap-box"><strong>Trap 6:</strong> "High cohesion means one method per class." — Wrong! It means all methods in the class are <em>closely related</em> to the same responsibility.</div>
+  <div class="trap-box"><strong>Trap 7:</strong> "Covariant return type means the child can return any type." — Wrong! The return type must be a <em>subtype</em> of the parent's return type.</div>
+
+  <h2>LSP 4 Conditions Mnemonic</h2>
+  <div class="card" style="text-align:center">
+    <em style="font-family:var(--serif);font-size:1.05rem">"<strong>C</strong>orrect <strong>P</strong>rogrammers <strong>P</strong>lease <strong>E</strong>veryone"</em>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;margin-top:.75rem;text-align:left">
+      <div class="card-sm"><strong style="color:var(--accent)">C</strong> — Contravariance (signatures match)</div>
+      <div class="card-sm"><strong style="color:var(--accent)">P</strong> — Preconditions not strengthened</div>
+      <div class="card-sm"><strong style="color:var(--accent)">P</strong> — Postconditions not weakened</div>
+      <div class="card-sm"><strong style="color:var(--accent)">E</strong> — Exception types must match</div>
+    </div>
+  </div>
+
+  <h2>Spaced Repetition Hints</h2>
+  <div class="highlight">
+    <strong>Today:</strong> Read all 5 principles with examples. <br>
+    <strong>Tomorrow:</strong> Cover the definitions and try to recall examples from memory. <br>
+    <strong>Day 3:</strong> Do all MCQs without looking at answers. <br>
+    <strong>Day 5:</strong> Write out the 4 LSP conditions and 3 DI types from memory. <br>
+    <strong>Night before exam:</strong> Use the Rapid Revision sheet only.
+  </div>
+</div>
+
+<!-- ══════════ MCQ ══════════ -->
+<div id="mcq" class="section">
+  <div class="hero-badge">Phase 4A</div>
+  <h1>MCQ Exam Training</h1>
+  <p style="color:var(--text2);margin-bottom:1.5rem">30 questions — easy, medium, and hard. Click an option to reveal the answer.</p>
+
+  <div class="mcq-controls">
+    <button class="btn btn-primary" onclick="resetMCQ()">🔄 Reset All</button>
+    <div class="mcq-score" id="mcq-score">Score: 0 / 0</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Progress</span><span id="prog-txt">0 / 30 answered</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-bar" style="width:0%"></div></div>
+  </div>
+
+  <div id="mcq-container"></div>
+</div>
+
+<!-- ══════════ WRITTEN ══════════ -->
+<div id="written" class="section">
+  <div class="hero-badge">Phase 4B</div>
+  <h1>Written Questions</h1>
+  <p style="color:var(--text2);margin-bottom:2rem">Short answer and long-form questions with complete model answers.</p>
+  <div id="written-container"></div>
+</div>
+
+<!-- ══════════ REVISION ══════════ -->
+<div id="revision" class="section">
+  <div class="hero-badge">Phase 5</div>
+  <h1>⚡ Rapid Revision Sheet</h1>
+  <p style="color:var(--text2);margin-bottom:1.5rem">Everything you need — the night before the exam.</p>
+
+  <div class="mnemonic" style="margin-bottom:1.5rem">
+    <strong style="font-size:.85rem;color:var(--text2);display:block;margin-bottom:.4rem">THE SOLID ACRONYM</strong>
+    <div class="mnemonic-word" style="font-size:1.5rem;letter-spacing:.3em">S · O · L · I · D</div>
+    <div style="display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;margin-top:.75rem;font-size:.82rem;color:var(--text2)">
+      <span><strong style="color:var(--text)">S</strong>ingle Responsibility</span>
+      <span><strong style="color:var(--text)">O</strong>pen/Closed</span>
+      <span><strong style="color:var(--text)">L</strong>iskov Substitution</span>
+      <span><strong style="color:var(--text)">I</strong>nterface Segregation</span>
+      <span><strong style="color:var(--text)">D</strong>ependency Inversion</span>
+    </div>
+  </div>
+
+  <div class="rev-grid">
+    <div class="rev-card">
+      <h3 style="color:var(--accent)">S — SRP</h3>
+      <div class="rev-row"><span class="rev-key">Rule</span><span class="rev-val">One reason to change</span></div>
+      <div class="rev-row"><span class="rev-key">Cohesion</span><span class="rev-val">HIGH (related parts together)</span></div>
+      <div class="rev-row"><span class="rev-key">Coupling</span><span class="rev-val">LOOSE (independent components)</span></div>
+      <div class="rev-row"><span class="rev-key">Fix</span><span class="rev-val">Split classes by responsibility</span></div>
+      <div class="rev-row"><span class="rev-key">Example</span><span class="rev-val">Square + SquareUI, Student + StudentRepository</span></div>
+    </div>
+    <div class="rev-card">
+      <h3 style="color:var(--accent2)">O — OCP</h3>
+      <div class="rev-row"><span class="rev-key">Rule</span><span class="rev-val">Extend, don't modify</span></div>
+      <div class="rev-row"><span class="rev-key">How</span><span class="rev-val">Abstract classes / interfaces</span></div>
+      <div class="rev-row"><span class="rev-key">Pattern</span><span class="rev-val">Strategy Design Pattern</span></div>
+      <div class="rev-row"><span class="rev-key">Roles</span><span class="rev-val">Context, Interface, Concrete Strategies</span></div>
+      <div class="rev-row"><span class="rev-key">Exception</span><span class="rev-val">Bug fixes are allowed</span></div>
+    </div>
+    <div class="rev-card">
+      <h3 style="color:var(--accent4)">L — LSP</h3>
+      <div class="rev-row"><span class="rev-key">Rule</span><span class="rev-val">Sub replaces super without breaking</span></div>
+      <div class="rev-row"><span class="rev-key">Author</span><span class="rev-val">Barbara Liskov (1987)</span></div>
+      <div class="rev-row"><span class="rev-key">Cond 1</span><span class="rev-val">Contravariance: params ≥ generic</span></div>
+      <div class="rev-row"><span class="rev-key">Cond 2</span><span class="rev-val">Preconditions: not strengthened</span></div>
+      <div class="rev-row"><span class="rev-key">Cond 3</span><span class="rev-val">Postconditions: not weakened</span></div>
+      <div class="rev-row"><span class="rev-key">Cond 4</span><span class="rev-val">Same exception types</span></div>
+      <div class="rev-row"><span class="rev-key">Warning</span><span class="rev-val">throws exception / empty override = LSP violation</span></div>
+    </div>
+    <div class="rev-card">
+      <h3 style="color:var(--danger)">I — ISP</h3>
+      <div class="rev-row"><span class="rev-key">Rule</span><span class="rev-val">No forced unused methods</span></div>
+      <div class="rev-row"><span class="rev-key">Author</span><span class="rev-val">Robert C. Martin (Xerox)</span></div>
+      <div class="rev-row"><span class="rev-key">Fix</span><span class="rev-val">Split fat interface into small ones</span></div>
+      <div class="rev-row"><span class="rev-key">Example</span><span class="rev-val">PrinterTasks → 4 interfaces</span></div>
+      <div class="rev-row"><span class="rev-key">Link</span><span class="rev-val">ISP violation often ≡ LSP violation</span></div>
+    </div>
+    <div class="rev-card">
+      <h3 style="color:#b06aff">D — DIP</h3>
+      <div class="rev-row"><span class="rev-key">Rule</span><span class="rev-val">High-level ↛ Low-level; both → Abstraction</span></div>
+      <div class="rev-row"><span class="rev-key">DI type 1</span><span class="rev-val">Constructor Injection</span></div>
+      <div class="rev-row"><span class="rev-key">DI type 2</span><span class="rev-val">Setter Injection</span></div>
+      <div class="rev-row"><span class="rev-key">DI type 3</span><span class="rev-val">Interface Injection</span></div>
+      <div class="rev-row"><span class="rev-key">IoC</span><span class="rev-val">General concept; DI is one way to implement it</span></div>
+      <div class="rev-row"><span class="rev-key">Chain</span><span class="rev-val">DI → DIP → OCP</span></div>
+    </div>
+    <div class="rev-card">
+      <h3>Key People</h3>
+      <div class="rev-row"><span class="rev-key">SRP / OCP / ISP / DIP</span><span class="rev-val">Robert C. Martin ("Uncle Bob")</span></div>
+      <div class="rev-row"><span class="rev-key">LSP</span><span class="rev-val">Barbara Liskov (1987)</span></div>
+      <div class="rev-row"><span class="rev-key">ISP origin</span><span class="rev-val">Martin consulting for Xerox</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:.5rem">
+    <h3 style="margin-top:0">Critical Relationships</h3>
+    <div class="highlight"><code>Store → PaymentGateway (interface) ← Stripe / PayPal</code> = DIP</div>
+    <div class="highlight teal"><code>Attack / Defend extend Strategy (abstract class)</code> = OCP via Strategy Pattern</div>
+    <div class="highlight amber"><code>Vehicle → VehicleWithEngines → Car | VehicleWithoutEngines → Bicycle</code> = LSP fix</div>
+    <div class="highlight danger"><code>PrintingTasks + ScanTasks + FaxTasks + DuplexTasks</code> (instead of one fat PrinterTasks) = ISP</div>
+    <div class="highlight"><code>new StudentRepository().save(this)</code> inside Student = SRP / loose coupling</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">⚡ 10 Things to Remember</h3>
+    <ol style="color:var(--text2);font-size:.88rem">
+      <li><strong>SRP:</strong> High cohesion, loose coupling = one reason to change</li>
+      <li><strong>OCP:</strong> Abstractions + Strategy Pattern = extend without modifying</li>
+      <li><strong>LSP:</strong> 4 conditions (Contravariance, Pre-, Post-conditions, Exceptions)</li>
+      <li><strong>LSP warning:</strong> throw Exception in override OR empty override = violation</li>
+      <li><strong>ISP:</strong> Robert C. Martin, Xerox — fat interface → many small interfaces</li>
+      <li><strong>DIP:</strong> Both modules depend on abstraction, not on each other</li>
+      <li><strong>DI ≠ DIP:</strong> DI (technique) implements DIP (principle)</li>
+      <li><strong>IoC:</strong> General concept; DI is one form of IoC</li>
+      <li><strong>Chain:</strong> DI → DIP → enables OCP</li>
+      <li><strong>Java 5+:</strong> Covariant return type = child can return subtype of parent's return</li>
+    </ol>
+  </div>
+</div>
+
+</main>
+
+<button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// ─── SECTION NAVIGATION ───
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const map={home:0,explain:1,summary:2,memory:3,mcq:4,written:5,revision:6};
+  document.querySelectorAll('.nav-btn')[map[id]].classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ─── DARK/LIGHT TOGGLE ───
+let darkMode=true;
+function toggleMode(){
+  darkMode=!darkMode;
+  document.body.classList.toggle('light',!darkMode);
+  document.getElementById('mode-toggle').textContent=darkMode?'🌙':'☀️';
+}
+
+// ─── SCROLL TOP BTN ───
+window.addEventListener('scroll',()=>{
+  document.getElementById('scroll-top').classList.toggle('show',window.scrollY>400);
+});
+
+// ─── COLLAPSIBLE ───
+function initCollapsible(){
+  document.querySelectorAll('.coll-head').forEach(h=>{
+    h.addEventListener('click',()=>{
+      const body=h.nextElementSibling;
+      const arrow=h.querySelector('.coll-arrow');
+      body.classList.toggle('open');
+      arrow.classList.toggle('open');
+    });
+  });
+}
+
+// ─── MCQ DATA ───
+const mcqs = [
+  {q:"What does SRP stand for?",opts:["Single Relationship Principle","Single Responsibility Principle","Structured Responsibility Pattern","Single Reference Principle"],ans:1,diff:"easy",exp:"SRP = Single Responsibility Principle. It states every software component should have one and only one responsibility."},
+  {q:"In SRP, 'cohesion' refers to:",opts:["The number of methods in a class","The degree of relatedness of parts within a component","The level of dependency between modules","The number of classes in a package"],ans:1,diff:"easy",exp:"Cohesion is defined as the degree to which the various parts of a software component are related. SRP aims for HIGH cohesion."},
+  {q:"In SRP, 'coupling' refers to:",opts:["How many responsibilities a class has","The number of interfaces a class implements","The level of interdependency between different software components","How cohesive the methods are"],ans:2,diff:"easy",exp:"Coupling is the level of inter-dependency between various software components. SRP recommends LOOSE coupling."},
+  {q:"Which of the following best describes the correct relationship between cohesion and coupling in SRP?",opts:["Low cohesion and loose coupling","High cohesion and tight coupling","High cohesion and loose coupling","Low cohesion and tight coupling"],ans:2,diff:"medium",exp:"SRP advocates for HIGH cohesion (related things together) and LOOSE coupling (independent components)."},
+  {q:"The Square class has calculateArea(), calculatePerimeter(), draw(), and rotate(). Which grouping has HIGH cohesion?",opts:["calculateArea() and draw()","calculatePerimeter() and rotate()","calculateArea() and calculatePerimeter()","draw() and calculateArea()"],ans:2,diff:"medium",exp:"calculateArea() and calculatePerimeter() both deal with the measurements of a square — they are closely related, so they have high cohesion together."},
+  {q:"A Student class contains MySQL database connection code. Which principle does this violate?",opts:["OCP","LSP","SRP","ISP"],ans:2,diff:"easy",exp:"The Student class has two reasons to change: student profile data AND database operations. This violates SRP's 'one reason to change' rule."},
+  {q:"What is the fix for the Student class containing database logic?",opts:["Remove all database code","Move DB code to a StudentRepository class","Add an interface to Student","Make Student abstract"],ans:1,diff:"easy",exp:"Moving DB code to a separate StudentRepository class gives each class one responsibility and makes Student's coupling with the database loose."},
+  {q:"OCP stands for:",opts:["Object Creation Pattern","Open Closed Principle","Object Composition Principle","Open Constructor Pattern"],ans:1,diff:"easy",exp:"OCP = Open Closed Principle. Open for extension, closed for modification."},
+  {q:"In OCP, 'closed for modification' means:",opts:["You can never add new code","You should not change existing working code to add new features","Classes must be sealed/final","Methods cannot be overridden"],ans:1,diff:"medium",exp:"Closed for modification means once a class is working correctly, you should not modify it for new features (only for bug fixes). New features are added via extension."},
+  {q:"How do you achieve OCP in practice?",opts:["By using concrete classes everywhere","By avoiding inheritance","By using interfaces or abstract classes as dependencies","By limiting the number of methods per class"],ans:2,diff:"medium",exp:"OCP is achieved by depending on abstractions (interfaces/abstract classes). New behavior is added by creating new classes that implement the abstraction, without touching existing code."},
+  {q:"The football Match class containing 'if (Team is Ahly)... else if (Team is Zamalk)...' violates:",opts:["SRP","OCP","LSP","ISP"],ans:1,diff:"medium",exp:"Every time a new team is added, the Match class must be modified. This violates OCP — it is not closed for modification."},
+  {q:"In the Strategy Design Pattern, which component holds a reference to the concrete strategy object?",opts:["Strategy Interface","Concrete Strategy","Context","Abstract Strategy"],ans:2,diff:"hard",exp:"The Context (e.g., Team or Match) maintains a reference to one of the concrete strategies and communicates only via the strategy interface."},
+  {q:"Who introduced the Liskov Substitution Principle?",opts:["Robert C. Martin","Barbara Liskov","Erich Gamma","Gang of Four"],ans:1,diff:"easy",exp:"LSP was introduced by Barbara Liskov in a 1987 conference keynote."},
+  {q:"LSP states that objects of a superclass should be:",opts:["Always extended by subclasses","Replaceable with objects of its subclasses without breaking the system","More restrictive than subclasses","Independent of all subclasses"],ans:1,diff:"easy",exp:"LSP: objects of a superclass should be replaceable with objects of its subclasses without breaking the system."},
+  {q:"A Bicycle class extends Vehicle and overrides startEngine() by throwing an exception. This is:",opts:["Correct because Bicycle is a Vehicle","A violation of SRP","A violation of LSP","A violation of OCP"],ans:2,diff:"medium",exp:"The override throws an exception, making Bicycle not substitutable for Vehicle. This is a classic LSP violation — a warning sign is when an overriding method throws an exception or does nothing."},
+  {q:"Which LSP condition states that subclass methods cannot add more constraints on input parameters?",opts:["Postconditions","Covariance","Preconditions","Contravariance"],ans:2,diff:"hard",exp:"Condition 2 — Preconditions cannot be strengthened. If the parent accepts any integer, the child cannot restrict to positive integers only."},
+  {q:"Which LSP condition deals with what the method promises to deliver after execution?",opts:["Contravariance","Preconditions","Exception types","Postconditions"],ans:3,diff:"hard",exp:"Condition 3 — Postconditions cannot be weakened. The subclass must deliver at least what the parent method promised (e.g., if parent closes a DB connection, so must the child)."},
+  {q:"Java 5 introduced covariant return types. This means:",opts:["A subclass can return any type from an overriding method","An overriding method can return a subtype of the parent's return type","Methods can change return types freely","Return types are ignored during compilation"],ans:1,diff:"hard",exp:"Covariant return type: an overriding method can return a subtype of the type returned by the parent's method with the same signature. For example, if parent returns Circle, child can return Square if Square extends Circle."},
+  {q:"ISP was defined by Robert C. Martin while consulting for which company?",opts:["IBM","Apple","Xerox","Microsoft"],ans:2,diff:"easy",exp:"Robert C. Martin defined ISP while consulting for Xerox to help them build software for their new printer systems."},
+  {q:"ISP states that clients should not be forced to:",opts:["Use abstract classes","Depend on interfaces they don't use","Extend concrete classes","Implement more than one interface"],ans:1,diff:"easy",exp:"ISP: 'Clients should not be forced to depend upon interfaces that they do not use.'"},
+  {q:"A LiquidInkjetPrinter implements PrinterTasks which has Print, Scan, Fax, PrintDuplex — but the printer only supports Print and Scan, so Fax and PrintDuplex throw UnsupportedOperationException. This violates:",opts:["SRP only","OCP only","ISP and LSP","OCP and SRP"],ans:2,diff:"medium",exp:"This violates ISP (forced to implement unused methods) AND LSP (override throws exception, making substitution unsafe)."},
+  {q:"What is the ISP solution for the Printer example?",opts:["Remove Fax and PrintDuplex from all classes","Create one giant interface with all methods","Split PrinterTasks into PrintingTasks, ScanTasks, FaxTasks, DuplexTasks","Make Printer an abstract class"],ans:2,diff:"medium",exp:"Split the fat interface into 4 focused interfaces. LiquidInkjetPrinter then implements only PrintingTasks and ScanTasks."},
+  {q:"DIP states that high-level modules should depend on:",opts:["Low-level modules","Concrete classes","Abstractions (interfaces or abstract classes)","Database connections"],ans:2,diff:"easy",exp:"DIP: High-level modules should NOT depend on low-level modules. Both should depend on abstractions."},
+  {q:"In the Store/Stripe example, what is the DIP violation?",opts:["Store imports too many classes","Store directly instantiates a Stripe object (concrete class)","Store has too many methods","Stripe has no interface"],ans:1,diff:"medium",exp:"Store directly creates 'new Stripe()' — making the high-level module (Store) depend on the low-level module (Stripe). If you switch to PayPal, you must change the Store class."},
+  {q:"Which is NOT a type of Dependency Injection?",opts:["Constructor Injection","Interface Injection","Setter Injection","Abstract Injection"],ans:3,diff:"medium",exp:"The three types of DI are: Constructor Injection, Setter Injection, and Interface Injection. 'Abstract Injection' does not exist."},
+  {q:"In Constructor Injection, the dependency is:",opts:["Set via a setter method","Passed as a constructor parameter","Obtained from a static method","Implemented via an injector interface"],ans:1,diff:"medium",exp:"Constructor Injection: dependency is passed to the object via its constructor parameter."},
+  {q:"Inversion of Control (IoC) is related to DI because:",opts:["IoC is another name for DI","DI is one specific way to implement IoC","IoC prevents the use of DI","IoC and DI are completely unrelated"],ans:1,diff:"hard",exp:"IoC is the general concept of inverting various responsibilities of a class. Dependency Injection is one specific way to implement IoC."},
+  {q:"The statement 'DI implements DIP, which enables OCP' describes:",opts:["An incorrect chain of principles","The relationship between three SOLID principles","Only how DI works in Spring","A violation of SOLID"],ans:1,diff:"hard",exp:"This is the key chain: Using DI (technique) to implement DIP (principle) means you depend on abstractions, which makes it easy to swap implementations — thus satisfying OCP without modifying high-level code."},
+  {q:"Which principle is MOST directly violated when an overriding method does nothing (empty body)?",opts:["SRP","OCP","LSP","ISP"],ans:2,diff:"medium",exp:"An empty override is a classic LSP warning sign — the subclass is not fulfilling the contract defined by the superclass, making it unsafe to substitute."},
+  {q:"Which statement about SRP and 'reasons to change' is MOST accurate?",opts:["Each class must have exactly one method","Two closely related reasons can be combined into one responsibility","A class can have any number of reasons to change if they are in the same file","Reasons to change only apply to database classes"],ans:1,diff:"hard",exp:"Technically SRP requires one reason to change, but if two reasons are closely related (e.g., student ID format and student name format are both 'student profile changes'), they can be combined into one responsibility."}
+];
+
+let mcqState={};
+let answered=0;let correct=0;
+
+function renderMCQ(){
+  const c=document.getElementById('mcq-container');
+  c.innerHTML='';
+  mcqs.forEach((q,i)=>{
+    const diffLabel=q.diff==='easy'?'<span class="diff-easy">Easy</span>':q.diff==='medium'?'<span class="diff-med">Medium</span>':'<span class="diff-hard">Hard</span>';
+    let optsHtml=q.opts.map((o,j)=>`<button class="mcq-opt" id="opt-${i}-${j}" onclick="selectMCQ(${i},${j})">`+
+      `<span class="opt-letter">${'ABCD'[j]}.</span><span>${o}</span></button>`).join('');
+    c.innerHTML+=`<div class="mcq-card" id="mcq-${i}">
+      <div class="mcq-num">Question ${i+1} of ${mcqs.length}</div>
+      <div class="mcq-meta">${diffLabel}</div>
+      <div class="mcq-q">${q.q}</div>
+      <div class="mcq-options">${optsHtml}</div>
+      <div class="mcq-explain" id="exp-${i}"><strong>💡 Explanation:</strong> ${q.exp}</div>
+    </div>`;
+  });
+}
+
+function selectMCQ(qi,oi){
+  if(mcqState[qi]!==undefined)return;
+  mcqState[qi]=oi;
+  const isCorrect=oi===mcqs[qi].ans;
+  if(isCorrect)correct++;
+  answered++;
+  for(let j=0;j<4;j++){
+    const btn=document.getElementById(`opt-${qi}-${j}`);
+    if(!btn)continue;
+    btn.classList.add('disabled');
+    if(j===mcqs[qi].ans)btn.classList.add('correct');
+    else if(j===oi)btn.classList.add('wrong');
+  }
+  document.getElementById(`exp-${qi}`).classList.add('show');
+  updateMCQScore();
+}
+
+function updateMCQScore(){
+  document.getElementById('mcq-score').textContent=`Score: ${correct} / ${answered}`;
+  const pct=Math.round((answered/mcqs.length)*100);
+  document.getElementById('prog-bar').style.width=pct+'%';
+  document.getElementById('prog-txt').textContent=`${answered} / ${mcqs.length} answered`;
+}
+
+function resetMCQ(){
+  mcqState={};answered=0;correct=0;
+  renderMCQ();updateMCQScore();
+}
+
+// ─── WRITTEN QUESTIONS ───
+const writtenQs=[
+  {type:"short",q:"Define SRP and explain the two key sub-concepts it is built upon.",ans:`<p><strong>Single Responsibility Principle (SRP)</strong> states that every software component should have one and only one reason to change. It is built upon two sub-concepts:</p><ul><li><strong>Cohesion:</strong> The degree of relatedness of the parts within a component. SRP aims for <em>high cohesion</em> — all methods/attributes should relate to one clear responsibility.</li><li><strong>Coupling:</strong> The level of interdependency between components. SRP recommends <em>loose coupling</em> — changing one component should not force changes in others.</li></ul>`},
+  {type:"short",q:"What is the Liskov Substitution Principle and who introduced it? List the four conditions.",ans:`<p><strong>LSP</strong> (introduced by Barbara Liskov in 1987) states that objects of a superclass should be replaceable with objects of its subclasses without breaking the system.</p><p>The four conditions:</p><ol><li><strong>Contravariance:</strong> Overriding method parameters must be the same or more generic than the parent's.</li><li><strong>Preconditions not strengthened:</strong> A subclass cannot add more constraints on inputs than the parent.</li><li><strong>Postconditions not weakened:</strong> A subclass must fulfill at least the same promises as the parent method.</li><li><strong>Exception types must match:</strong> The overriding method must throw the same exception type(s) as the parent.</li></ol>`},
+  {type:"short",q:"What is the difference between Dependency Inversion Principle (DIP) and Dependency Injection (DI)?",ans:`<p><strong>DIP</strong> is a design <em>principle</em> that states high-level modules should not depend on low-level modules; both should depend on abstractions.</p><p><strong>DI</strong> is a design <em>technique/pattern</em> used to implement DIP. It involves passing (injecting) dependencies from outside the class instead of creating them inside. The three types of DI are Constructor Injection, Setter Injection, and Interface Injection.</p><p><strong>Relationship:</strong> DI is the practical mechanism used to achieve DIP.</p>`},
+  {type:"short",q:"Explain ISP and describe how the Printer example violates and then satisfies it.",ans:`<p><strong>ISP</strong> (Interface Segregation Principle): Clients should not be forced to depend upon interfaces they do not use. Create multiple small focused interfaces rather than one fat interface.</p><p><strong>Violation:</strong> <code>PrinterTasks</code> interface has Print, Scan, Fax, and PrintDuplex. <code>LiquidInkjetPrinter</code> doesn't support Fax or PrintDuplex, but is forced to implement them (throwing UnsupportedOperationException). This also violates LSP.</p><p><strong>Fix:</strong> Split into four interfaces: <code>PrintingTasks</code>, <code>ScanTasks</code>, <code>FaxTasks</code>, <code>DuplexTasks</code>. LiquidInkjetPrinter then implements only PrintingTasks and ScanTasks. HPLaserJetPrinter implements all four.</p>`},
+  {type:"long",q:"A university system has a Course class with the following methods: getCourseId(), getCourseName(), addStudent(), removeStudent(), saveToDatabase(), generateReport(), sendEmailToStudents(). Analyze which SOLID principles are violated and propose a complete redesign.",ans:`<p>This class violates <strong>SRP</strong> (multiple responsibilities) and likely <strong>OCP</strong> and <strong>DIP</strong>.</p><p><strong>Violations identified:</strong></p><ul><li>getCourseId(), getCourseName() → core course data ✓</li><li>addStudent(), removeStudent() → enrollment management (could be separate)</li><li>saveToDatabase() → database concern — tight coupling, violates SRP &amp; DIP</li><li>generateReport() → reporting concern — separate responsibility</li><li>sendEmailToStudents() → communication concern — separate responsibility</li></ul><p><strong>Redesigned solution:</strong></p><ul><li><code>Course</code>: getCourseId(), getCourseName(), addStudent(), removeStudent() — core data &amp; enrollment</li><li><code>CourseRepository</code>: save(Course), findById(id) — handles database operations, injected via interface <code>ICourseRepository</code></li><li><code>ReportService</code>: generateReport(Course) — report generation</li><li><code>EmailService</code>: sendEmail(List&lt;Student&gt;) — communication via interface <code>IEmailService</code></li></ul><p>DIP is applied by having Course depend on interfaces <code>ICourseRepository</code> and <code>IEmailService</code> rather than concrete implementations, enabling OCP (swap MongoDB for MySQL without changing Course).</p>`},
+  {type:"long",q:"Explain the Open/Closed Principle using the Strategy Design Pattern. How does the football Match example illustrate both OCP violation and its fix?",ans:`<p><strong>OCP</strong>: Software entities should be open for extension but closed for modification.</p><p><strong>Violation in the Match example:</strong><br>The Match class contains if-else chains like <code>if (Team1 is Ahly) ... else if (Team1 is Zamalk) ...</code> inside methods like Play(), Welcome(), and SetScore(). Each time a new team is added, the Match class must be modified. This violates OCP.</p><p><strong>Fix using Strategy Pattern:</strong></p><ul><li>Create abstract class <code>Strategy</code> with <code>play()</code>, <code>setScorePoint()</code>, and <code>getName()</code></li><li>Create concrete classes: <code>Attack extends Strategy</code> (scorePoint = +2), <code>Defend extends Strategy</code> (scorePoint = +1)</li><li>Team holds a <code>Strategy</code> reference. Match calls <code>Team.strategy.play()</code> and <code>Team.strategy.setScorePoint()</code></li><li>To add a new strategy (e.g., Counter-Attack): create a new class <code>CounterAttack extends Strategy</code> — Match and Team classes do NOT need to change</li></ul><p>The Match class is now closed for modification but open for extension — new strategies only require new classes.</p>`},
+  {type:"long",q:"Using the Vehicle example, explain how LSP can be violated and how proper class hierarchy design resolves the violation. Include all relevant LSP conditions.",ans:`<p><strong>LSP Violation:</strong><br>A <code>Vehicle</code> class has a <code>startEngine()</code> method. <code>Car extends Vehicle</code> and correctly overrides it. <code>Bicycle extends Vehicle</code> and overrides <code>startEngine()</code> by throwing an exception — because bicycles have no engine.</p><p>When we create a list <code>ArrayList&lt;Vehicle&gt;</code> containing Car and Bicycle objects and call <code>v.startEngine()</code> for each, the Car works fine but Bicycle throws an exception. This breaks the system — Bicycle is NOT substitutable for Vehicle.</p><p><strong>LSP Conditions violated:</strong></p><ul><li>Condition 3 (Postconditions weakened): Vehicle promises startEngine() works; Bicycle's override doesn't deliver.</li><li>Condition 4 (Exception types): Vehicle's startEngine() doesn't define an exception; Bicycle throws one.</li></ul><p><strong>Fix — Correct Hierarchy:</strong></p><ul><li><code>Vehicle</code>: name, speed (common attributes)</li><li><code>VehicleWithEngines extends Vehicle</code>: engine, startEngine()</li><li><code>VehicleWithoutEngines extends Vehicle</code>: startMoving()</li><li><code>Car extends VehicleWithEngines</code>: overrides startEngine() correctly</li><li><code>Bicycle extends VehicleWithoutEngines</code>: overrides startMoving() correctly</li></ul><p>Now no class is forced to implement methods irrelevant to it. LSP is satisfied because Car is fully substitutable for VehicleWithEngines, and Bicycle for VehicleWithoutEngines.</p>`},
+];
+
+function renderWritten(){
+  const c=document.getElementById('written-container');
+  writtenQs.forEach((q,i)=>{
+    const typeLabel=q.type==='short'?'<span class="badge badge-blue">Short Answer</span>':'<span class="badge badge-teal">Long Answer</span>';
+    c.innerHTML+=`<div class="written-card">
+      <div class="wq-label">${typeLabel} — Question ${i+1}</div>
+      <div class="wq-q">${q.q}</div>
+      <button class="model-toggle" onclick="toggleModel(${i})">Show Model Answer ▼</button>
+      <div class="model-answer" id="ma-${i}">${q.ans}</div>
+    </div>`;
+  });
+}
+
+function toggleModel(i){
+  const el=document.getElementById(`ma-${i}`);
+  const btn=el.previousElementSibling;
+  el.classList.toggle('show');
+  btn.textContent=el.classList.contains('show')?'Hide Model Answer ▲':'Show Model Answer ▼';
+}
+
+// ─── INIT ───
+window.addEventListener('DOMContentLoaded',()=>{
+  renderMCQ();
+  renderWritten();
+  initCollapsible();
+});
+</script>
+</body>
+</html>
